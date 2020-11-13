@@ -1,15 +1,9 @@
 #pragma once
 
 #include <iostream>
-
-#include <glm/glm.hpp>
-#include <glfw/glfw3.h>
+#include "header.h"
 
 int main() {
-
-	glfwInit();
-
-	glm::vec3 test(1, 2, 3);
-	std::cout << "Hello World: " << test.x << " " << test.y << " " << test.z;
+	std::cout << "Hello World: " << LOA::getReturn() << '\n';
 	return 0;
 }
