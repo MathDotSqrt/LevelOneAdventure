@@ -21,6 +21,10 @@ set(SOURCE_FILES ${SOURCE_FILES}
 # Generates Game Executable
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} )
 
+# GLM
+include_directories(
+	"thirdparty/glm")
+
 # GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
