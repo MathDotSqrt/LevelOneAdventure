@@ -13,16 +13,21 @@ include_directories(
 
 # Add new header files here
 set(HEADER_FILES ${HEADER_FILES} 
-	"src/header/header.h")
+	"src/header/Graphics/VBO.h"
+	"src/header/common.h"
+)
 
 # Add new source files here
 set(SOURCE_FILES ${SOURCE_FILES} 
+	"src/source/Graphics/VBO.cpp"
 	"src/source/main.cpp"
-	"src/source/header.cpp")
+)
 
 
 set(RES_FILES ${RES_FILES}
-	"res/shaders/basic.vert")
+	"res/shaders/basic.vert"
+	"res/shaders/basic.frag"
+)
 
 # Generate executable
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} )

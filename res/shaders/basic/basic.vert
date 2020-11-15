@@ -1,4 +1,2 @@
-#include glsl.h
-This is test
-aaa
+#include preamble.h
 

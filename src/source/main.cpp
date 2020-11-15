@@ -6,6 +6,9 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "common.h"
+
+
 using namespace glm;
 
 #define GLSL(src) #src
@@ -35,7 +38,7 @@ int main(void) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
     window = glfwCreateWindow(640, 480, "OpenGL Boilerplate", NULL, NULL);
     if (!window) {
@@ -50,12 +53,17 @@ int main(void) {
 
     glfwSetKeyCallback(window, key_callback);
 
+    float t = 0;
+
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(1, 0, 0, 1);
+
+        glClearColor(sin(t), cos(t), 1 - sin(t), 1);
         render(window);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        t += .01f;
         //glfwWaitEvents();
     }
 
