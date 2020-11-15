@@ -5,12 +5,17 @@
 
 using namespace LOA::Graphics;
 
-VBO::VBO(GLenum bufferType) : vboID(0), bufferType(bufferType){
-	glGenBuffers(1, &this->vboID);
+enum class VBO::BufferType : GLenum {
+	VERTEX_ARRAY = GL_VERTEX_ARRAY,
+	ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER
+};
+
+VBO::VBO(VBO::BufferType type) : vboID(0), type(type){
+	glGenBuffers(1, &vboID);
 	assert(vboID, "FATAL: failed to generate VBO");
 }
 
-VBO::VBO(VBO&& other) noexcept : vboID(other.vboID), bufferType(other.bufferType){
+VBO::VBO(VBO&& other) noexcept : vboID(other.vboID), type(other.type){
 	other.vboID = 0;
 }
 
@@ -22,7 +27,7 @@ VBO& VBO::operator=(VBO &&other) noexcept {
 	if (this != &other) {
 		dispose();
 		std::swap(vboID, other.vboID);
-		std::swap(bufferType, other.bufferType);
+		std::swap(type, other.type);
 	}
 
 	return *this;
@@ -31,15 +36,15 @@ VBO& VBO::operator=(VBO &&other) noexcept {
 
 void VBO::bind() {
 	assert(vboID, "Fatal: failed to bind");
-	glBindBuffer(bufferType, vboID);
+	glBindBuffer((GLenum)type, vboID);
 }
 
 void VBO::unbind() {
-	glBindBuffer(bufferType, 0);
+	glBindBuffer((GLenum)type, 0);
 }
 
 void VBO::bufferData(size_t bytes, void* data, GLenum drawType) {
-	glBufferData(this->bufferType, bytes, data, drawType);
+	glBufferData((GLenum)type, bytes, data, drawType);
 }
 
 void VBO::dispose() {

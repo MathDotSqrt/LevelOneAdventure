@@ -3,10 +3,14 @@
 
 #include "common.h"
 namespace LOA::Graphics {
+	
 
 	class VBO {
 	public:
-		VBO(GLenum bufferType);
+		
+		enum class BufferType : GLenum;
+
+		VBO(BufferType type);
 		VBO(VBO &&other) noexcept;
 		~VBO();
 
@@ -26,9 +30,10 @@ namespace LOA::Graphics {
 		}
 
 		GLuint getID() const;
+		BufferType getType();
 	private:
 		GLuint vboID;
-		GLenum bufferType;
+		BufferType type;
 
 		void dispose();
 	};
