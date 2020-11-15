@@ -11,14 +11,21 @@ include_directories(
 	"include" 
 	"src/header")
 
+# Add new header files here
 set(HEADER_FILES ${HEADER_FILES} 
 	"src/header/header.h")
 
+# Add new source files here
 set(SOURCE_FILES ${SOURCE_FILES} 
 	"src/source/main.cpp"
 	"src/source/header.cpp")
 
 
+set(RES_FILES ${RES_FILES}
+	"res/shaders/basic.vert")
+
+# Generate executable
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} )
 
 # GLM
 include_directories(
@@ -42,8 +49,6 @@ set(LIBS
 	"${CMAKE_SOURCE_DIR}/lib/glew32.lib"
 	OpenGL::GL)
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} )
-
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 # Copy dlls
@@ -55,4 +60,27 @@ if(WIN32)
 endif()
 
 
-# Generates Game Executable
+# Scan through resource folder for updated files and copy if none existing or changed
+set(RES_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/res")
+file (GLOB_RECURSE resources "res/*.*")
+foreach(resource ${resources})
+	get_filename_component(filename ${resource} NAME)
+	get_filename_component(dir ${resource} DIRECTORY)
+	get_filename_component(dirname ${dir} NAME)
+
+	file(RELATIVE_PATH rel_path ${RES_FILE_PATH} ${dir})
+ 
+	set(output "${CMAKE_CURRENT_BINARY_DIR}/res/${rel_path}/${filename}")
+	message("OUTPUT_NAME ${output}")
+	add_custom_command(
+		COMMENT "Moving updated resource-file '${filename}'"
+		OUTPUT ${output}
+		DEPENDS ${resource}
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		${resource}
+		${output}
+	)
+	add_custom_target(${filename} ALL DEPENDS ${resource} ${output})
+ 
+endforeach()
+
