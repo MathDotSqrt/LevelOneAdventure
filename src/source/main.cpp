@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 #include "common.h"
+#include "Graphics/BasicRenderer.h"
 
 
 using namespace glm;
@@ -20,10 +19,6 @@ static void error_callback(int error, const char* description) {
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
-}
-
-static void render(GLFWwindow* window) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 int main(void) {
@@ -46,8 +41,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    glewExperimental = GL_TRUE;
-    glewInit();
+    LOA::Graphics::BasicRenderer renderer;
 
     glfwMakeContextCurrent(window);
 
@@ -56,15 +50,12 @@ int main(void) {
     float t = 0;
 
     while (!glfwWindowShouldClose(window)) {
-
-        glClearColor(sin(t), cos(t), 1 - sin(t), 1);
-        render(window);
+        renderer.render(t);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         t += .01f;
-        //glfwWaitEvents();
     }
 
     glfwDestroyWindow(window);

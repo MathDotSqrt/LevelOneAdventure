@@ -13,12 +13,16 @@ include_directories(
 
 # Add new header files here
 set(HEADER_FILES ${HEADER_FILES} 
+	"src/header/Graphics/BasicRenderer.h"
+	"src/header/Graphics/VAO.h"
 	"src/header/Graphics/VBO.h"
 	"src/header/common.h"
 )
 
 # Add new source files here
 set(SOURCE_FILES ${SOURCE_FILES} 
+	"src/source/Graphics/BasicRenderer.cpp"
+	"src/source/Graphics/VAO.cpp"
 	"src/source/Graphics/VBO.cpp"
 	"src/source/main.cpp"
 )
