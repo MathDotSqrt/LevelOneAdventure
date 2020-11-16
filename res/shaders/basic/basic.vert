@@ -3,8 +3,11 @@ in vec3 v_pos;
 
 out vec3 f_color;
 
-void main(){
-	gl_Position = vec4(v_pos, 1);
+uniform mat4 M;
+uniform float u_time;
 
-	f_color = abs(v_pos);
+void main(){
+	gl_Position = M * vec4(v_pos, 1);
+
+	f_color = v_pos + vec3(sin(u_time));
 }

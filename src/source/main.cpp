@@ -60,6 +60,7 @@ int main(void) {
     LOA::Graphics::BasicRenderer renderer;
 
     while (!glfwWindowShouldClose(window)) {
+        renderer.update(.016f);
         renderer.render(t);
 
         glfwSwapBuffers(window);

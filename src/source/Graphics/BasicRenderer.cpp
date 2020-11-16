@@ -1,10 +1,11 @@
 #include "Graphics/BasicRenderer.h"
 #include <GL/glew.h>
 #include <iostream>
-
 #include <vector>
-#include <glm/glm.hpp>
 #include <assert.h>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "common.h"
 #include "Graphics/preamble.h"
@@ -35,10 +36,25 @@ BasicRenderer::BasicRenderer() :
 			ebo.bufferData(indices);
 		ebo.unbind();
 	vao.unbind();
+
 }
 
-void BasicRenderer::render(float dt) {
-	glClearColor(sin(dt), cos(dt), 1-sin(dt), 1);
+void BasicRenderer::update(float delta) {
+	rotation.y += .1f;
+	position.x += delta;
+}
+
+void BasicRenderer::render(float time) {
+	glm::quat rot_quat = glm::quat(rotation);
+
+	glm::mat4 transform = glm::identity<glm::mat4>();
+	transform = glm::translate(transform, position);
+	transform = glm::rotate(transform, glm::angle(rot_quat), glm::axis(rot_quat));
+	transform = glm::scale(transform, scale);
+	
+
+
+	glClearColor(sin(time), cos(time), 1-sin(time), 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	auto basic_shader = shaders.getShader({"basic/basic.vert", "basic/basic.frag"});
@@ -46,6 +62,8 @@ void BasicRenderer::render(float dt) {
 	assert(basic_shader, "SHADER IS NULL");
 
 	basic_shader->start();
+	basic_shader->setUniform1f("u_time", time);
+	basic_shader->setUniformMat4("M", transform);
 	vao.bind();
 	ebo.bind();
 	glEnableVertexAttribArray(POSITION_ATTRIB);

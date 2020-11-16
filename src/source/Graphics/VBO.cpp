@@ -21,7 +21,6 @@ constexpr GLenum toGL(VBO::BufferType type) {
 }
 
 VBO::VBO(VBO::BufferType type) : vboID(0), type(type), bytes(0){
-	std::cout << "VBO\n";
 	glGenBuffers(1, &vboID);
 	assert(vboID, "FATAL: failed to generate VBO");
 }
