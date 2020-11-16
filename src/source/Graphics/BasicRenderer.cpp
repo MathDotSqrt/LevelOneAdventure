@@ -4,8 +4,10 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include <assert.h>
 
 #include "common.h"
+#include "Graphics/preamble.h"
 using namespace LOA::Graphics;
 
 BasicRenderer::BasicRenderer() : 
@@ -26,23 +28,29 @@ BasicRenderer::BasicRenderer() :
 
 	vao.bind();
 		vbo.bind();
-			vao.addVertexAttribPtr(0, 3, 0, 0);
+			vao.addVertexAttribPtr(POSITION_ATTRIB, 3, 0, 0);
 			vbo.bufferData(verticies);
 		vbo.unbind();
 		ebo.bind();
-		ebo.bufferData(indices);
+			ebo.bufferData(indices);
+		ebo.unbind();
 	vao.unbind();
-
-
-	std::cout << ebo.getNumBytes()/sizeof(u32);
 }
 
 void BasicRenderer::render(float dt) {
 	glClearColor(sin(dt), cos(dt), 1-sin(dt), 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	auto basic_shader = shaders.getShader({"basic/basic.vert", "basic/basic.frag"});
+
+	assert(basic_shader, "SHADER IS NULL");
+
+	basic_shader->start();
 	vao.bind();
-	glEnableVertexAttribArray(0);
+	ebo.bind();
+	glEnableVertexAttribArray(POSITION_ATTRIB);
 	glDrawElements(GL_TRIANGLES, ebo.getNumBytes()/sizeof(u32), GL_UNSIGNED_INT, (void*)0);
+	ebo.unbind();
 	vao.unbind();
+	basic_shader->end();
 }
