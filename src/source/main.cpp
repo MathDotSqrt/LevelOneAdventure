@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <iostream>
 
 #include "common.h"
 #include "Graphics/BasicRenderer.h"
@@ -41,13 +43,21 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    LOA::Graphics::BasicRenderer renderer;
+    
 
     glfwMakeContextCurrent(window);
+
+    glewExperimental = GL_TRUE;
+    GLenum glewErr = glewInit();
+    if (glewErr != GLEW_OK) {
+        std::cout << "FATAL\n";
+    }
 
     glfwSetKeyCallback(window, key_callback);
 
     float t = 0;
+
+    LOA::Graphics::BasicRenderer renderer;
 
     while (!glfwWindowShouldClose(window)) {
         renderer.render(t);

@@ -3,14 +3,25 @@
 #include <assert.h>
 #include <GL/glew.h>
 
+#include <iostream>
+
 using namespace LOA::Graphics;
 
-enum class VBO::BufferType : GLenum {
-	VERTEX_ARRAY = GL_VERTEX_ARRAY,
-	ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER
-};
+constexpr GLenum toGL(VBO::BufferType type) {
+	switch (type)
+	{
+	case VBO::BufferType::ARRAY_BUFFER:
+		return GL_ARRAY_BUFFER;
+	case VBO::BufferType::ELEMENT_ARRAY_BUFFER:
+		return GL_ELEMENT_ARRAY_BUFFER;
+	default:
+		assert(false, "TO GL FAILED");
+		return 0;
+	}
+}
 
-VBO::VBO(VBO::BufferType type) : vboID(0), type(type){
+VBO::VBO(VBO::BufferType type) : vboID(0), type(type), bytes(0){
+	std::cout << "VBO\n";
 	glGenBuffers(1, &vboID);
 	assert(vboID, "FATAL: failed to generate VBO");
 }
@@ -36,15 +47,16 @@ VBO& VBO::operator=(VBO &&other) noexcept {
 
 void VBO::bind() {
 	assert(vboID, "Fatal: failed to bind");
-	glBindBuffer((GLenum)type, vboID);
+	glBindBuffer(toGL(type), vboID);
 }
 
 void VBO::unbind() {
-	glBindBuffer((GLenum)type, 0);
+	glBindBuffer(toGL(type), 0);
 }
 
-void VBO::bufferData(size_t bytes, void* data, GLenum drawType) {
-	glBufferData((GLenum)type, bytes, data, drawType);
+void VBO::bufferData(size_t bytes, void* data) {
+	glBufferData(toGL(type), bytes, data, GL_STATIC_DRAW);
+	this->bytes = bytes;
 }
 
 void VBO::dispose() {
@@ -56,4 +68,12 @@ void VBO::dispose() {
 
 GLuint VBO::getID() const {
 	return vboID;
+}
+
+VBO::BufferType VBO::getType() const {
+	return type;
+}
+
+size_t VBO::getNumBytes() const {
+	return bytes;
 }
