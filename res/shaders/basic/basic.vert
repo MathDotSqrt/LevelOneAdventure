@@ -1,13 +1,18 @@
 #version 330
-in vec3 v_pos;
 
+#include "preamble.glsl"
+
+layout(location=POSITION_ATTRIB_LOCATION) in vec3 v_pos;
+layout(location=COLOR_ATTRIB_LOCATION) in vec3 v_color;
+
+out vec3 f_pos;
 out vec3 f_color;
 
-uniform mat4 M;
-uniform float u_time;
+uniform mat4 MP;
 
 void main(){
-	gl_Position = M * vec4(v_pos, 1);
+	gl_Position = MP * vec4(v_pos, 1);
 
-	f_color = v_pos + vec3(sin(u_time));
+	f_pos = v_pos;
+	f_color = v_color; 
 }

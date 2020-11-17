@@ -9,7 +9,8 @@ project(LevelOneAdventure)
 # General Includes
 include_directories(
 	"include" 
-	"src/header")
+	"src/header"
+	"res/shaders")
 
 # Add new header files here
 set(HEADER_FILES ${HEADER_FILES} 

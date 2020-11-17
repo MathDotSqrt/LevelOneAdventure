@@ -49,6 +49,8 @@ namespace LOA::Graphics {
 		}
 	};
 
-	typedef Attrib<POSITION_ATTRIB, glm::vec3> PositionAttrib;
-	typedef Attrib<TEXCOORD_ATTRIB, glm::vec2> TexcoordAttrib;
+	typedef Attrib<POSITION_ATTRIB_LOCATION, glm::vec3> PositionAttrib;
+	typedef Attrib<TEXCOORD_ATTRIB_LOCATION, glm::vec2> TexcoordAttrib;
+	typedef Attrib<NORMAL_ATTRIB_LOCATION, glm::vec3> NormalAttrib;
+	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::vec3> ColorAttrib;;
 }

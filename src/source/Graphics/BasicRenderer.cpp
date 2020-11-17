@@ -14,7 +14,8 @@
 using namespace LOA::Graphics;
 
 BasicRenderer::BasicRenderer() : 
-	vbo(VBO::BufferType::ARRAY_BUFFER), 
+	vbo(VBO::BufferType::ARRAY_BUFFER),
+	vbo_color(VBO::BufferType::ARRAY_BUFFER),
 	ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER) {
 	
 	std::vector<glm::vec3> verticies = {
@@ -22,6 +23,13 @@ BasicRenderer::BasicRenderer() :
 		glm::vec3(-.5, -.5, 0),
 		glm::vec3(.5, .5, 0),
 		glm::vec3(.5, -.5, 0),
+	};
+
+	std::vector<glm::vec3> color = {
+		glm::vec3(1, 1, 1),
+		glm::vec3(0, 1, 1),
+		glm::vec3(1, 1, 1),
+		glm::vec3(1, 0, 1),
 	};
 	
 	std::vector<u32> indices = {
@@ -34,24 +42,28 @@ BasicRenderer::BasicRenderer() :
 			vao.addVertexAttribPtr<PositionAttrib>();
 			vbo.bufferData(verticies);
 		vbo.unbind();
+		vbo_color.bind();
+			vao.addVertexAttribPtr<ColorAttrib>();
+			vbo_color.bufferData(color);
+		vbo_color.unbind();
 		ebo.bind();
 			ebo.bufferData(indices);
 		ebo.unbind();
 	vao.unbind();
 
+
+	projection = glm::perspective<float>(70, 1, .1f, 1000.0f);
 }
 
 void BasicRenderer::update(float delta) {
-	rotation.y += .1f;
-	position.x += delta / 10;
+	rotation = glm::rotate(rotation, .01f, glm::vec3(1, 0, 1));
+	position.z -= delta;
 }
 
 void BasicRenderer::render(float time) {
-	glm::quat rot_quat = glm::quat(rotation);
-
 	glm::mat4 transform = glm::identity<glm::mat4>();
 	transform = glm::translate(transform, position);
-	transform = glm::rotate(transform, glm::angle(rot_quat), glm::axis(rot_quat));
+	transform = glm::rotate(transform, glm::angle(rotation), glm::axis(rotation));
 	transform = glm::scale(transform, scale);
 	
 
@@ -65,10 +77,11 @@ void BasicRenderer::render(float time) {
 
 	basic_shader->start();
 	basic_shader->setUniform1f("u_time", time);
-	basic_shader->setUniformMat4("M", transform);
+	basic_shader->setUniformMat4("MP", projection * transform);
 	vao.bind();
 	ebo.bind();
-	glEnableVertexAttribArray(POSITION_ATTRIB);
+	glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
+	glEnableVertexAttribArray(COLOR_ATTRIB_LOCATION);
 	glDrawElements(GL_TRIANGLES, ebo.getNumBytes()/sizeof(u32), GL_UNSIGNED_INT, (void*)0);
 	ebo.unbind();
 	vao.unbind();
