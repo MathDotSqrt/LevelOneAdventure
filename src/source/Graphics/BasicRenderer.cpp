@@ -9,6 +9,8 @@
 
 #include "common.h"
 #include "Graphics/preamble.h"
+#include "Graphics/Attrib.h"
+
 using namespace LOA::Graphics;
 
 BasicRenderer::BasicRenderer() : 
@@ -41,7 +43,7 @@ BasicRenderer::BasicRenderer() :
 
 void BasicRenderer::update(float delta) {
 	rotation.y += .1f;
-	position.x += delta;
+	position.x += delta / 10;
 }
 
 void BasicRenderer::render(float time) {

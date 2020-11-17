@@ -10,9 +10,9 @@ typedef short i16;
 typedef int i32;
 typedef long long i64;
 
-typedef float float32;
+typedef float f32;
 //TODO: insert check here to gaurentee 64 bit
-typedef double float64;	
+typedef double f64;	
 
 typedef unsigned int GLenum;
 typedef unsigned int GLbitfield;
