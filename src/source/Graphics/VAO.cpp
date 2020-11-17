@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <algorithm>
+#include <iostream>
 
 using namespace LOA::Graphics;
 
@@ -35,8 +36,9 @@ void VAO::unbind() {
 	glBindVertexArray(0);
 }
 
-void VAO::addVertexAttribPtr(int ptr, int size, size_t stride, size_t offset) {
-	glVertexAttribPointer(ptr, size, GL_FLOAT, false, stride, (void*)offset);
+void VAO::addVertexAttribPtr(int ptr, int num_components, size_t stride, size_t offset) {
+	std::cout << ptr << " " << num_components << " " << stride << " " << offset << '\n';
+	glVertexAttribPointer(ptr, num_components, GL_FLOAT, false, stride, (void*)offset);
 }
 
 void VAO::dispose() {

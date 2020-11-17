@@ -31,7 +31,7 @@ BasicRenderer::BasicRenderer() :
 
 	vao.bind();
 		vbo.bind();
-			vao.addVertexAttribPtr(POSITION_ATTRIB, 3, 0, 0);
+			vao.addVertexAttribPtr<PositionAttrib>();
 			vbo.bufferData(verticies);
 		vbo.unbind();
 		ebo.bind();

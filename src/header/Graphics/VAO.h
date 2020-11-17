@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "Attrib.h"
 
 namespace LOA::Graphics {
 	class VAO {
@@ -17,7 +18,13 @@ namespace LOA::Graphics {
 		void bind();
 		void unbind();
 
-		void addVertexAttribPtr(int ptr, int size, size_t stride, size_t offset);
+		void addVertexAttribPtr(int ptr, int num_components, size_t stride, size_t offset);
+
+		template<typename ...ATTRIBS>
+		void addVertexAttribPtr() {
+			const size_t stride = getAttribsStride<ATTRIBS...>();
+			setInterleavedAttribPointers<ATTRIBS...>(stride, 0);
+		}
 
 		GLuint getID() const;
 
@@ -25,6 +32,24 @@ namespace LOA::Graphics {
 		GLuint vaoID = 0;
 
 		void dispose();
+
+		template<typename ATTRIB, typename ...U>
+		constexpr size_t getAttribsStride() {
+			if constexpr (!sizeof...(U)) {
+				return ATTRIB::size();
+			}
+			else {
+				return ATTRIB::size() + getAttribsStride<U...>();
+			}
+		}
+
+		template<typename ATTRIB, typename ...U>
+		void setInterleavedAttribPointers(size_t stride, size_t offset) {
+			addVertexAttribPtr(ATTRIB::Location, ATTRIB::NumComponents, stride, offset);
+			if constexpr (sizeof...(U)) {
+				setInterleavedAttribPointers<U...>(stride, offset + ATTRIB::size());
+			}
+		}
 
 	};
 }
