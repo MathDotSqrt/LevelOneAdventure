@@ -37,7 +37,7 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-    window = glfwCreateWindow(640, 480, "OpenGL Boilerplate", NULL, NULL);
+    window = glfwCreateWindow(1024, 1024, "OpenGL Boilerplate", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -54,13 +54,14 @@ int main(void) {
     }
 
     glfwSetKeyCallback(window, key_callback);
+    glfwSwapInterval(1);
 
     float t = 0;
 
     LOA::Graphics::BasicRenderer renderer;
 
     while (!glfwWindowShouldClose(window)) {
-        renderer.update(.016f);
+        renderer.update(t);
         renderer.render(t);
 
         glfwSwapBuffers(window);

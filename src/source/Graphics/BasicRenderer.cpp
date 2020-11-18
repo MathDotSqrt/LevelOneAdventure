@@ -26,7 +26,7 @@ BasicRenderer::BasicRenderer() :
 	};
 
 	std::vector<glm::vec3> color = {
-		glm::vec3(1, 1, 1),
+		glm::vec3(1, 0, 0),
 		glm::vec3(0, 1, 1),
 		glm::vec3(1, 1, 1),
 		glm::vec3(1, 0, 1),
@@ -55,9 +55,9 @@ BasicRenderer::BasicRenderer() :
 	projection = glm::perspective<float>(70, 1, .1f, 1000.0f);
 }
 
-void BasicRenderer::update(float delta) {
+void BasicRenderer::update(float time) {
 	rotation = glm::rotate(rotation, .01f, glm::vec3(1, 0, 1));
-	position.z -= delta;
+	position.z = -1 * (sin(time) + 1) - 1;
 }
 
 void BasicRenderer::render(float time) {

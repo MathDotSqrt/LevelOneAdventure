@@ -8,6 +8,5 @@ out vec4 out_color;
 uniform float u_time;
 
 void main(){
-	
 	out_color = vec4(f_color, 1);
 }
