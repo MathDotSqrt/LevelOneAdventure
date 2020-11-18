@@ -16,6 +16,7 @@ include_directories(
 set(HEADER_FILES ${HEADER_FILES} 
 	"src/header/Graphics/Attrib.h"
 	"src/header/Graphics/BasicRenderer.h"
+	"src/header/Graphics/Geometry.h"
 	"src/header/Graphics/GLSLProgram.h"
 	"src/header/Graphics/preamble.h"
 	"src/header/Graphics/ShaderSet.h"
@@ -31,6 +32,7 @@ set(HEADER_FILES ${HEADER_FILES}
 set(SOURCE_FILES ${SOURCE_FILES} 
 	"src/source/Graphics/Attrib.cpp"
 	"src/source/Graphics/BasicRenderer.cpp"
+	"src/source/Graphics/Geometry.cpp"
 	"src/source/Graphics/GLSLProgram.cpp"
 	"src/source/Graphics/ShaderSet.cpp"
 	"src/source/Graphics/TEX.cpp"

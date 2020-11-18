@@ -1,14 +1,16 @@
 #include "Graphics/BasicRenderer.h"
-#include <GL/glew.h>
 #include <iostream>
 #include <vector>
 #include <assert.h>
+
+#include <GL/glew.h>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
 
 #include "common.h"
 #include "Graphics/Attrib.h"
+#include "Graphics/Geometry.h"
 
 using namespace LOA::Graphics;
 
@@ -18,38 +20,22 @@ BasicRenderer::BasicRenderer() :
 	vbo_uv(VBO::BufferType::ARRAY_BUFFER),
 	ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER) {
 	
-	std::vector<glm::vec3> verticies = {
-		glm::vec3(-.5, .5, 0),
-		glm::vec3(-.5, -.5, 0),
-		glm::vec3(.5, .5, 0),
-		glm::vec3(.5, -.5, 0),
-	};
+	Geometry<PositionAttrib, TexcoordAttrib> geometry;
+	geometry.pushVertex(glm::vec3(-.5, .5, 0), glm::vec2(0, 0));
+	geometry.pushVertex(glm::vec3(-.5, -.5, 0), glm::vec2(0, 1));
+	geometry.pushVertex(glm::vec3(.5, .5, 0), glm::vec2(1, 0));
+	geometry.pushVertex(glm::vec3(.5, -.5, 0), glm::vec2(1, 1));
 
-	std::vector<glm::vec2> uv = {
-		glm::vec2(0, 0),
-		glm::vec2(0, 1),
-		glm::vec2(1, 0),
-		glm::vec2(1, 1),
-	};
-
-
+	geometry.pushTriangle(0, 1, 2);
+	geometry.pushTriangle(2, 1, 3);
 	
-	std::vector<u32> indices = {
-		0, 1, 2,
-		2, 1, 3
-	};
-
 	vao.bind();
 		vbo.bind();
-			vao.addVertexAttribPtr<PositionAttrib>();
-			vbo.bufferData(verticies);
+			vao.addVertexAttribPtr<PositionAttrib, TexcoordAttrib>();
+			vbo.bufferData(geometry.getVerticies());
 		vbo.unbind();
-		vbo_uv.bind();
-			vao.addVertexAttribPtr<TexcoordAttrib>();
-			vbo_uv.bufferData(uv);
-		vbo_uv.unbind();
 		ebo.bind();
-			ebo.bufferData(indices);
+			ebo.bufferData(geometry.getIndices());
 		ebo.unbind();
 	vao.unbind();
 

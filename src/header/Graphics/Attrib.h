@@ -39,7 +39,7 @@ namespace LOA::Graphics {
 	template<u32 LOC, typename T>
 	class Attrib {
 	public:
-		typename T Type;
+		typename typedef T Type;
 		typename typedef Implementation::AttribInfo<T>::ScalarType ScalarType;
 		constexpr static u8 NumComponents = Implementation::AttribInfo<T>::NumComponents;
 		constexpr static u32 Location = LOC;
