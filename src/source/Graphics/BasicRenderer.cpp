@@ -73,14 +73,14 @@ void BasicRenderer::render(float time) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	auto basic_shader = shaders.getShader({"basic/basic.vert", "basic/basic.frag"});
-
 	assert(basic_shader, "SHADER IS NULL");
 
 	basic_shader->start();
+	
 	basic_shader->setUniform1f("u_time", time);
-	tex.bindActiveTexture(0);
 	basic_shader->setUniformMat4("MP", projection * transform);
 	basic_shader->setUniform1i("diffuse", 0);
+	
 	tex.bindActiveTexture(0);
 
 	vao.bind();
