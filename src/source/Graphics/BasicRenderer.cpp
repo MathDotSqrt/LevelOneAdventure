@@ -15,7 +15,7 @@ using namespace LOA::Graphics;
 BasicRenderer::BasicRenderer() : 
 	tex(TEX::Builder("./res/textures/uv_grid.jpg").mipmapLinear().buildTexture()),
 	vbo(VBO::BufferType::ARRAY_BUFFER),
-	vbo_color(VBO::BufferType::ARRAY_BUFFER),
+	vbo_uv(VBO::BufferType::ARRAY_BUFFER),
 	ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER) {
 	
 	std::vector<glm::vec3> verticies = {
@@ -44,10 +44,10 @@ BasicRenderer::BasicRenderer() :
 			vao.addVertexAttribPtr<PositionAttrib>();
 			vbo.bufferData(verticies);
 		vbo.unbind();
-		vbo_color.bind();
+		vbo_uv.bind();
 			vao.addVertexAttribPtr<TexcoordAttrib>();
-			vbo_color.bufferData(uv);
-		vbo_color.unbind();
+			vbo_uv.bufferData(uv);
+		vbo_uv.unbind();
 		ebo.bind();
 			ebo.bufferData(indices);
 		ebo.unbind();

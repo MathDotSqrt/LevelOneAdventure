@@ -20,7 +20,7 @@ namespace LOA::Graphics {
 		TEX tex;
 		VAO vao;
 		VBO vbo;
-		VBO vbo_color;
+		VBO vbo_uv;
 		VBO ebo;
 
 		ShaderSet shaders;
