@@ -48,6 +48,14 @@ set(RES_FILES ${RES_FILES}
 # Generate executable
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} )
 
+# ASSIMP
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+add_subdirectory("thirdparty/assimp") 
+include_directories(
+	"thirdparty/assimp/include")
+
+
 # GLM
 include_directories(
 	"thirdparty/glm")
@@ -66,6 +74,7 @@ find_package(OpenGL REQUIRED)
 
 # Link libs
 set(LIBS 
+	assimp
 	glfw 
 	"${CMAKE_SOURCE_DIR}/lib/glew32.lib"
 	OpenGL::GL)
