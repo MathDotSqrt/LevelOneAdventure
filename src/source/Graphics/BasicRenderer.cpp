@@ -8,15 +8,12 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "common.h"
-#include "Graphics/preamble.h"
 #include "Graphics/Attrib.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 
 using namespace LOA::Graphics;
 
 BasicRenderer::BasicRenderer() : 
+	tex(TEX::Builder("./res/textures/uv_grid.jpg").mipmapLinear().buildTexture()),
 	vbo(VBO::BufferType::ARRAY_BUFFER),
 	vbo_color(VBO::BufferType::ARRAY_BUFFER),
 	ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER) {
@@ -28,12 +25,14 @@ BasicRenderer::BasicRenderer() :
 		glm::vec3(.5, -.5, 0),
 	};
 
-	std::vector<glm::vec3> color = {
-		glm::vec3(1, 0, 0),
-		glm::vec3(0, 1, 1),
-		glm::vec3(1, 1, 1),
-		glm::vec3(1, 0, 1),
+	std::vector<glm::vec2> uv = {
+		glm::vec2(0, 0),
+		glm::vec2(0, 1),
+		glm::vec2(1, 0),
+		glm::vec2(1, 1),
 	};
+
+
 	
 	std::vector<u32> indices = {
 		0, 1, 2,
@@ -46,14 +45,13 @@ BasicRenderer::BasicRenderer() :
 			vbo.bufferData(verticies);
 		vbo.unbind();
 		vbo_color.bind();
-			vao.addVertexAttribPtr<ColorAttrib>();
-			vbo_color.bufferData(color);
+			vao.addVertexAttribPtr<TexcoordAttrib>();
+			vbo_color.bufferData(uv);
 		vbo_color.unbind();
 		ebo.bind();
 			ebo.bufferData(indices);
 		ebo.unbind();
 	vao.unbind();
-
 
 	projection = glm::perspective<float>(70, 1, .1f, 1000.0f);
 }
@@ -80,11 +78,15 @@ void BasicRenderer::render(float time) {
 
 	basic_shader->start();
 	basic_shader->setUniform1f("u_time", time);
+	tex.bindActiveTexture(0);
 	basic_shader->setUniformMat4("MP", projection * transform);
+	basic_shader->setUniform1i("diffuse", 0);
+	tex.bindActiveTexture(0);
+
 	vao.bind();
 	ebo.bind();
 	glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
-	glEnableVertexAttribArray(COLOR_ATTRIB_LOCATION);
+	glEnableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
 	glDrawElements(GL_TRIANGLES, ebo.getNumBytes()/sizeof(u32), GL_UNSIGNED_INT, (void*)0);
 	ebo.unbind();
 	vao.unbind();

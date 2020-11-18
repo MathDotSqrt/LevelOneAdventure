@@ -3,14 +3,14 @@
 #include "preamble.glsl"
 
 layout(location=POSITION_ATTRIB_LOCATION) in vec3 v_pos;
-layout(location=COLOR_ATTRIB_LOCATION) in vec3 v_color;
+layout(location=TEXCOORD_ATTRIB_LOCATION) in vec2 v_texcoord;
 
-out vec3 f_color;
+out vec2 f_texcoord;
 
 uniform mat4 MP;
 
 void main(){
 	gl_Position = MP * vec4(v_pos, 1);
 
-	f_color = v_color; 
+	f_texcoord = v_texcoord; 
 }

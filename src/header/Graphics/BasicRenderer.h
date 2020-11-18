@@ -5,6 +5,7 @@
 
 #include "Graphics/VAO.h"
 #include "Graphics/VBO.h"
+#include "Graphics/TEX.h"
 #include "Graphics/ShaderSet.h"
 
 
@@ -16,6 +17,7 @@ namespace LOA::Graphics {
 		void render(float time);
 
 	private:
+		TEX tex;
 		VAO vao;
 		VBO vbo;
 		VBO vbo_color;
