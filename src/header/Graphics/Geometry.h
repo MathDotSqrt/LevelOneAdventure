@@ -49,7 +49,11 @@ namespace LOA::Graphics {
 		}
 
 		inline void resizeVerticies(size_t newSize) {
-			this->verticies.resize(newSize);
+			this->verticies.reserve(newSize);
+		}
+
+		inline void resizeIndices(size_t newSize) {
+			this->indices.reserve(newSize);
 		}
 
 		inline void clear() {
