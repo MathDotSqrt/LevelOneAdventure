@@ -22,7 +22,7 @@ using namespace LOA::Graphics;
 Geometry<PositionAttrib, NormalAttrib> loadModel(Assimp::Importer &importer, std::string filename) {
 	Geometry<PositionAttrib, NormalAttrib> geometry;
 
-	const aiScene* scene = importer.ReadFile("./res/models/dragon/dragon2.stl", aiProcess_Triangulate | aiProcess_GenSmoothNormals);
+	const aiScene* scene = importer.ReadFile("./res/models/dragon/dragon2.stl", aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	assert(scene);
 
 	const auto mesh = scene->mMeshes[0];
@@ -85,7 +85,7 @@ void BasicRenderer::render(float time) {
 	transform = glm::rotate(transform, glm::angle(rotation), glm::axis(rotation));
 	transform = glm::scale(transform, scale);
 	
-
+	glm::mat3 inverse = glm::inverse(glm::mat3(transform));
 
 	//glClearColor(sin(time), cos(time), 1 - sin(time), 1);
 	glClearColor(0, 0, 0, 1);
@@ -100,6 +100,7 @@ void BasicRenderer::render(float time) {
 	basic_shader->setUniformMat4("P", projection);
 	basic_shader->setUniformMat4("M", transform);
 	basic_shader->setUniform3f("u_light_pos", glm::vec3(0, 0, 0));
+	basic_shader->setUniformMat3("inverse_transpose", inverse, true);
 
 	vao.bind();
 	ebo.bind();
