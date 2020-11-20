@@ -55,7 +55,7 @@ BasicRenderer::BasicRenderer() :
 	ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER) {
 	
 	Assimp::Importer importer;
-	auto geometry = loadModel(importer, "./res/models/demo_room/room.obj");
+	auto geometry = loadModel(importer, "./res/models/demo_room/room.xobj");
 
 	
 	
