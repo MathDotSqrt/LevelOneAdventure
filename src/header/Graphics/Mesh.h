@@ -31,8 +31,6 @@ namespace LOA::Graphics {
 
 		}
 
-		//Mesh(const Mesh& mesh) = delete;
-
 		VAO vao;
 		VBO vbo;
 		VBO ebo;

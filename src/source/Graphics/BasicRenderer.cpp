@@ -14,6 +14,7 @@
 #include "common.h"
 #include "Graphics/Attrib.h"
 #include "Graphics/Geometry.h"
+#include "Util/PackedFreeList.h"
 
 
 
@@ -60,13 +61,21 @@ BasicRenderer::BasicRenderer() {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_MULTISAMPLE);
 
-	//auto test = loadMesh("./res/models/demo_girl/chr_knight.xobj", "./res/models/demo_girl/chr_knight.png");
-
-	//meshes.emplace_back(std::move(test));
 	meshes.emplace_back(loadMesh("./res/models/demo_girl/chr_knight.xobj", "./res/models/demo_girl/chr_knight.png"));
 	meshes.emplace_back(loadMesh("./res/models/demo_room/room.xobj", "./res/models/demo_room/room.png"));
+
+	Util::PackedFreeList<Mesh> packedList;
+	const auto id = packedList.insert(loadMesh("./res/models/demo_girl/chr_knight.xobj", "./res/models/demo_girl/chr_knight.png"));
+
+
+
+	for (auto& test : packedList) {
+		const auto& test = packedList[id];
+		std::cout << "test\n";
+	}
+	glEnable(GL_MULTISAMPLE);
+
 
 }
 
