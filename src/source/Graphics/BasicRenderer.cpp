@@ -49,37 +49,25 @@ Geometry<PositionAttrib, NormalAttrib, TexcoordAttrib> loadModel(Assimp::Importe
 	return geometry;
 }
 
-BasicRenderer::BasicRenderer() : 
-	tex(TEX::Builder("./res/models/demo_room/room.png").buildTexture()),
-	vbo(VBO::BufferType::ARRAY_BUFFER),
-	ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER) {
+Mesh BasicRenderer::loadMesh(std::string model_name, std::string tex_name) {
+	const auto geometry = loadModel(importer, model_name);
 	
-	Assimp::Importer importer;
-	auto geometry = loadModel(importer, "./res/models/demo_room/room.xobj");
+	return Mesh(geometry, TEX::Builder(tex_name).buildTexture());
+}
 
-	
-	
-	vao.bind();
-		vbo.bind();
-			vao.addVertexAttribPtr<PositionAttrib, NormalAttrib, TexcoordAttrib>();
-			vbo.bufferData(geometry.getVerticies());
-		vbo.unbind();
-		ebo.bind();
-			ebo.bufferData(geometry.getIndices());
-		ebo.unbind();
-	vao.unbind();
-
+BasicRenderer::BasicRenderer() {
 	projection = glm::perspective<float>(70, 1, .1f, 1000.0f);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 
-	//rotation = glm::rotate(rotation, -glm::pi<float>(), glm::vec3(0, 1, 0));
-	//rotation = glm::rotate(rotation, -glm::pi<float>() - 1.0f, glm::vec3(1, 0, 0));
+	//auto test = loadMesh("./res/models/demo_girl/chr_knight.xobj", "./res/models/demo_girl/chr_knight.png");
 
-	//rotation = glm::rotate(rotation, -glm::pi<float>() / 2.0f, glm::vec3(1, 0, 0));
-	//rotation = glm::rotate(rotation, -glm::pi<float>() / 2.0f, glm::vec3(0, 1, 0));
+	//meshes.emplace_back(std::move(test));
+	meshes.emplace_back(loadMesh("./res/models/demo_girl/chr_knight.xobj", "./res/models/demo_girl/chr_knight.png"));
+	meshes.emplace_back(loadMesh("./res/models/demo_room/room.xobj", "./res/models/demo_room/room.png"));
+
 }
 
 void BasicRenderer::update(float time) {
@@ -109,21 +97,25 @@ void BasicRenderer::render(float time) {
 	
 	basic_shader->setUniformMat4("P", projection);
 	basic_shader->setUniformMat4("M", transform);
-	basic_shader->setUniform3f("u_light_pos", glm::vec3(3, 3, 0));
+	basic_shader->setUniform3f("u_light_pos", glm::vec3(-.1, .5, -3 * time));
 	basic_shader->setUniformMat3("inverse_transpose", inverse, true);
 	basic_shader->setUniform1i("diffuse", 0);
 
-	tex.bindActiveTexture(0);
+	for (auto& mesh : meshes) {
+		mesh.tex.bindActiveTexture(0);
 
-	vao.bind();
-	ebo.bind();
-	glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
-	glEnableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
-	glEnableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
-	glDrawElements(GL_TRIANGLES, ebo.getNumBytes()/sizeof(u32), GL_UNSIGNED_INT, (void*)0);
-	ebo.unbind();
-	vao.unbind();
+		mesh.vao.bind();
+		mesh.ebo.bind();
+		glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
+		glEnableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
+		glEnableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
+		glDrawElements(GL_TRIANGLES, mesh.ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, (void*)0);
+		mesh.ebo.unbind();
+		mesh.vao.unbind();
 
-	tex.unbind();
+		mesh.tex.unbind();
+	}
+
+	
 	basic_shader->end();
 }

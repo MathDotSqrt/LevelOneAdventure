@@ -25,7 +25,7 @@ VBO::VBO(VBO::BufferType type) : vboID(0), type(type), bytes(0){
 	assert(vboID, "FATAL: failed to generate VBO");
 }
 
-VBO::VBO(VBO&& other) noexcept : vboID(other.vboID), type(other.type){
+VBO::VBO(VBO&& other) noexcept : vboID(other.vboID), type(other.type), bytes(other.bytes){
 	other.vboID = 0;
 }
 

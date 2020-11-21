@@ -1,12 +1,13 @@
 #pragma once
 
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <assimp/Importer.hpp>
 
-#include "Graphics/VAO.h"
-#include "Graphics/VBO.h"
-#include "Graphics/TEX.h"
+#include "Graphics/Mesh.h"
 #include "Graphics/ShaderSet.h"
+
 
 
 namespace LOA::Graphics {
@@ -17,10 +18,11 @@ namespace LOA::Graphics {
 		void render(float time);
 
 	private:
-		TEX tex;
-		VAO vao;
-		VBO vbo;
-		VBO ebo;
+		Mesh loadMesh(std::string, std::string);
+
+		std::vector<Mesh> meshes;
+		Assimp::Importer importer;
+
 
 		ShaderSet shaders;
 
