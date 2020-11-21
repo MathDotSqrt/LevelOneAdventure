@@ -26,19 +26,12 @@ namespace LOA::Util {
 			return packed_array.at(index_array[id.index].index).data;
 		}
 
-		//const T& operator[](ID id) const {
-		//	assert(has(id));
-		//	return packed_array[index_array[id.index].index];
-		//}
-
 		ID insert(const T &item) {
 			return emplace(std::copy(item));
 		}
 
 		ID insert(T &&item) {
 			u32 packed_index = packed_array.size();
-
-
 
 			if (free_length == 0) {
 				u32 generation = 0;
