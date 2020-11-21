@@ -15,33 +15,57 @@ namespace LOA::Util {
 	template<typename T>
 	class PackedFreeList {
 		
+		T get(ID id) {
+			assert(has(id));
+			return packed_array[index_array[id.index].index];
+		}
 
 		template<typename T>
 		ID insert(const T &item) {
 			
 
 			size_t packed_index = packed_array.size();
-			packed_array.push_back(item);
+
+
 
 			if (free_length == 0) {
-				index_array.push_back(IndexElement{ ID{packed_index, 0},  packed_index });
+				u32 generation = 0;
+				size_t index = index_array.size();
+				index_array.push_back({packed_index, generation});
+
+				packed_array.push_back({item, index});
+				return {index, generation};
 			}
 			else {
+
 				ID free_element = index_array[free_index];
-				free_index = free_element.index;
+				u32 next_index = free_element.index;
+
+				free_element.index = packed_index;
+				free_element.generation += 1;
+				
+				packed_array.push_back({ item, free_index });
+				free_index = next_index;
 				free_length -= 1;
 
-				free_element.generation += 1;
-				free_element.index = packed_index;
+				return { free_index, free_element.generation };
 			}
 		}
 
 		void remove(ID id) {
 			assert(has(id));
 
-			size_t packed_index = id.index;
-			index_array
+			u32 element_index = index_array[id.index];
 
+			const auto back_element = packed_array.back();
+			index_array[back_element.back_index].index = element_index;
+			packed_array[element_index] = std::move(back_element);
+			packed_array.pop_back();
+
+			index_array[id.index].index = free_index;
+
+			free_index = id.index;
+			free_length += 1;
 		}
 
 		bool has(ID id) const {
@@ -53,15 +77,15 @@ namespace LOA::Util {
 		}
 
 	private:
-		struct IndexElement {
-			size_t index;
-			u32 generation;
+		struct Data {
+			T data;
+			u32 back_index;
 		};
 
 		u32 free_index = 0;
 		size_t free_length = 0;
 
-		std::vector<IndexElement> index_array;
-		std::vector<T> packed_array;
+		std::vector<ID> index_array;
+		std::vector<Data> packed_array;
 	};
 }
