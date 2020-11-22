@@ -38,7 +38,8 @@ namespace LOA::Util {
 				u32 index = index_array.size();
 				index_array.push_back({ packed_index, generation });
 
-				packed_array.push_back({ std::move(item), index });
+				packed_array.push_back(std::move(item));
+				back_packed_array.push_back(index);
 				return { index, generation };
 			}
 			else {
@@ -49,7 +50,8 @@ namespace LOA::Util {
 				free_element.index = packed_index;
 				free_element.generation += 1;
 
-				packed_array.push_back({ std::move(item), free_index });
+				packed_array.push_back(std::move(item));
+				back_packed_array.push_back(free_index);
 				free_index = next_index;
 				free_length -= 1;
 
@@ -63,9 +65,15 @@ namespace LOA::Util {
 			u32 element_index = index_array[id.index].index;
 
 			const auto back_element = packed_array.back();
-			index_array[back_element.back_index].index = element_index;
+			const auto back_index = back_packed_array.begin();
+
+			index_array[back_index].index = element_index;
+			
 			packed_array[element_index] = std::move(back_element);
+			back_packed_array[element_index] = back_index;
+
 			packed_array.pop_back();
+			back_packed_array.pop_back();
 
 			index_array[id.index].index = free_index;
 
@@ -113,6 +121,8 @@ namespace LOA::Util {
 		size_t free_length = 0;
 
 		std::vector<ID> index_array;
-		std::vector<Data> packed_array;
+
+		std::vector<T> packed_array;
+		std::vector<u32> back_packed_array;
 	};
 }

@@ -7,6 +7,7 @@
 
 #include "Graphics/Mesh.h"
 #include "Graphics/ShaderSet.h"
+#include "Util/PackedFreeList.h"
 
 
 
@@ -20,7 +21,7 @@ namespace LOA::Graphics {
 	private:
 		Mesh loadMesh(std::string, std::string);
 
-		std::vector<Mesh> meshes;
+		Util::PackedFreeList<Mesh> meshes;
 		Assimp::Importer importer;
 
 
