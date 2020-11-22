@@ -18,6 +18,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/BasicRenderer.h"
 	"src/header/Graphics/Geometry.h"
 	"src/header/Graphics/GLSLProgram.h"
+	"src/header/Graphics/Material.h"
 	"src/header/Graphics/Mesh.h"
 	"src/header/Graphics/preamble.h"
 	"src/header/Graphics/Scene.h"
