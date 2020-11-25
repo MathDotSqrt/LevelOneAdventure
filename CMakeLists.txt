@@ -37,6 +37,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Components.h"
 	"src/header/Engine.h"
 	"src/header/PlayState.h"
+	"src/header/Window.h"
 
 
 )
@@ -58,6 +59,7 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Engine.cpp"
 	"src/source/PlayState.cpp"
 	"src/source/main.cpp"
+	"src/source/Window.cpp"
 )
 
 

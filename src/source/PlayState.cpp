@@ -18,8 +18,8 @@ PlayState::PlayState() {
 	room_material.diffuse = "room_diffuse"_hs;
 	auto instance_id = scene.addInstance("room"_hs, room_material);
 
-	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, 0), glm::vec3(.5, .5, .5), 30 });
-	scene.addPointLight(Graphics::PointLight{glm::vec3(0, 5, -5), glm::vec3(1, .3, .2), 10});
+	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, 0), glm::vec3(.1, .2, 1), 30 });
+	scene.addPointLight(Graphics::PointLight{glm::vec3(0, 5, -10), glm::vec3(1, .3, .2), 30});
 
 
 	auto& registry = engine.getRegistry();

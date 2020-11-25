@@ -16,7 +16,6 @@ void RenderSystem::update(Engine &engine, float delta) {
 		auto& trans = view.get<Transformation>(entity);
 		auto& renderable = view.get<Renderable>(entity);
 
-
 		auto& instance = scene.getInstance(renderable.instance_id);
 		instance.pos = trans.pos;
 		instance.rot = trans.rot;
