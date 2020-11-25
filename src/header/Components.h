@@ -14,10 +14,9 @@ namespace LOA::Component {
 		glm::vec3 scale;
 	};
 
-	struct Velocity {
-		glm::vec3 vel;
-
-		operator glm::vec3() const { return vel; }
+	struct Velocity : glm::vec3{
+		Velocity(const glm::vec3& vel) : glm::vec3(vel) {}
+		operator const glm::vec3&() const { return vel; }
 	};
 
 	struct Renderable {

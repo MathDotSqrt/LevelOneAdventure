@@ -1,4 +1,5 @@
 #include "PlayState.h"
+#include "Systems/MovementSystem.h"
 using namespace LOA;
 
 PlayState::PlayState() {
@@ -23,16 +24,18 @@ PlayState::PlayState() {
 	Graphics::PointLight point;
 	point.position = glm::vec3(0, 0, 0);
 	point.color = glm::vec3(1, 1, 1);
-	point.intensity = 20;
+	point.intensity = 7;
 
 	scene.addPointLight(point);
 
 	Graphics::PointLight point2;
 	point2.position = glm::vec3(0, 5, 0);
-	point2.color = glm::vec3(1, .5, .3);
+	point2.color = glm::vec3(1, .2, 1);
 	point2.intensity = 30;
 
 	scene.addPointLight(point2);
+
+	engine.addSystem<Systems::MovementSystem>();
 
 }
 

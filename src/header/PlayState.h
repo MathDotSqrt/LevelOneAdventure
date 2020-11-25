@@ -3,6 +3,8 @@
 #include "Graphics/BasicRenderer.h"
 #include "Graphics/Scene.h"
 #include "Util/PackedFreeList.h"
+#include "Engine.h"
+
 namespace LOA {
 	class PlayState {
 	public:
@@ -12,6 +14,8 @@ namespace LOA {
 		void render();
 	
 	private:
+		Engine engine;
+
 		ID entity;
 		ID char_entity;
 		Graphics::BasicRenderer renderer;
