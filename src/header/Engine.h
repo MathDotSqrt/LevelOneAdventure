@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include "Graphics/Scene.h"
+#include "Graphics/BasicRenderer.h"
 #include "Systems/System.h"
 namespace LOA {
 	class Engine {
@@ -23,9 +25,14 @@ namespace LOA {
 		}
 
 		entt::registry& getRegistry();
+		Graphics::Scene& getScene();
 
 	private:
 		entt::registry registry;
+		Graphics::Scene scene;
+		Graphics::BasicRenderer renderer;
+
+
 		std::vector<std::unique_ptr<Systems::BaseSystem>> systems;
 	};
 }

@@ -1,56 +1,44 @@
 #include "PlayState.h"
 #include "Systems/MovementSystem.h"
+#include "Systems/RenderSystem.h"
+#include "Components.h"
+
 using namespace LOA;
 
 PlayState::PlayState() {
 	using namespace entt;
+	using namespace Component;
 
-	scene.loadMesh("knight"_hs, "./res/models/demo_girl/chr_knight.xobj");
-	scene.loadMesh("dragon_room"_hs, "./res/models/demo_room/room.xobj");
-	scene.loadTEX("room"_hs, "./res/models/demo_room/room.png");
-	scene.loadTEX("char"_hs, "./res/models/demo_girl/chr_knight.png");
+	auto& scene = engine.getScene();
 
-	Graphics::BasicLitMaterial material;
-	material.diffuse = "room"_hs;
-	entity = scene.addInstance("dragon_room"_hs, material);
+	scene.loadMesh("room"_hs, "res/models/demo_room/room.xobj");
+	scene.loadTEX("room_diffuse"_hs, "res/models/demo_room/room.png");
 
-	Graphics::NormalMaterial char_material;
-	//char_material.diffuse = "char"_hs;
-	char_entity = scene.addInstance("knight"_hs, char_material);
+	Graphics::BasicLitMaterial room_material;
+	room_material.diffuse = "room_diffuse"_hs;
+	auto instance_id = scene.addInstance("room"_hs, room_material);
 
-	Graphics::PerspectiveCamera camera(glm::radians(70.0f), 1, .01f, 1000.0f);
-	scene.setMainCamera(camera);
+	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), 20 });
+	scene.addPointLight(Graphics::PointLight{glm::vec3(0, 5, -5), glm::vec3(1, .3, .2), 20});
 
-	Graphics::PointLight point;
-	point.position = glm::vec3(0, 0, 0);
-	point.color = glm::vec3(1, 1, 1);
-	point.intensity = 7;
 
-	scene.addPointLight(point);
+	auto& registry = engine.getRegistry();
 
-	Graphics::PointLight point2;
-	point2.position = glm::vec3(0, 5, 0);
-	point2.color = glm::vec3(1, .2, 1);
-	point2.intensity = 30;
-
-	scene.addPointLight(point2);
-
+	entt::entity room = registry.create();
+	registry.emplace<Transformation>(room, glm::vec3(0, -5, -10));
+	registry.emplace<Velocity>(room, glm::vec3(0, .1f, 0));
+	registry.emplace<Renderable>(room, instance_id);
+	
 	engine.addSystem<Systems::MovementSystem>();
+	engine.addSystem<Systems::RenderSystem>();
 
 }
 
 void PlayState::update(float dt) {
-	static float time = 0;
-	time += dt / 5;
-	scene.getInstance(entity).pos = glm::vec3(0, time - 5, -10);
-	scene.getInstance(char_entity).pos = glm::vec3(2 * time, time - 5, -9.9);
-
-
-	scene.getInstance(entity).rot = glm::angleAxis(time, glm::vec3(0, 1, 0));
-	scene.getInstance(char_entity).rot = glm::angleAxis(time, glm::vec3(0, 1, 0));
-
+	
+	engine.update(dt);
 }
 
 void PlayState::render() {
-	renderer.render(scene);
+	engine.render();
 }

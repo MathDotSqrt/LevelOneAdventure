@@ -9,14 +9,16 @@
 
 namespace LOA::Component {
 	struct Transformation {
-		glm::vec3 pos;
-		glm::quat rot;
-		glm::vec3 scale;
+		glm::vec3 pos = glm::vec3(0);
+		glm::quat rot = glm::quat();
+		glm::vec3 scale = glm::vec3(1);
+
+		Transformation(glm::vec3 pos) : pos(pos) {}
 	};
 
 	struct Velocity : glm::vec3{
 		Velocity(const glm::vec3& vel) : glm::vec3(vel) {}
-		operator const glm::vec3&() const { return vel; }
+		operator const glm::vec3& () const { return static_cast<glm::vec3>(*this); }
 	};
 
 	struct Renderable {

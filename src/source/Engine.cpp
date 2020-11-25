@@ -13,10 +13,14 @@ void Engine::update(float delta) {
 }
 
 void Engine::render() {
-
+	renderer.render(scene);
 }
 
 entt::registry& Engine::getRegistry() {
 	return registry;
+}
+
+Graphics::Scene& Engine::getScene() {
+	return scene;
 }
 
