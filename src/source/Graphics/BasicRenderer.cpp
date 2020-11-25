@@ -45,24 +45,29 @@ void BasicRenderer::render(const Scene &scene) {
 	draw_iterator start = drawList.begin();
 	draw_iterator end = drawList.end();
 
+	setViewPort(scene, start);
+
 	while (start != end) {
 		const RenderStateKey key = start->getKey();
 		const MaterialType current_material = key.getMaterialType();
 
-		setViewPort(scene, start);
-
 		switch (current_material) {
-		case MaterialType::COLOR_MATERIAL_ID:
+		/*case MaterialType::COLOR_MATERIAL_ID:
 			start = renderColor(scene, start, end);
-			break;
+			break;*/
 		case MaterialType::NORMAL_MATERIAL_ID:
 			start = renderNormal(scene, start, end);
 			break;
 		case MaterialType::BASIC_LIT_MATERIAL_ID:
 			start = renderBasicLit(scene, start, end);
 			break;
+		default:
+			start++;
 		}
+
+		clearOpenGLState();
 	}
+
 }
 
 BasicRenderer::draw_iterator 
@@ -74,11 +79,10 @@ BasicRenderer::renderColor(const Scene& scene, draw_iterator start, draw_iterato
 	
 	auto shader = shaders.getShader({"basic/basic.vert", "basic/basic.frag"});
 	if (!shader) {
-		std::cout << "Failed to load Shader\n";
 		return end;
 	}
 
-	return start;
+	return end;
 }
 
 BasicRenderer::draw_iterator
@@ -116,9 +120,6 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 		start++;
 	}
 	shader->end();
-	glDisableVertexAttribArray(POSITION_ATTRIB_LOCATION);
-	glDisableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
-	glBindVertexArray(0);
 	
 	return start;
 }
@@ -168,12 +169,15 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 		start++;
 	}
 
+	return end;
+}
+
+void BasicRenderer::clearOpenGLState() {
 	glDisableVertexAttribArray(POSITION_ATTRIB_LOCATION);
 	glDisableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
 	glDisableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
-
-	return end;
 }
 
 void BasicRenderer::loadPointLights(const Scene& scene, GLSLProgram &shader) {

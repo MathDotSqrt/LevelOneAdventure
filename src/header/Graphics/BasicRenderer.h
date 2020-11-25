@@ -25,6 +25,7 @@ namespace LOA::Graphics {
 		draw_iterator renderNormal(const Scene &scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderBasicLit(const Scene& scene, draw_iterator start, draw_iterator end);
 
+		void clearOpenGLState();
 		void loadPointLights(const Scene& scene, GLSLProgram &shader);
 		glm::mat4 makeTransform(const glm::vec3& t, const glm::quat& r, const glm::vec3& s) const;
 

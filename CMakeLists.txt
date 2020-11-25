@@ -30,6 +30,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/VAO.h"
 	"src/header/Graphics/VBO.h"
 	"src/header/Util/PackedFreeList.h"
+	"src/header/Components.h"
 	"src/header/PlayState.h"
 	"src/header/common.h"
 

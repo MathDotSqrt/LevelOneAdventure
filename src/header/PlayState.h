@@ -13,6 +13,7 @@ namespace LOA {
 	
 	private:
 		ID entity;
+		ID char_entity;
 		Graphics::BasicRenderer renderer;
 		Graphics::Scene scene;
 	};
