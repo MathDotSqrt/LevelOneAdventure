@@ -40,7 +40,7 @@ namespace LOA::Graphics {
 		ID materialID;
 
 		glm::vec3 pos = glm::vec3(0);
-		glm::quat rot = glm::quat(0, 0, 0, 1);
+		glm::quat rot = glm::quat(1, 0, 0, 0);
 		glm::vec3 scale = glm::vec3(1);
 		
 		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID);

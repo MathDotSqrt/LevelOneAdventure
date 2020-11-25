@@ -15,5 +15,7 @@ void MovementSystem::update(Engine &engine, float delta) {
 		auto& transformation = view.get<Transformation>(entity);
 		auto& velocity = view.get<Velocity>(entity);
 		transformation.pos += velocity * delta;
+
+		transformation.rot *= glm::angleAxis(delta, glm::vec3(0, 1, 0));
 	}
 }
