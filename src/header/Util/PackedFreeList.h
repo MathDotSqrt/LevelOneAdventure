@@ -11,6 +11,8 @@ namespace LOA {
 		u32 index;
 		u32 generation;
 	};
+
+	constexpr ID NullID = ID{ (u32)-1, (u32)-1 };
 }
 
 namespace LOA::Util {

@@ -11,6 +11,7 @@
 #include "Util/PackedFreeList.h"
 
 #include "Graphics/MeshCache.h"
+#include "Graphics/TEXCache.h"
 
 namespace LOA::Graphics {
 	struct PerspectiveCamera {
@@ -49,12 +50,17 @@ namespace LOA::Graphics {
 	class Scene {
 	public:
 		MeshCache meshCache;
+		TEXCache texCache;
 
 		entt::resource_handle<Mesh> loadMesh(entt::id_type meshID, std::string path);
+		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, std::string path);
+		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, TEX::Builder settings, std::string path);
 
 		ID addInstance(entt::id_type meshID, ColorMaterial material);
 		ID addInstance(entt::id_type meshID, NormalMaterial material);
 		ID addInstance(entt::id_type meshID, BasicLitMaterial material);
+
+		ID addPointLight(PointLight light);
 
 		Instance& getInstance(ID id);
 
@@ -68,8 +74,9 @@ namespace LOA::Graphics {
 		PerspectiveCamera mainCamera;
 
 		Util::PackedFreeList<Instance> instances;
-
 		Util::PackedFreeList<ColorMaterial> colorMaterials;
 		Util::PackedFreeList<BasicLitMaterial> basicLitMaterials;
+		
+		Util::PackedFreeList<PointLight> pointLights;
 	};
 }

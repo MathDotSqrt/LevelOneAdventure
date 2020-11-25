@@ -4,9 +4,11 @@
 
 layout(location=POSITION_ATTRIB_LOCATION) in vec3 v_pos;
 layout(location=NORMAL_ATTRIB_LOCATION) in vec3 v_normal;
+layout(location=TEXCOORD_ATTRIB_LOCATION) in vec2 v_uv;
 
 out vec3 f_world_pos;
 out vec3 f_world_normal;
+out vec2 f_uv;
 
 uniform mat4 M;
 uniform mat4 P;
@@ -18,5 +20,6 @@ void main(){
 	gl_Position = P * world_pos;
 
 	f_world_pos = world_pos.xyz;
-	f_world_normal = inverse_transpose * v_normal; 
+	f_world_normal = inverse_transpose * v_normal;
+	f_uv = v_uv;
 }

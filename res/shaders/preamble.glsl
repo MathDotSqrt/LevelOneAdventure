@@ -6,4 +6,6 @@
 #define NORMAL_ATTRIB_LOCATION 2
 #define COLOR_ATTRIB_LOCATION 3
 
+#define MAX_POINT_LIGHTS 4
+
 #endif

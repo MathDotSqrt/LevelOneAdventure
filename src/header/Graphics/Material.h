@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <entt/resource/handle.hpp>
 #include <entt/core/hashed_string.hpp>
 
 #include "common.h"
@@ -57,6 +56,6 @@ namespace LOA::Graphics {
 		constexpr static MaterialType Type = MaterialType::BASIC_LIT_MATERIAL_ID;
 		constexpr static id_type ShaderID = "BasicLitShader"_hs;
 
-		resource_handle<TEX> diffuse;
+		entt::id_type diffuse;
 	};
 }

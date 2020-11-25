@@ -25,7 +25,6 @@ namespace LOA::Graphics {
 		class Builder {
 		private:
 			friend class TEX;
-			std::string filename;
 			int width, height;
 
 			GLuint texID;
@@ -45,7 +44,7 @@ namespace LOA::Graphics {
 			bool useMipMap;
 
 		public:
-			Builder(std::string filename);
+			Builder();
 
 			Builder& rgb();
 			Builder& rgba();
@@ -63,7 +62,7 @@ namespace LOA::Graphics {
 			Builder& mipmapNearest();
 			Builder& mipmapLinear();
 
-			TEX buildTexture();
+			TEX buildTexture(std::string filename);
 		};
 
 	private:

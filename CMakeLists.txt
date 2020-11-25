@@ -26,6 +26,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/Scene.h"
 	"src/header/Graphics/ShaderSet.h"
 	"src/header/Graphics/TEX.h"
+	"src/header/Graphics/TEXCache.h"
 	"src/header/Graphics/VAO.h"
 	"src/header/Graphics/VBO.h"
 	"src/header/Util/PackedFreeList.h"

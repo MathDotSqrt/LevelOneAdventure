@@ -74,8 +74,7 @@ int TEX::getHeight() const {
 	return height;
 }
 
-TEX::Builder::Builder(std::string filename) {
-	this->filename = filename;
+TEX::Builder::Builder() {
 	mipmap = false;
 	useMipMap = false;
 	rgb().repeat().nearest().borderColor(1, 0, 1, 1).unsignedByteType();
@@ -163,7 +162,7 @@ TEX::Builder& TEX::Builder::mipmapLinear() {
 	return *this;
 }
 
-TEX TEX::Builder::buildTexture() {
+TEX TEX::Builder::buildTexture(std::string filename) {
 	u8* image = nullptr;
 	if (filename != "") {
 		int channels;

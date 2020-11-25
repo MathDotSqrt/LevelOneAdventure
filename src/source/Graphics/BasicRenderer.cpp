@@ -125,7 +125,66 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iterator end) {
-	return start;
+	if (start == end) {	//Nothing else to render
+		return end;
+	}
+
+	auto shader = shaders.getShader({ "basic_lit/basic_lit.vert", "basic_lit/basic_lit.frag" });
+	if (!shader) {
+		return end;
+	}
+
+	shader->start();
+	shader->setUniformMat4("P", projection);
+
+	loadPointLights(scene, *shader);
+
+	const RenderStateKey current_state = start->getKey();
+	while (start != end && current_state == start->getKey()) {
+		auto instance_id = start->getValue();
+		auto instance = scene.instances[instance_id];
+		auto& mesh = instance.mesh;
+		auto& material = scene.basicLitMaterials[instance.materialID];
+		auto& diffuse = scene.texCache.handle(material.diffuse);
+
+
+		auto transformation = makeTransform(instance.pos, instance.rot, instance.scale);
+		glm::mat3 inverse = glm::inverse(glm::mat3(transformation));
+
+		shader->setUniformMat3("inverse_transpose", inverse, true);
+		shader->setUniformMat4("M", transformation);
+		shader->setUniform1i("diffuse", 0);
+		diffuse->bindActiveTexture(0);
+		
+
+		mesh->vao.bind();
+		mesh->ebo.bind();
+		glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
+		glEnableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
+		glEnableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
+		glDrawElements(GL_TRIANGLES, mesh->ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0);
+		diffuse->unbind();
+
+		start++;
+	}
+
+	glDisableVertexAttribArray(POSITION_ATTRIB_LOCATION);
+	glDisableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
+	glDisableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
+	glBindVertexArray(0);
+
+	return end;
+}
+
+void BasicRenderer::loadPointLights(const Scene& scene, GLSLProgram &shader) {
+	shader.setUniform1i("u_num_point_lights", scene.pointLights.size());
+	for (int i = 0; i < scene.pointLights.size(); i++) {
+		const auto& point = scene.pointLights[i];
+		const auto index = std::to_string(i);
+		shader.setUniform3f("u_point_lights[" + index + "].pos", point.position);
+		shader.setUniform3f("u_point_lights[" + index + "].color", point.color);
+		shader.setUniform1f("u_point_lights[" + index + "].intensity", point.intensity);
+	}
 }
 
 glm::mat4 
