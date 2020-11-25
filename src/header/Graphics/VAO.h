@@ -18,11 +18,11 @@ namespace LOA::Graphics {
 		void bind();
 		void unbind();
 
-		void addVertexAttribPtr(int ptr, int num_components, size_t stride, size_t offset);
+		void addVertexAttribPtr(u32 ptr, u8 num_components, size_t stride, size_t offset);
 
 		template<typename ...ATTRIBS>
 		void addVertexAttribPtr() {
-			const size_t stride = getAttribsStride<ATTRIBS...>();
+			const auto stride = getAttribsStride<ATTRIBS...>();
 			setInterleavedAttribPointers<ATTRIBS...>(stride, 0);
 		}
 

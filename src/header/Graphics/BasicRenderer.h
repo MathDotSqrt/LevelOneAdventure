@@ -3,33 +3,33 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <assimp/Importer.hpp>
 
-#include "Graphics/Mesh.h"
 #include "Graphics/ShaderSet.h"
-#include "Util/PackedFreeList.h"
-
-
+#include "Graphics/Scene.h"
+#include "Graphics/RenderStateKey.h"
 
 namespace LOA::Graphics {
 	class BasicRenderer {
 	public:
 		BasicRenderer();
-		void update(float dt);
-		void render(float time);
+		void render(const Scene &scene);
 
 	private:
-		Mesh loadMesh(std::string, std::string);
+		typedef std::vector<RenderStateKeyValue>::const_iterator draw_iterator;
 
-		Util::PackedFreeList<Mesh> meshes;
-		Assimp::Importer importer;
+		void prerender(const Scene &scene);
 
+		void setViewPort(const Scene &scene, draw_iterator current);
 
+		draw_iterator renderColor(const Scene &scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderNormal(const Scene &scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderBasicLit(const Scene& scene, draw_iterator start, draw_iterator end);
+
+		glm::mat4 makeTransform(const glm::vec3& t, const glm::quat& r, const glm::vec3& s) const;
+
+		std::vector<RenderStateKeyValue> drawList;
 		ShaderSet shaders;
 
-		glm::vec3 position = glm::vec3();
-		glm::quat rotation = glm::quat(0, 0, 0, 1);
-		glm::vec3 scale = glm::vec3(1);
-		glm::mat4 projection;
+		glm::mat4 projection = glm::identity<glm::mat4>();
 	};
 }

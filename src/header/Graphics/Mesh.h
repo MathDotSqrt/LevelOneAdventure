@@ -11,10 +11,9 @@ namespace LOA::Graphics {
 	class Mesh {
 	public:
 		template<typename ...T>
-		Mesh(const Geometry<T...> &geometry, TEX &&tex) : 
+		Mesh(const Geometry<T...> &geometry) : 
 			vbo(VBO::BufferType::ARRAY_BUFFER),
-			ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER),
-			tex(std::move(tex)){
+			ebo(VBO::BufferType::ELEMENT_ARRAY_BUFFER) {
 			
 			vao.bind();
 			
@@ -34,6 +33,5 @@ namespace LOA::Graphics {
 		VAO vao;
 		VBO vbo;
 		VBO ebo;
-		TEX tex;
 	};
 }

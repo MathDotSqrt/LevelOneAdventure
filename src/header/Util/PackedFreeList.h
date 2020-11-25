@@ -1,36 +1,39 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 
 #include "common.h"
 #include "assert.h"
 
-
-namespace LOA::Util {
+namespace LOA {
 	struct ID {
 		u32 index;
 		u32 generation;
 	};
-	
+}
+
+namespace LOA::Util {
 	template<typename T>
 	class PackedFreeList {
 	public:
 
 		T& operator[](ID id) {
 			assert(has(id));
-			return packed_array.at(index_array[id.index].index).data;
+			return packed_array.at(index_array[id.index].index);
 		}
 
 		const T& operator[](ID id) const {
 			assert(has(id));
-			return packed_array.at(index_array[id.index].index).data;
+			return packed_array.at(index_array[id.index].index);
+		}
+
+		const T& operator[](u32 index) const {
+			assert(index < size());
+			return packed_array.at(index);
 		}
 
 		ID insert(const T &item) {
-			return emplace(std::copy(item));
-		}
-
-		ID insert(T &&item) {
 			u32 packed_index = packed_array.size();
 
 			if (free_length == 0) {

@@ -20,13 +20,16 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/GLSLProgram.h"
 	"src/header/Graphics/Material.h"
 	"src/header/Graphics/Mesh.h"
+	"src/header/Graphics/MeshCache.h"
 	"src/header/Graphics/preamble.h"
+	"src/header/Graphics/RenderStateKey.h"
 	"src/header/Graphics/Scene.h"
 	"src/header/Graphics/ShaderSet.h"
 	"src/header/Graphics/TEX.h"
 	"src/header/Graphics/VAO.h"
 	"src/header/Graphics/VBO.h"
 	"src/header/Util/PackedFreeList.h"
+	"src/header/PlayState.h"
 	"src/header/common.h"
 
 
@@ -38,10 +41,13 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Graphics/BasicRenderer.cpp"
 	"src/source/Graphics/Geometry.cpp"
 	"src/source/Graphics/GLSLProgram.cpp"
+	"src/source/Graphics/RenderStateKey.cpp"
+	"src/source/Graphics/Scene.cpp"
 	"src/source/Graphics/ShaderSet.cpp"
 	"src/source/Graphics/TEX.cpp"
 	"src/source/Graphics/VAO.cpp"
 	"src/source/Graphics/VBO.cpp"
+	"src/source/PlayState.cpp"
 	"src/source/main.cpp"
 )
 
@@ -62,6 +68,11 @@ include_directories(
 	"thirdparty/assimp/include")
 
 
+# ENTT
+add_subdirectory("thirdparty/entt")
+include_directories(
+	"thirdparty/entt/src")
+
 # GLM
 include_directories(
 	"thirdparty/glm")
@@ -73,13 +84,12 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("thirdparty/glfw") 
 
-# GLEW 
-
 # OpenGL
 find_package(OpenGL REQUIRED)
 
 # Link libs
 set(LIBS 
+	EnTT::EnTT
 	assimp
 	glfw 
 	"${CMAKE_SOURCE_DIR}/lib/glew32.lib"

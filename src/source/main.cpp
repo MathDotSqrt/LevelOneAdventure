@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "common.h"
-#include "Graphics/BasicRenderer.h"
+#include "PlayState.h"
 
 
 using namespace glm;
@@ -59,11 +59,11 @@ int main(void) {
 
     float t = 0;
 
-    LOA::Graphics::BasicRenderer renderer;
+    LOA::PlayState state;
 
     while (!glfwWindowShouldClose(window)) {
-        renderer.update(t);
-        renderer.render(t);
+        state.update(1/60.0f);
+        state.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

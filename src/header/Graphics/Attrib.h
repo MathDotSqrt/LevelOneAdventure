@@ -14,7 +14,7 @@ namespace LOA::Graphics {
 		
 		template<u8 SIZE>
 		struct AttribSize {
-			constexpr static i32 NumComponents = SIZE;
+			constexpr static u8 NumComponents = SIZE;
 		};
 
 
