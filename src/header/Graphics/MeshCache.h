@@ -12,8 +12,7 @@
 #include "Graphics/Geometry.h"
 namespace LOA::Graphics {
 	struct MeshLoader : entt::resource_loader<MeshLoader, Mesh> {
-
-		Geometry<PositionAttrib, NormalAttrib, TexcoordAttrib> loadModel(std::string filename) const {
+		Geometry<PositionAttrib, NormalAttrib, TexcoordAttrib> loadModel(std::string filename, glm::vec3 offset) const {
 			static Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(filename, aiProcess_Triangulate);
 			assert(scene);
@@ -32,7 +31,7 @@ namespace LOA::Graphics {
 				const auto n = mesh->mNormals[i];
 				const auto t = mesh->mTextureCoords[0][i];
 
-				geometry.pushVertex(glm::vec3(p.x, p.y, p.z), glm::vec3(n.x, n.y, n.z), glm::vec2(t.x, t.y));
+				geometry.pushVertex(glm::vec3(p.x, p.y, p.z) + offset, glm::vec3(n.x, n.y, n.z), glm::vec2(t.x, t.y));
 			}
 
 			for (int i = 0; i < mesh->mNumFaces; i++) {
@@ -42,9 +41,9 @@ namespace LOA::Graphics {
 			}
 			return geometry;
 		}
-		
-		std::shared_ptr<Mesh> load(std::string filename) const {
-			return std::make_shared<Mesh>(loadModel(filename));
+
+		std::shared_ptr<Mesh> load(std::string filename, glm::vec3 offset=glm::vec3(0)) const {
+			return std::make_shared<Mesh>(loadModel(filename, offset));
 		}
 
 		template<typename ...T>

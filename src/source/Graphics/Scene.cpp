@@ -14,8 +14,8 @@ Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID
 Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type)
 	: mesh(mesh), materialType(type), materialID(ID{0, 0}) {}
 
-entt::resource_handle<Mesh> Scene::loadMesh(entt::id_type id, std::string filename) {
-	return meshCache.load<Graphics::MeshLoader>(id, filename);
+entt::resource_handle<Mesh> Scene::loadMesh(entt::id_type id, std::string filename, glm::vec3 offset) {
+	return meshCache.load<Graphics::MeshLoader>(id, filename, offset);
 }
 
 entt::resource_handle<TEX> Scene::loadTEX(entt::id_type id, std::string filename) {

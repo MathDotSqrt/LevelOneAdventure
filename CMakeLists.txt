@@ -31,6 +31,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/VBO.h"
 
 	"src/header/Systems/InputSystem.h"
+	"src/header/Systems/LevelSystem.h"
 	"src/header/Systems/MovementSystem.h"
 	"src/header/Systems/RenderSystem.h"
 	"src/header/Systems/System.h"
@@ -38,6 +39,7 @@ set(HEADER_FILES ${HEADER_FILES}
 
 
 	"src/header/Util/PackedFreeList.h"
+	"src/header/Util/TransformUtil.h"
 
 	"src/header/common.h"
 	"src/header/Components.h"
@@ -62,10 +64,12 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Graphics/VBO.cpp"
 
 	"src/source/Systems/InputSystem.cpp"
+	"src/source/Systems/LevelSystem.cpp"
 	"src/source/Systems/MovementSystem.cpp"
 	"src/source/Systems/RenderSystem.cpp"
 	"src/source/Systems/VelocitySystem.cpp"
 
+	"src/source/Util/TransformUtil.cpp"
 
 	"src/source/Engine.cpp"
 	"src/source/PlayState.cpp"
