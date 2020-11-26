@@ -12,6 +12,8 @@ namespace LOA {
 		static void destroyInstance();
 
 		void update() const;
+
+		bool isPressed(char c) const;
 		bool shouldClose() const;
 
 	private:

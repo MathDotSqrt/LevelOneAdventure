@@ -19,15 +19,26 @@ PlayState::PlayState() {
 	auto instance_id = scene.addInstance("room"_hs, room_material);
 
 	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, 0), glm::vec3(.1, .2, 1), 30 });
-	scene.addPointLight(Graphics::PointLight{glm::vec3(0, 5, -10), glm::vec3(1, .3, .2), 30});
+	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, -10), glm::vec3(1, .3, .2), 5 });
 
 
 	auto& registry = engine.getRegistry();
 
-	entt::entity room = registry.create();
-	registry.emplace<Transformation>(room, glm::vec3(0, -5, -10));
-	registry.emplace<Velocity>(room, glm::vec3(0, .1f, 0));
-	registry.emplace<Renderable>(room, instance_id);
+	//ROOM
+	{
+		entt::entity room = registry.create();
+		registry.emplace<Transformation>(room, glm::vec3(0, -3, -10));
+		registry.emplace<Velocity>(room, glm::vec3(0, .1f, 0));
+		registry.emplace<Renderable>(room, instance_id);
+	}
+	
+	//Camera
+	{
+		entt::entity camera = registry.create();
+		registry.emplace<Transformation>(camera, glm::vec3(0, 0, 0));
+		registry.emplace<Velocity>(camera, glm::vec3(0, 0, 0));
+		registry.emplace<Camera>(camera, glm::radians(90.0f), 1.0f, .01f, 1000.0f);
+	}
 	
 	engine.addSystem<Systems::MovementSystem>();
 	engine.addSystem<Systems::RenderSystem>();
@@ -35,7 +46,6 @@ PlayState::PlayState() {
 }
 
 void PlayState::update(float dt) {
-	
 	engine.update(dt);
 }
 

@@ -11,13 +11,13 @@ out vec3 f_world_normal;
 out vec2 f_uv;
 
 uniform mat4 M;
-uniform mat4 P;
+uniform mat4 VP;
 
 uniform mat3 inverse_transpose;
 
 void main(){
 	vec4 world_pos = M * vec4(v_pos, 1);
-	gl_Position = P * world_pos;
+	gl_Position = VP * world_pos;
 
 	f_world_pos = world_pos.xyz;
 	f_world_normal = inverse_transpose * v_normal;

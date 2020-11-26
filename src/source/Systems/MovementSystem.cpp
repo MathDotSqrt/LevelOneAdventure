@@ -16,6 +16,8 @@ void MovementSystem::update(Engine &engine, float delta) {
 		auto& velocity = view.get<Velocity>(entity);
 		transformation.pos += velocity * delta;
 
-		transformation.rot *= glm::angleAxis(delta, glm::vec3(0, 1, 0));
+		if (registry.has<Camera>(entity)) {
+			transformation.rot *= glm::angleAxis(delta, glm::vec3(0, 1, 0));
+		}
 	}
 }

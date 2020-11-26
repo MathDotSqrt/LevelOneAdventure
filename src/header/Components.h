@@ -13,10 +13,11 @@ namespace LOA::Component {
 		glm::quat rot = glm::quat(1, 0, 0, 0);
 		glm::vec3 scale = glm::vec3(1);
 
+		Transformation() = default;
 		Transformation(glm::vec3 pos) : pos(pos) {}
 	};
 
-	struct Velocity : glm::vec3{
+	struct Velocity : glm::vec3 {
 		Velocity(const glm::vec3& vel) : glm::vec3(vel) {}
 		operator const glm::vec3& () const { return static_cast<glm::vec3>(*this); }
 	};
@@ -25,11 +26,24 @@ namespace LOA::Component {
 		LOA::ID instance_id;
 	};
 
-	struct Camera {
-		glm::vec3 eye;
-		glm::vec3 target;
-		glm::vec3 up;
+	struct Direction {
+		glm::vec3 up = glm::vec3(0, 1, 0);
+		glm::vec3 right = glm::vec3(1, 0, 0);
+		glm::vec3 forward = glm::vec3(0, 0, -1);
+	};
 
+	struct MovementState {
+		float forward = 0;
+		float strafe = 0;
+		float fly = 0;
+		float rotate = 0;
+	};
+
+	struct InputComponent {
+
+	};
+
+	struct Camera {
 		float fov;
 		float aspect;
 		float near;

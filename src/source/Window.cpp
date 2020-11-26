@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <assert.h>
+#include <cctype>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -7,6 +8,15 @@ using namespace LOA;
 
 Window* Window::singleton = nullptr;
 
+
+void error_callback(int error, const char* description) {
+    fputs(description, stderr);
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+}
 
 
 Window& Window::createInstance(int width, int height, std::string title) {
@@ -38,6 +48,8 @@ Window::Window(int width, int height, std::string title) {
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
+    glfwSetErrorCallback(error_callback);
+
     window = glfwCreateWindow(1024, 1024, "OpenGL Boilerplate", NULL, NULL);
     if (!window) {
         glfwTerminate();
@@ -45,13 +57,17 @@ Window::Window(int width, int height, std::string title) {
     }
 
     glfwMakeContextCurrent(window);
-    //glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, key_callback);
     glfwSwapInterval(1);
 }
 
 void Window::update() const {
     glfwSwapBuffers(window);
     glfwPollEvents();
+}
+
+bool Window::isPressed(char c) const {
+    return GLFW_PRESS == glfwGetKey(window, toupper(c));
 }
 
 bool Window::shouldClose() const {

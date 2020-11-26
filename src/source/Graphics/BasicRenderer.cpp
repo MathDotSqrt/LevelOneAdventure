@@ -97,7 +97,7 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 	}
 
 	shader->start();
-	shader->setUniformMat4("P", projection);
+	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
 
 	const RenderStateKey current_state = start->getKey();
 	while (start != end && current_state == start->getKey()) {
@@ -105,11 +105,11 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 		auto instance = scene.instances[instance_id];
 		auto &mesh = instance.mesh;
 
-		auto transformation = makeTransform(instance.pos, instance.rot, instance.scale);
-		glm::mat3 inverse = glm::inverse(glm::mat3(transformation));
+		auto &transform = instance.transform;
+		glm::mat3 inverse = glm::inverse(glm::mat3(transform));
 
 		shader->setUniformMat3("inverse_transpose", inverse, true);
-		shader->setUniformMat4("M", transformation);
+		shader->setUniformMat4("M", transform);
 
 		mesh->vao.bind();
 		mesh->ebo.bind();
@@ -136,7 +136,7 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 	}
 
 	shader->start();
-	shader->setUniformMat4("P", projection);
+	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
 
 	loadPointLights(scene, *shader);
 
@@ -149,11 +149,11 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 		auto& diffuse = scene.texCache.handle(material.diffuse);
 
 
-		auto transformation = makeTransform(instance.pos, instance.rot, instance.scale);
-		glm::mat3 inverse = glm::inverse(glm::mat3(transformation));
+		auto &transform= instance.transform;
+		glm::mat3 inverse = glm::inverse(glm::mat3(transform));
 
 		shader->setUniformMat3("inverse_transpose", inverse, true);
-		shader->setUniformMat4("M", transformation);
+		shader->setUniformMat4("M", transform);
 		shader->setUniform1i("diffuse", 0);
 		diffuse->bindActiveTexture(0);
 		

@@ -15,14 +15,12 @@
 
 namespace LOA::Graphics {
 	struct PerspectiveCamera {
-		glm::vec3 eye;
-		glm::vec3 target;
-		glm::vec3 up;
-
 		float fov;
 		float aspect;
 		float near;
 		float far;
+
+		glm::mat4 transform = glm::identity<glm::mat4>();
 
 		PerspectiveCamera();
 		PerspectiveCamera(float fov, float aspect, float near, float far);
@@ -39,9 +37,7 @@ namespace LOA::Graphics {
 		MaterialType materialType;
 		ID materialID;
 
-		glm::vec3 pos = glm::vec3(0);
-		glm::quat rot = glm::quat(1, 0, 0, 0);
-		glm::vec3 scale = glm::vec3(1);
+		glm::mat4 transform = glm::identity<glm::mat4>();
 		
 		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID);
 		Instance(entt::resource_handle<Mesh> mesh, MaterialType type);
@@ -65,9 +61,7 @@ namespace LOA::Graphics {
 		Instance& getInstance(ID id);
 
 		void setMainCamera(PerspectiveCamera camera);
-
-
-
+		PerspectiveCamera& getMainCamera();
 
 	private:
 		friend class BasicRenderer;

@@ -3,12 +3,10 @@
 using namespace LOA::Graphics;
 
 PerspectiveCamera::PerspectiveCamera() 
-	: eye(0), target(glm::vec3(0, 0, -1)), up(glm::vec3(0, 1, 0)),
-	fov(70), aspect(1), near(.1f), far(1000.0f){}
+	: fov(glm::radians(90.0f)), aspect(1), near(.1f), far(1000.0f){}
 
 PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float near, float far)
-	: eye(0), target(glm::vec3(0, 0, -1)), up(glm::vec3(0, 1, 0)),
-	fov(fov), aspect(aspect), near(near), far(far) {}
+	: fov(fov), aspect(aspect), near(near), far(far) {}
 
 Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID)
 	: mesh(mesh), materialType(type), materialID(matID) {}
@@ -55,5 +53,9 @@ Instance& Scene::getInstance(ID id) {
 
 
 void Scene::setMainCamera(PerspectiveCamera camera) {
-	this->mainCamera = camera;
+	mainCamera = camera;
+}
+
+PerspectiveCamera& Scene::getMainCamera() {
+	return mainCamera;
 }
