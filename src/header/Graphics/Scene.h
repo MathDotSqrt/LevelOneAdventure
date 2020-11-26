@@ -59,6 +59,7 @@ namespace LOA::Graphics {
 		ID addPointLight(PointLight light);
 
 		Instance& getInstance(ID id);
+		PointLight& getPointLight(ID id);
 
 		void setMainCamera(PerspectiveCamera camera);
 		PerspectiveCamera& getMainCamera();

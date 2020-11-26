@@ -1,5 +1,7 @@
 #include "PlayState.h"
+#include "Systems/InputSystem.h"
 #include "Systems/MovementSystem.h"
+#include "Systems/VelocitySystem.h"
 #include "Systems/RenderSystem.h"
 #include "Components.h"
 
@@ -19,7 +21,8 @@ PlayState::PlayState() {
 	auto instance_id = scene.addInstance("room"_hs, room_material);
 
 	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, 0), glm::vec3(.1, .2, 1), 30 });
-	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, -10), glm::vec3(1, .3, .2), 5 });
+	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 5, -10), glm::vec3(1, .3, .2), 5 });
+	ID point_id = scene.addPointLight(Graphics::PointLight{});
 
 
 	auto& registry = engine.getRegistry();
@@ -38,9 +41,15 @@ PlayState::PlayState() {
 		registry.emplace<Transformation>(camera, glm::vec3(0, 0, 0));
 		registry.emplace<Velocity>(camera, glm::vec3(0, 0, 0));
 		registry.emplace<Camera>(camera, glm::radians(90.0f), 1.0f, .01f, 1000.0f);
+		registry.emplace<Direction>(camera, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+		registry.emplace<MovementState>(camera);
+		registry.emplace<PointLight>(camera, point_id, glm::vec3(1, .3, .2), 5.0f);
+		registry.emplace<Input>(camera);
 	}
 	
+	engine.addSystem<Systems::InputSystem>();
 	engine.addSystem<Systems::MovementSystem>();
+	engine.addSystem<Systems::VelocitySystem>();
 	engine.addSystem<Systems::RenderSystem>();
 
 }

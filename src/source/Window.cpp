@@ -14,8 +14,27 @@ void error_callback(int error, const char* description) {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    //if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    //    glfwSetWindowShouldClose(window, GL_TRUE);
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void internal_focus_callback(GLFWwindow* window, int focused) {
+    if (focused) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+
+    }
+    else {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+}
+
+void internal_mouse_callback(GLFWwindow* window, int button, int action, int mods) {
+    if (action == GLFW_PRESS) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
 }
 
 
@@ -37,7 +56,7 @@ void Window::destroyInstance() {
     glfwTerminate();
 }
 
-Window::Window(int width, int height, std::string title) {
+Window::Window(int width, int height, std::string title) : width(width), height(height){
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
@@ -50,7 +69,7 @@ Window::Window(int width, int height, std::string title) {
 
     glfwSetErrorCallback(error_callback);
 
-    window = glfwCreateWindow(1024, 1024, "OpenGL Boilerplate", NULL, NULL);
+    window = glfwCreateWindow(width, height, "OpenGL Boilerplate", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -58,7 +77,16 @@ Window::Window(int width, int height, std::string title) {
 
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
+    glfwSetWindowFocusCallback(window, internal_focus_callback);
+    glfwSetMouseButtonCallback(window, internal_mouse_callback);
+
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPos(window, 0, 0);
+    isMouseDisabled = true;
+
     glfwSwapInterval(1);
+
 }
 
 void Window::update() const {
@@ -70,6 +98,33 @@ bool Window::isPressed(char c) const {
     return GLFW_PRESS == glfwGetKey(window, toupper(c));
 }
 
+bool Window::isPressed(Keys key) const {
+    switch (key) {
+    case Keys::LEFT_SHIFT:
+        return GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+    case Keys::LEFT_CTRL:
+        return GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT_CONTROL);
+    case Keys::ESC:
+        return GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE);
+    default:
+        return false;
+    }
+}
+
 bool Window::shouldClose() const {
     return glfwWindowShouldClose(window);
+}
+
+glm::vec2 Window::getMousePos() const {
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    return glm::vec2(x, y);
+}
+
+int Window::getWidth() const {
+    return width;
+}
+
+int Window::getHeight() const {
+    return height;
 }

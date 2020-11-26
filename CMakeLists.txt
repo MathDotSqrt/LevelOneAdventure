@@ -29,10 +29,16 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/TEXCache.h"
 	"src/header/Graphics/VAO.h"
 	"src/header/Graphics/VBO.h"
-	"src/header/Systems/System.h"
+
+	"src/header/Systems/InputSystem.h"
 	"src/header/Systems/MovementSystem.h"
 	"src/header/Systems/RenderSystem.h"
+	"src/header/Systems/System.h"
+	"src/header/Systems/VelocitySystem.h"
+
+
 	"src/header/Util/PackedFreeList.h"
+
 	"src/header/common.h"
 	"src/header/Components.h"
 	"src/header/Engine.h"
@@ -54,8 +60,13 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Graphics/TEX.cpp"
 	"src/source/Graphics/VAO.cpp"
 	"src/source/Graphics/VBO.cpp"
+
+	"src/source/Systems/InputSystem.cpp"
 	"src/source/Systems/MovementSystem.cpp"
 	"src/source/Systems/RenderSystem.cpp"
+	"src/source/Systems/VelocitySystem.cpp"
+
+
 	"src/source/Engine.cpp"
 	"src/source/PlayState.cpp"
 	"src/source/main.cpp"

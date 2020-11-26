@@ -51,6 +51,9 @@ Instance& Scene::getInstance(ID id) {
 	return instances[id];
 }
 
+PointLight& Scene::getPointLight(ID id) {
+	return pointLights[id];
+}
 
 void Scene::setMainCamera(PerspectiveCamera camera) {
 	mainCamera = camera;

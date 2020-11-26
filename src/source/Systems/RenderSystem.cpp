@@ -40,6 +40,18 @@ void RenderSystem::update(Engine &engine, float delta) {
 		instance.transform = makeTransform(trans);;
 	}
 
+	auto point_view = registry.view<Transformation, PointLight>();
+	for (auto entity : point_view) {
+		auto& trans = point_view.get<Transformation>(entity);
+		auto& point = point_view.get<PointLight>(entity);
+
+		auto& instance = scene.getPointLight(point.instance_id);
+		instance.position = trans.pos;
+		instance.color = point.color;
+		instance.intensity = point.intensity;
+	}
+
+
 	auto camera_view = registry.view<Transformation, Camera>();
 	for (auto entity : camera_view) {
 		auto& trans = camera_view.get<Transformation>(entity);

@@ -27,20 +27,20 @@ namespace LOA::Component {
 	};
 
 	struct Direction {
-		glm::vec3 up = glm::vec3(0, 1, 0);
-		glm::vec3 right = glm::vec3(1, 0, 0);
 		glm::vec3 forward = glm::vec3(0, 0, -1);
+		glm::vec3 right = glm::vec3(1, 0, 0);
+		glm::vec3 up = glm::vec3(0, 1, 0);
 	};
 
 	struct MovementState {
 		float forward = 0;
 		float strafe = 0;
 		float fly = 0;
-		float rotate = 0;
+		glm::vec2 rotate = glm::vec2(0);
 	};
 
-	struct InputComponent {
-
+	struct Input {
+		glm::vec2 lastCursorPos = glm::vec2(0);
 	};
 
 	struct Camera {
@@ -51,7 +51,7 @@ namespace LOA::Component {
 	};
 
 	struct PointLight {
-		glm::vec3 position;
+		LOA::ID instance_id;
 		glm::vec3 color;
 		float intensity;
 	};
