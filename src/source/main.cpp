@@ -18,7 +18,7 @@ using namespace glm;
 
 int main(void) {
 
-    LOA::Window &window = LOA::Window::createInstance(1024, 1024, "Level One Adventure");
+    LOA::Window &window = LOA::Window::createInstance(1280, 1024, "Level One Adventure");
 
     glewExperimental = GL_TRUE;
     GLenum glewErr = glewInit();

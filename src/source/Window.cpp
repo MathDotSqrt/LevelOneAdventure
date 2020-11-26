@@ -37,7 +37,6 @@ void internal_mouse_callback(GLFWwindow* window, int button, int action, int mod
     }
 }
 
-
 Window& Window::createInstance(int width, int height, std::string title) {
 	assert(Window::singleton == nullptr);
 
@@ -122,9 +121,13 @@ glm::vec2 Window::getMousePos() const {
 }
 
 int Window::getWidth() const {
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
     return width;
 }
 
 int Window::getHeight() const {
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
     return height;
 }

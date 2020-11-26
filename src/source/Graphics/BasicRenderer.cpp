@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <algorithm>
 #include "common.h"
+#include "Window.h"
 
 using namespace LOA::Graphics;
 
@@ -31,12 +32,15 @@ void BasicRenderer::prerender(const Scene& scene) {
 }
 
 void BasicRenderer::setViewPort(const Scene& scene, draw_iterator current) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, 1024, 1024);
+	auto& window = Window::getInstance();
+	int width = window.getWidth();
+	int height = window.getHeight();
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, width, height);
 
 	const PerspectiveCamera camera = scene.mainCamera;
-	projection = glm::perspective(camera.fov, camera.aspect, camera.near, camera.far);
+	projection = glm::perspective(camera.fov, width / (float)height, camera.near, camera.far);
 }
 
 void BasicRenderer::render(const Scene &scene) {
