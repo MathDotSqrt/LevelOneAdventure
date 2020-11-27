@@ -1,7 +1,6 @@
 #include "Systems/LevelSystem.h"
 #include "Engine.h"
 #include "Util/TransformUtil.h"
-#include <iostream>
 
 using namespace LOA;
 using namespace LOA::Systems;
@@ -27,7 +26,6 @@ ID loadRoom(Graphics::Scene &scene, entt::id_type model, entt::id_type tex, glm:
 void LevelSystem::init(Engine &engine) {
 	using namespace entt;
 
-	//const glm::vec3 offset(2.5, 0, 2.5);
 	const glm::vec3 offset(-2.5, -5, 2.5);
 
 
@@ -41,8 +39,6 @@ void LevelSystem::init(Engine &engine) {
 	scene.loadTEX("demo_diffuse"_hs, "res/models/demo_room/room.png");
 	scene.loadTEX("thirsty_diffuse"_hs, "res/models/thirsty_room/thirsty_room.png");
 
-
-	std::cout << "TEST\n";
 	loadRoom(scene, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(0, 0), 0);
 	loadRoom(scene, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(-1, 0), 1);
 	loadRoom(scene, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(-1, 1), 2);
