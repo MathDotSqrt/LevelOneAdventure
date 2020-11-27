@@ -51,6 +51,18 @@ void RenderSystem::update(Engine &engine, float delta) {
 		instance.intensity = point.intensity;
 	}
 
+	auto dissolve_view = registry.view<Renderable, Dissolve>();
+	for (auto entity : dissolve_view) {
+		auto& render = dissolve_view.get<Renderable>(entity);
+		auto& dissolve = dissolve_view.get<Dissolve>(entity);
+
+		auto& instance = scene.getInstance(render.instance_id);
+		auto& material = scene.getDissolveMaterial(instance.materialID);
+
+		material.time = dissolve.time;
+		material.offset = dissolve.offset;
+		material.dissolve_color = dissolve.dissolve_color;
+	}
 
 	auto camera_view = registry.view<Transformation, Camera>();
 	for (auto entity : camera_view) {

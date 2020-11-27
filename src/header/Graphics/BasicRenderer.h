@@ -21,9 +21,9 @@ namespace LOA::Graphics {
 
 		void setViewPort(const Scene &scene, draw_iterator current);
 
-		draw_iterator renderColor(const Scene &scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderNormal(const Scene &scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderBasicLit(const Scene& scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderDissolve(const Scene& scene, draw_iterator start, draw_iterator end);
 
 		void clearOpenGLState();
 		void loadPointLights(const Scene& scene, GLSLProgram &shader);
@@ -31,7 +31,8 @@ namespace LOA::Graphics {
 
 		std::vector<RenderStateKeyValue> drawList;
 		ShaderSet shaders;
-
 		glm::mat4 projection = glm::identity<glm::mat4>();
+
+		TEX noise3D;
 	};
 }

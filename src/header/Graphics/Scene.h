@@ -52,14 +52,16 @@ namespace LOA::Graphics {
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, std::string path);
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, TEX::Builder settings, std::string path);
 
-		ID addInstance(entt::id_type meshID, ColorMaterial material);
 		ID addInstance(entt::id_type meshID, NormalMaterial material);
 		ID addInstance(entt::id_type meshID, BasicLitMaterial material);
+		ID addInstance(entt::id_type meshID, DissolveMaterial material);
+
 
 		ID addPointLight(PointLight light);
 
 		Instance& getInstance(ID id);
 		PointLight& getPointLight(ID id);
+		DissolveMaterial& getDissolveMaterial(ID id);
 
 		void setMainCamera(PerspectiveCamera camera);
 		PerspectiveCamera& getMainCamera();
@@ -69,8 +71,9 @@ namespace LOA::Graphics {
 		PerspectiveCamera mainCamera;
 
 		Util::PackedFreeList<Instance> instances;
-		Util::PackedFreeList<ColorMaterial> colorMaterials;
 		Util::PackedFreeList<BasicLitMaterial> basicLitMaterials;
+		Util::PackedFreeList<DissolveMaterial> dissolveMaterials;
+
 		
 		Util::PackedFreeList<PointLight> pointLights;
 	};

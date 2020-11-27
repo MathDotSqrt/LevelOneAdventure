@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "common.h"
 
@@ -46,6 +47,7 @@ namespace LOA::Graphics {
 		public:
 			Builder();
 
+			Builder& r();
 			Builder& rgb();
 			Builder& rgba();
 			Builder& depth24();
@@ -63,6 +65,7 @@ namespace LOA::Graphics {
 			Builder& mipmapLinear();
 
 			TEX buildTexture(std::string filename);
+			TEX buildTexture3D(const std::vector<float> &buffer);
 		};
 
 	private:

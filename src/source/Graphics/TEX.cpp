@@ -1,9 +1,10 @@
 #include "Graphics/TEX.h"
 
+#include <cmath>
 #include <GL/glew.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+
 #include "common.h"
 
 using namespace LOA::Graphics;
@@ -80,6 +81,12 @@ TEX::Builder::Builder() {
 	rgb().repeat().nearest().borderColor(1, 0, 1, 1).unsignedByteType();
 }
 
+TEX::Builder& TEX::Builder::r() {
+	components = GL_RED;
+	storage = GL_R16F;
+	return *this;
+}
+
 TEX::Builder& TEX::Builder::rgb() {
 	components = GL_RGB;
 	storage = GL_RGB;
@@ -105,6 +112,7 @@ TEX::Builder& TEX::Builder::unsignedByteType() {
 
 TEX::Builder& TEX::Builder::floatType() {
 	dataType = GL_FLOAT;
+
 	return *this;
 }
 
@@ -205,6 +213,46 @@ TEX TEX::Builder::buildTexture(std::string filename) {
 
 	stbi_image_free(image);
 
+	glBindTexture(textureTarget, 0);
+
+	return TEX(*this);
+}
+
+TEX TEX::Builder::buildTexture3D(const std::vector<float> &buffer) {
+	const f32* image = buffer.data();
+	int width = (int)std::cbrt(buffer.size());
+
+	textureTarget = GL_TEXTURE_3D;
+	int mipmapLevelCount = 0;
+
+	glGenTextures(1, &texID);
+	glBindTexture(textureTarget, texID);
+	glTexImage3D(textureTarget, mipmapLevelCount, storage, width, width, width, 0, components, dataType, image);
+
+	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, wrapS);
+	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, wrapT);
+	//glTexParameterfv(textureTarget, GL_TEXTURE_BORDER_COLOR, bgColor);
+
+	GLenum f;
+
+	if (useMipMap) {
+		glGenerateMipmap(textureTarget);
+
+		u8 bit1 = mipmap == GL_LINEAR;
+		u8 bit2 = filter == GL_LINEAR;
+		switch ((bit2 << 1) | bit1) {
+		case 0x0: f = GL_NEAREST_MIPMAP_NEAREST; break;
+		case 0x1: f = GL_LINEAR_MIPMAP_NEAREST; break;
+		case 0x2: f = GL_NEAREST_MIPMAP_LINEAR; break;
+		case 0x3: f = GL_LINEAR_MIPMAP_LINEAR; break;
+		}
+	}
+	else {
+		f = filter;
+	}
+
+	glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, f);
+	glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, filter);
 	glBindTexture(textureTarget, 0);
 
 	return TEX(*this);

@@ -19,6 +19,11 @@ struct PointLight {
 uniform int u_num_point_lights = 0;
 uniform PointLight u_point_lights[MAX_POINT_LIGHTS];
 
+uniform float u_dissolve = .1;
+uniform float u_offset = .1;
+uniform vec3 u_dissolve_color = vec3(1, 1, 1);
+
+uniform sampler3D noise;
 uniform sampler2D diffuse;
 
 vec3 point_color(PointLight light){
@@ -49,9 +54,28 @@ vec3 calc_light(){
 	return diffuse_light_color;
 }
 
+vec3 toGamma(vec3 linear_color){
+	vec3 gamma = pow(linear_color, vec3(1/2.2));
+	return gamma;
+}
+
 void main(){
+	float noise = abs(texture(noise, f_world_pos).r);
+
+	if(u_dissolve >= noise){
+		discard;
+	}
+
 	vec3 diffuse_texture = pow(texture(diffuse, f_uv).rgb, vec3(2.2));
 	vec3 f_color = diffuse_texture * calc_light();
-	vec3 gamma = pow(f_color, vec3(1/2.2));
-	out_color = vec4(gamma, 1);
+
+	if(noise - u_dissolve < u_offset){
+		float mix_factor = (noise - u_dissolve) / u_offset;
+		vec3 mix_color = mix(u_dissolve_color, f_color, mix_factor);
+		out_color = vec4(toGamma(u_dissolve_color), 1);
+	}
+	else{
+		out_color = vec4(toGamma(f_color), 1);
+	}
+
 }

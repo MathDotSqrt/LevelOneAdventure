@@ -3,12 +3,15 @@
 #include <algorithm>
 #include "common.h"
 #include "Window.h"
+#include "Util/Noise.h"
+
 
 using namespace LOA::Graphics;
 
 
 
-BasicRenderer::BasicRenderer() {
+BasicRenderer::BasicRenderer() : 
+	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_perlin_3D_texture(64, .1))){
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -56,14 +59,14 @@ void BasicRenderer::render(const Scene &scene) {
 		const MaterialType current_material = key.getMaterialType();
 
 		switch (current_material) {
-		/*case MaterialType::COLOR_MATERIAL_ID:
-			start = renderColor(scene, start, end);
-			break;*/
 		case MaterialType::NORMAL_MATERIAL_ID:
 			start = renderNormal(scene, start, end);
 			break;
 		case MaterialType::BASIC_LIT_MATERIAL_ID:
 			start = renderBasicLit(scene, start, end);
+			break;
+		case MaterialType::DISSOLVE_MATERIAL_ID:
+			start = renderDissolve(scene, start, end);
 			break;
 		default:
 			start++;
@@ -72,21 +75,6 @@ void BasicRenderer::render(const Scene &scene) {
 		clearOpenGLState();
 	}
 
-}
-
-BasicRenderer::draw_iterator 
-BasicRenderer::renderColor(const Scene& scene, draw_iterator start, draw_iterator end) {
-	if (start == end) {
-		//nothing else to render
-		return end;
-	}
-	
-	auto shader = shaders.getShader({"basic/basic.vert", "basic/basic.frag"});
-	if (!shader) {
-		return end;
-	}
-
-	return end;
 }
 
 BasicRenderer::draw_iterator
@@ -158,9 +146,66 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 
 		shader->setUniformMat3("inverse_transpose", inverse, true);
 		shader->setUniformMat4("M", transform);
-		shader->setUniform1i("diffuse", 0);
-		diffuse->bindActiveTexture(0);
 		
+		shader->setUniform1i("diffuse", 0);
+		
+		diffuse->bindActiveTexture(0);
+
+		mesh->vao.bind();
+		mesh->ebo.bind();
+		glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
+		glEnableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
+		glEnableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
+		glDrawElements(GL_TRIANGLES, mesh->ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0);
+		diffuse->unbind();
+
+		start++;
+	}
+
+	return end;
+}
+
+BasicRenderer::draw_iterator
+BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iterator end) {
+	if (start == end) {
+		//nothing else to render
+		return end;
+	}
+
+	auto shader = shaders.getShader({ "dissolve_lit/dissolve_lit.vert", "dissolve_lit/dissolve_lit.frag" });
+	if (!shader) {
+		return end;
+	}
+
+	shader->start();
+	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+
+	loadPointLights(scene, *shader);
+
+	const RenderStateKey current_state = start->getKey();
+	while (start != end && current_state == start->getKey()) {
+		auto instance_id = start->getValue();
+		auto instance = scene.instances[instance_id];
+		auto& mesh = instance.mesh;
+		auto& material = scene.dissolveMaterials[instance.materialID];
+		auto& diffuse = scene.texCache.handle(material.diffuse);
+
+
+		auto& transform = instance.transform;
+		glm::mat3 inverse = glm::inverse(glm::mat3(transform));
+
+		shader->setUniformMat3("inverse_transpose", inverse, true);
+		shader->setUniformMat4("M", transform);
+
+		shader->setUniform1f("u_dissolve", material.time);
+		shader->setUniform1f("u_offset", material.offset);
+		shader->setUniform3f("u_dissolve_color", material.dissolve_color);
+
+		shader->setUniform1i("diffuse", 0);
+		shader->setUniform1i("noise", 1);
+
+		diffuse->bindActiveTexture(0);
+		noise3D.bindActiveTexture(1);
 
 		mesh->vao.bind();
 		mesh->ebo.bind();

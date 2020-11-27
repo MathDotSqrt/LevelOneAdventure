@@ -26,11 +26,6 @@ entt::resource_handle<TEX> Scene::loadTEX(entt::id_type id, TEX::Builder setting
 	return texCache.load<Graphics::TextureLoader>(id, settings, filename);
 }
 
-LOA::ID Scene::addInstance(entt::id_type meshID, ColorMaterial material) {
-	const auto id = colorMaterials.insert(material);
-	return instances.insert(Instance(meshCache.handle(meshID), MaterialType::COLOR_MATERIAL_ID, id));
-}
-
 LOA::ID Scene::addInstance(entt::id_type meshID, NormalMaterial material) {
 	return instances.insert(Instance{ meshCache.handle(meshID), MaterialType::NORMAL_MATERIAL_ID});
 }
@@ -38,6 +33,11 @@ LOA::ID Scene::addInstance(entt::id_type meshID, NormalMaterial material) {
 LOA::ID Scene::addInstance(entt::id_type meshID, BasicLitMaterial material) {
 	const auto id = basicLitMaterials.insert(material);
 	return instances.insert(Instance{ meshCache.handle(meshID), MaterialType::BASIC_LIT_MATERIAL_ID, id });
+}
+
+LOA::ID Scene::addInstance(entt::id_type meshID, DissolveMaterial material) {
+	const auto id = dissolveMaterials.insert(material);
+	return instances.insert(Instance(meshCache.handle(meshID), MaterialType::DISSOLVE_MATERIAL_ID, id));
 }
 
 LOA::ID Scene::addPointLight(PointLight light) {
@@ -53,6 +53,10 @@ Instance& Scene::getInstance(ID id) {
 
 PointLight& Scene::getPointLight(ID id) {
 	return pointLights[id];
+}
+
+DissolveMaterial& Scene::getDissolveMaterial(ID id) {
+	return dissolveMaterials[id];
 }
 
 void Scene::setMainCamera(PerspectiveCamera camera) {

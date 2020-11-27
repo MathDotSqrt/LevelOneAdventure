@@ -50,6 +50,12 @@ namespace LOA::Component {
 		float far;
 	};
 
+	struct Dissolve {
+		float time = 0;
+		float offset = 0;
+		glm::vec3 dissolve_color = glm::vec3(1);
+	};
+
 	struct PointLight {
 		LOA::ID instance_id;
 		glm::vec3 color;

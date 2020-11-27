@@ -31,19 +31,10 @@ namespace LOA::Graphics {
 	};
 
 	enum class MaterialType : u8 {
-		COLOR_MATERIAL_ID,
 		NORMAL_MATERIAL_ID,
 		BASIC_LIT_MATERIAL_ID,
+		DISSOLVE_MATERIAL_ID,
 		NUM_MATERIAL_ID
-	};
-
-	
-
-	struct ColorMaterial {
-		constexpr static MaterialType Type = MaterialType::COLOR_MATERIAL_ID;
-		constexpr static id_type ShaderID = "ColorShader"_hs;
-		
-		glm::vec3 color;
 	};
 
 	struct NormalMaterial {
@@ -57,5 +48,15 @@ namespace LOA::Graphics {
 		constexpr static id_type ShaderID = "BasicLitShader"_hs;
 
 		entt::id_type diffuse;
+	};
+
+	struct DissolveMaterial {
+		constexpr static MaterialType Type = MaterialType::DISSOLVE_MATERIAL_ID;
+		constexpr static id_type ShaderID = "DissolveShader"_hs;
+
+		entt::id_type diffuse;
+		glm::vec3 dissolve_color;
+		float offset;
+		float time;
 	};
 }
