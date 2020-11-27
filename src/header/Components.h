@@ -15,6 +15,7 @@ namespace LOA::Component {
 
 		Transformation() = default;
 		Transformation(glm::vec3 pos) : pos(pos) {}
+		Transformation(glm::vec3 pos, glm::quat rot) : pos(pos), rot(rot) {}
 	};
 
 	struct Velocity : glm::vec3 {

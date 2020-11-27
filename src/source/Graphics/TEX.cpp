@@ -83,7 +83,8 @@ TEX::Builder::Builder() {
 
 TEX::Builder& TEX::Builder::r() {
 	components = GL_RED;
-	storage = GL_R16F;
+	//storage = GL_R16F;
+	storage = GL_RED;
 	return *this;
 }
 

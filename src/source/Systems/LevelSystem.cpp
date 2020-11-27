@@ -31,8 +31,10 @@ ID loadRoom(Engine &engine, entt::id_type model, entt::id_type tex, glm::ivec2 l
 	auto& registry = engine.getRegistry();
 	auto entity = registry.create();
 
-	registry.emplace<Component::Dissolve>(entity, 0.0f, .1f, glm::vec3(.4, .2, 1));
+	registry.emplace<Component::Dissolve>(entity, 0.0f, .05f, glm::vec3(.3f, .2f, .7f));
 	registry.emplace<Component::Renderable>(entity, id);
+	//registry.emplace<Component::Transformation>(entity, pos, rotation);
+	//registry.emplace<Component::Velocity>(entity, glm::vec3(0, 0, 0));
 
 	return id;
 }
@@ -66,8 +68,8 @@ void LevelSystem::update(Engine& engine, float delta) {
 	auto view = registry.view<Component::Dissolve>();
 	for (auto entity : view) {
 		if (Window::getInstance().isPressed('e'))
-			view.get<Component::Dissolve>(entity).time += delta / 10.0f;
+			view.get<Component::Dissolve>(entity).time += delta / 2.0f;
 		else if(Window::getInstance().isPressed('q'))
-			view.get<Component::Dissolve>(entity).time -= delta / 10.0f;
+			view.get<Component::Dissolve>(entity).time -= delta / 2.0f;
 	}
 }

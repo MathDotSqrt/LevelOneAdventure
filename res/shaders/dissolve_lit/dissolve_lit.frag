@@ -59,8 +59,16 @@ vec3 toGamma(vec3 linear_color){
 	return gamma;
 }
 
+float sampleNoise(vec3 pos){
+	float value = texture(noise, pos * .01).r * 2/4;
+	value += texture(noise, pos * .05 + vec3(13,223,-11)).r * 1/4;
+	value += texture(noise, pos.zyx * .3 + vec3(10,223,-1)).r * 1/4;
+
+	return value;
+}
+
 void main(){
-	float noise = abs(texture(noise, f_world_pos).r);
+	float noise = sampleNoise(f_world_pos);
 
 	if(u_dissolve >= noise){
 		discard;
@@ -71,7 +79,7 @@ void main(){
 
 	if(noise - u_dissolve < u_offset){
 		float mix_factor = (noise - u_dissolve) / u_offset;
-		vec3 mix_color = mix(u_dissolve_color, f_color, mix_factor);
+		vec3 mix_color = mix(u_dissolve_color, f_color, pow(mix_factor, 40));
 		out_color = vec4(toGamma(u_dissolve_color), 1);
 	}
 	else{
