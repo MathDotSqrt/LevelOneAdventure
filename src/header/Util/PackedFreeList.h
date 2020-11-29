@@ -35,7 +35,12 @@ namespace LOA::Util {
 			return packed_array.at(index);
 		}
 
-		ID insert(const T &item) {
+		ID insert(const T& item) {
+			T copy = item;
+			return insert(std::move(copy));
+		}
+
+		ID insert(T&& item) {
 			u32 packed_index = packed_array.size();
 
 			if (free_length == 0) {

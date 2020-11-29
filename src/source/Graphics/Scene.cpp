@@ -14,6 +14,12 @@ Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID
 Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type)
 	: mesh(mesh), materialType(type), materialID(ID{0, 0}) {}
 
+ParticleSystemInstance::ParticleSystemInstance(ParticleRenderData &&data, MaterialType type, ID matID) 
+	: data(std::move(data)), materialType(type), materialID(matID){}
+
+ParticleSystemInstance::ParticleSystemInstance(size_t max, MaterialType type, ID matID)
+	: data(max), materialType(type), materialID(matID) {}
+
 entt::resource_handle<Mesh> Scene::loadMesh(entt::id_type id, std::string filename, glm::vec3 offset) {
 	return meshCache.load<Graphics::MeshLoader>(id, filename, offset);
 }
@@ -45,6 +51,11 @@ LOA::ID Scene::addPointLight(PointLight light) {
 		return pointLights.insert(light);
 	else 
 		return NullID;
+}
+
+LOA::ID Scene::createParticleInstance(size_t max, ParticleMaterial material) {
+	const auto id = particleMaterials.insert(material);
+	return particleSystemInstances.insert(ParticleSystemInstance{max, MaterialType::PARTICLE_MATERIAL_ID, id});
 }
 
 Instance& Scene::getInstance(ID id) {

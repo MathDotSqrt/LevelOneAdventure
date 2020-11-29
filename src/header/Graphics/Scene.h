@@ -6,8 +6,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "Graphics/Mesh.h"
 #include "Graphics/Material.h"
+#include "Graphics/Mesh.h"
+#include "Graphics/ParticleRenderData.h"
 #include "Util/PackedFreeList.h"
 
 #include "Graphics/MeshCache.h"
@@ -43,6 +44,17 @@ namespace LOA::Graphics {
 		Instance(entt::resource_handle<Mesh> mesh, MaterialType type);
 	};
 
+	struct ParticleSystemInstance {
+		ParticleRenderData data;
+		MaterialType materialType;
+		ID materialID;
+		glm::mat4 transform = glm::identity<glm::mat4>();
+
+		ParticleSystemInstance(ParticleRenderData&& data, MaterialType type, ID matID);
+		ParticleSystemInstance(size_t max, MaterialType type, ID matID);
+
+	};
+
 	class Scene {
 	public:
 		MeshCache meshCache;
@@ -56,8 +68,10 @@ namespace LOA::Graphics {
 		ID addInstance(entt::id_type meshID, BasicLitMaterial material);
 		ID addInstance(entt::id_type meshID, DissolveMaterial material);
 
-
 		ID addPointLight(PointLight light);
+
+		ID createParticleInstance(size_t max_particles, ParticleMaterial material);
+
 
 		Instance& getInstance(ID id);
 		PointLight& getPointLight(ID id);
@@ -73,7 +87,9 @@ namespace LOA::Graphics {
 		Util::PackedFreeList<Instance> instances;
 		Util::PackedFreeList<BasicLitMaterial> basicLitMaterials;
 		Util::PackedFreeList<DissolveMaterial> dissolveMaterials;
-
+		Util::PackedFreeList<ParticleMaterial> particleMaterials;
+		
+		Util::PackedFreeList<ParticleSystemInstance> particleSystemInstances;
 		
 		Util::PackedFreeList<PointLight> pointLights;
 	};

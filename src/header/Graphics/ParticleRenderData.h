@@ -12,14 +12,15 @@ namespace LOA::Graphics {
 	};
 
 	class ParticleRenderData {
-		ParticleRenderData(int max_size);
+	public:
+		ParticleRenderData(size_t max_size);
 		void streamData(const std::vector<RenderData>& data);
 	private:
 		VAO vao;
 		VBO quad;
 		VBO instance_data;
 		VBO ebo;
-		int max_size;
+		size_t max_size;
 		int instances = 0;
 	};
 }

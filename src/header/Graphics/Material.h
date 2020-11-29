@@ -34,6 +34,9 @@ namespace LOA::Graphics {
 		NORMAL_MATERIAL_ID,
 		BASIC_LIT_MATERIAL_ID,
 		DISSOLVE_MATERIAL_ID,
+
+		PARTICLE_MATERIAL_ID,
+
 		NUM_MATERIAL_ID
 	};
 
@@ -58,5 +61,12 @@ namespace LOA::Graphics {
 		glm::vec3 dissolve_color;
 		float offset;
 		float time;
+	};
+
+	struct ParticleMaterial {
+		constexpr static MaterialType Type = MaterialType::PARTICLE_MATERIAL_ID;
+		constexpr static id_type ShaderID = "ParticleShader"_hs;
+
+		entt::id_type diffuse;
 	};
 }

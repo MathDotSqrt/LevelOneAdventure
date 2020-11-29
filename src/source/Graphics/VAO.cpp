@@ -41,6 +41,10 @@ void VAO::addVertexAttribPtr(u32 ptr, u8 num_components, size_t stride, size_t o
 	glVertexAttribPointer(ptr, num_components, GL_FLOAT, false, stride, (void*)offset);
 }
 
+void VAO::vertexAttribDivisor(u32 ptr, u32 divisor) {
+	glVertexAttribDivisor(ptr, divisor);
+}
+
 void VAO::dispose() {
 	if (vaoID) {
 		glDeleteVertexArrays(1, &vaoID);

@@ -19,11 +19,12 @@ namespace LOA::Graphics {
 		void unbind();
 
 		void addVertexAttribPtr(u32 ptr, u8 num_components, size_t stride, size_t offset);
+		void vertexAttribDivisor(u32 ptr, u32 divisor);
 
 		template<typename ...ATTRIBS>
-		void addVertexAttribPtr() {
+		void addVertexAttribPtr(u32 divisor=0) {
 			const auto stride = getAttribsStride<ATTRIBS...>();
-			setInterleavedAttribPointers<ATTRIBS...>(stride, 0);
+			setInterleavedAttribPointers<ATTRIBS...>(stride, 0, divisor);
 		}
 
 		GLuint getID() const;
@@ -44,10 +45,11 @@ namespace LOA::Graphics {
 		}
 
 		template<typename ATTRIB, typename ...U>
-		void setInterleavedAttribPointers(size_t stride, size_t offset) {
+		void setInterleavedAttribPointers(size_t stride, size_t offset, u32 divisor) {
 			addVertexAttribPtr(ATTRIB::Location, ATTRIB::NumComponents, stride, offset);
+			vertexAttribDivisor(ATTRIB::Location, divisor);
 			if constexpr (sizeof...(U) > 0) {
-				setInterleavedAttribPointers<U...>(stride, offset + ATTRIB::size());
+				setInterleavedAttribPointers<U...>(stride, offset + ATTRIB::size(), divisor);
 			}
 		}
 

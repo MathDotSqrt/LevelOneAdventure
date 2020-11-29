@@ -5,7 +5,7 @@
 
 using namespace LOA::Graphics;
 
-ParticleRenderData::ParticleRenderData(int max_size) : 
+ParticleRenderData::ParticleRenderData(size_t max_size) :
 	max_size(max_size), 
 	quad(VBO::BufferType::ARRAY_BUFFER),
 	instance_data(VBO::BufferType::ARRAY_BUFFER),
@@ -16,12 +16,12 @@ ParticleRenderData::ParticleRenderData(int max_size) :
 	vao.bind();
 
 	quad.bind();
-	vao.addVertexAttribPtr<PositionAttrib, TexcoordAttrib>();
+	vao.addVertexAttribPtr<PositionAttrib, TexcoordAttrib>(0);
 	quad.bufferData(geometry.getVerticies());
 	quad.unbind();
 
 	instance_data.bind();
-	vao.addVertexAttribPtr<PositionSizeAttrib, ParticleColorAttrib>();
+	vao.addVertexAttribPtr<PositionSizeAttrib, ParticleColorAttrib>(1);
 	instance_data.bufferData(sizeof(RenderData) * max_size, nullptr, VBO::BufferHint::STREAM_DRAW);
 	instance_data.unbind();
 
