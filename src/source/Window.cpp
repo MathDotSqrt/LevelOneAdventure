@@ -8,7 +8,6 @@ using namespace LOA;
 
 Window* Window::singleton = nullptr;
 
-
 void error_callback(int error, const char* description) {
     fputs(description, stderr);
 }
@@ -23,8 +22,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void internal_focus_callback(GLFWwindow* window, int focused) {
     if (focused) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-
     }
     else {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -115,7 +112,7 @@ bool Window::shouldClose() const {
 }
 
 glm::vec2 Window::getMousePos() const {
-    double x, y;
+    static double x, y;
     glfwGetCursorPos(window, &x, &y);
     return glm::vec2(x, y);
 }

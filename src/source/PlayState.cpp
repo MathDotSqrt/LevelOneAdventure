@@ -19,7 +19,7 @@ PlayState::PlayState() {
 
 	auto& registry = engine.getRegistry();
 
-	//Camera
+	//Camera 
 	{
 		ID camera_light = scene.addPointLight(Graphics::PointLight{});
 

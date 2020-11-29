@@ -46,7 +46,7 @@ namespace LOA::Graphics {
 		template<typename ATTRIB, typename ...U>
 		void setInterleavedAttribPointers(size_t stride, size_t offset) {
 			addVertexAttribPtr(ATTRIB::Location, ATTRIB::NumComponents, stride, offset);
-			if constexpr (sizeof...(U)) {
+			if constexpr (sizeof...(U) > 0) {
 				setInterleavedAttribPointers<U...>(stride, offset + ATTRIB::size());
 			}
 		}

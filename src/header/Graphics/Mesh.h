@@ -18,7 +18,7 @@ namespace LOA::Graphics {
 			vao.bind();
 			
 			vbo.bind();
-			vao.addVertexAttribPtr<PositionAttrib, NormalAttrib, TexcoordAttrib>();
+			vao.addVertexAttribPtr<T...>();
 			vbo.bufferData(geometry.getVerticies());
 			vbo.unbind();
 

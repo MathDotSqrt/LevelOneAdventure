@@ -11,7 +11,7 @@ using namespace LOA::Graphics;
 
 
 BasicRenderer::BasicRenderer() : 
-	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_perlin_3D_texture(64, .1)))
+	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_simplex_3D_texture(64, .05)))
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f)))
 
 {
