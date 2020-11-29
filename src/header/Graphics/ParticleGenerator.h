@@ -22,6 +22,9 @@ namespace LOA::Graphics {
 		//not to be called after update
 		void genParticles(int num);
 		void update(glm::vec3 camera_pos, float delta);
+
+		const std::vector<RenderData>& getRenderData() const;
+		size_t getMax() const;
 	private:
 		size_t max_particles;
 		std::vector<Particle> particles;

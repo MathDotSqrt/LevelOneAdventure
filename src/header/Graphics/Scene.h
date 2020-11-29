@@ -75,6 +75,8 @@ namespace LOA::Graphics {
 
 		Instance& getInstance(ID id);
 		PointLight& getPointLight(ID id);
+		ParticleSystemInstance& getParticleSystemInstance(ID id);
+
 		DissolveMaterial& getDissolveMaterial(ID id);
 
 		void setMainCamera(PerspectiveCamera camera);

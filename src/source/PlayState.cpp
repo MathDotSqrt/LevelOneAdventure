@@ -35,7 +35,17 @@ PlayState::PlayState() {
 		registry.emplace<Input>(camera);
 	}
 	
-	
+	{
+		Graphics::ParticleGenerator generator(1000);
+		
+		Graphics::ParticleMaterial material{0};
+		ID id = scene.createParticleInstance(generator.getMax(), material);
+		auto &system = scene.getParticleSystemInstance(id);
+
+		generator.genParticles(10);
+		generator.update(glm::vec3(0, 0, 0), .016f);
+		system.data.streamData(generator.getRenderData());
+	}
 
 	engine.addSystem<Systems::LevelSystem>();
 	engine.addSystem<Systems::InputSystem>();
@@ -46,9 +56,7 @@ PlayState::PlayState() {
 }
 
 void PlayState::update(float dt) {
-	//static Graphics::ParticleGenerator generator(1000);
-	//generator.genParticles(10);
-	//generator.update(glm::vec3(0, 0, 0), .016f);
+	//static 
 
 	engine.update(dt);
 }

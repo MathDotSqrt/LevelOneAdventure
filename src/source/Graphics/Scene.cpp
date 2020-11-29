@@ -66,6 +66,10 @@ PointLight& Scene::getPointLight(ID id) {
 	return pointLights[id];
 }
 
+ParticleSystemInstance& Scene::getParticleSystemInstance(ID id) {
+	return particleSystemInstances[id];
+}
+
 DissolveMaterial& Scene::getDissolveMaterial(ID id) {
 	return dissolveMaterials[id];
 }

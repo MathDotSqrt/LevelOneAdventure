@@ -69,3 +69,11 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 		renderData.push_back({glm::vec4(p.pos, p.size), p.color});
 	}
 }
+
+const std::vector<RenderData>& ParticleGenerator::getRenderData() const {
+	return renderData;
+}
+
+size_t ParticleGenerator::getMax() const {
+	return max_particles;
+}
