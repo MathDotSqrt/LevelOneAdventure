@@ -37,6 +37,7 @@ void VAO::unbind() {
 }
 
 void VAO::addVertexAttribPtr(u32 ptr, u8 num_components, size_t stride, size_t offset) {
+	glEnableVertexAttribArray(ptr);
 	glVertexAttribPointer(ptr, num_components, GL_FLOAT, false, stride, (void*)offset);
 }
 

@@ -27,7 +27,7 @@ namespace LOA::Graphics {
 		template<> struct AttribInfo<u32> : AttribType<u32>, AttribSize<1> {};
 		template<> struct AttribInfo<i16> : AttribType<i16>, AttribSize<1> {};
 		template<> struct AttribInfo<u16> : AttribType<u16>, AttribSize<1> {};
-		template<> struct AttribInfo<i8> : AttribType<i8>, AttribSize<1> {};
+		//template<> struct AttribInfo<i8> : AttribType<i8>, AttribSize<1> {};
 		template<> struct AttribInfo<u8> : AttribType<u8>, AttribSize<1> {};
 
 		template<typename T, glm::qualifier Q> struct AttribInfo<glm::vec<1, T, Q>> : AttribType<T>, AttribSize<1> {};
@@ -52,5 +52,8 @@ namespace LOA::Graphics {
 	typedef Attrib<POSITION_ATTRIB_LOCATION, glm::vec3> PositionAttrib;
 	typedef Attrib<TEXCOORD_ATTRIB_LOCATION, glm::vec2> TexcoordAttrib;
 	typedef Attrib<NORMAL_ATTRIB_LOCATION, glm::vec3> NormalAttrib;
-	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::vec3> ColorAttrib;;
+	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::vec3> ColorAttrib;
+
+	typedef Attrib<POSITION_ATTRIB_LOCATION, glm::vec4> PositionSizeAttrib;
+	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::u8vec4> ParticleColorAttrib;
 }

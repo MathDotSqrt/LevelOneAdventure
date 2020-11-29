@@ -6,6 +6,8 @@
 #include "Systems/RenderSystem.h"
 #include "Components.h"
 
+#include "Graphics/ParticleGenerator.h"
+
 using namespace LOA;
 
 PlayState::PlayState() {
@@ -33,6 +35,10 @@ PlayState::PlayState() {
 		registry.emplace<Input>(camera);
 	}
 	
+	Graphics::ParticleGenerator generator(100);
+	generator.genParticles(10);
+	generator.update(glm::vec3(0, 0, 0), .01f);
+
 	engine.addSystem<Systems::LevelSystem>();
 	engine.addSystem<Systems::InputSystem>();
 	engine.addSystem<Systems::MovementSystem>();

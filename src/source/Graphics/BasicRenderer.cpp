@@ -106,8 +106,6 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 
 		mesh->vao.bind();
 		mesh->ebo.bind();
-		glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
-		glEnableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
 		glDrawElements(GL_TRIANGLES, mesh->ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0);
 
 		start++;
@@ -154,9 +152,6 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 
 		mesh->vao.bind();
 		mesh->ebo.bind();
-		glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
-		glEnableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
-		glEnableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
 		glDrawElements(GL_TRIANGLES, mesh->ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0);
 		diffuse->unbind();
 
@@ -210,9 +205,6 @@ BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iter
 
 		mesh->vao.bind();
 		mesh->ebo.bind();
-		glEnableVertexAttribArray(POSITION_ATTRIB_LOCATION);
-		glEnableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
-		glEnableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
 		glDrawElements(GL_TRIANGLES, mesh->ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0);
 		diffuse->unbind();
 
@@ -223,9 +215,6 @@ BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iter
 }
 
 void BasicRenderer::clearOpenGLState() {
-	glDisableVertexAttribArray(POSITION_ATTRIB_LOCATION);
-	glDisableVertexAttribArray(NORMAL_ATTRIB_LOCATION);
-	glDisableVertexAttribArray(TEXCOORD_ATTRIB_LOCATION);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }

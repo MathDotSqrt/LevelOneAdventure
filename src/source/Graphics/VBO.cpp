@@ -15,14 +15,27 @@ constexpr GLenum toGL(VBO::BufferType type) {
 	case VBO::BufferType::ELEMENT_ARRAY_BUFFER:
 		return GL_ELEMENT_ARRAY_BUFFER;
 	default:
-		assert(false, "TO GL FAILED");
+		assert(false);
+		return 0;
+	}
+}
+
+constexpr GLenum toGL(VBO::BufferHint type) {
+	switch (type)
+	{
+	case VBO::BufferHint::STATIC_DRAW:
+		return GL_STATIC_DRAW;
+	case VBO::BufferHint::STREAM_DRAW:
+		return GL_STREAM_DRAW;
+	default:
+		assert(false);
 		return 0;
 	}
 }
 
 VBO::VBO(VBO::BufferType type) : vboID(0), type(type), bytes(0){
 	glGenBuffers(1, &vboID);
-	assert(vboID, "FATAL: failed to generate VBO");
+	assert(vboID);
 }
 
 VBO::VBO(VBO&& other) noexcept : vboID(other.vboID), type(other.type), bytes(other.bytes){
@@ -45,7 +58,7 @@ VBO& VBO::operator=(VBO &&other) noexcept {
 
 
 void VBO::bind() {
-	assert(vboID, "Fatal: failed to bind");
+	assert(vboID);
 	glBindBuffer(toGL(type), vboID);
 }
 
@@ -53,8 +66,8 @@ void VBO::unbind() {
 	glBindBuffer(toGL(type), 0);
 }
 
-void VBO::bufferData(size_t bytes, void* data) {
-	glBufferData(toGL(type), bytes, data, GL_STATIC_DRAW);
+void VBO::bufferData(size_t bytes, void* data, BufferHint hint) {
+	glBufferData(toGL(type), bytes, data, toGL(hint));
 	this->bytes = bytes;
 }
 

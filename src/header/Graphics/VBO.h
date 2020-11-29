@@ -13,6 +13,11 @@ namespace LOA::Graphics {
 			ELEMENT_ARRAY_BUFFER
 		};
 
+		enum class BufferHint : GLenum {
+			STATIC_DRAW,
+			STREAM_DRAW
+		};
+
 		VBO(BufferType type);
 		VBO(VBO &&other) noexcept;
 		~VBO();
@@ -24,10 +29,10 @@ namespace LOA::Graphics {
 		void bind();
 		void unbind();
 
-		void bufferData(size_t bytes, void* data);
+		void bufferData(size_t bytes, void* data, BufferHint hint = BufferHint::STATIC_DRAW);
 
 		template<typename T>
-		void bufferData(const std::vector<T>& data) {
+		void bufferData(const std::vector<T>& data, BufferHint hint = BufferHint::STATIC_DRAW) {
 			void* data_ptr = (void*)data.data();
 			bufferData(sizeof(T) * data.size(), data_ptr);
 		}
