@@ -20,5 +20,6 @@ namespace LOA::Graphics {
 		VBO instance_data;
 		VBO ebo;
 		int max_size;
+		int instances = 0;
 	};
 }

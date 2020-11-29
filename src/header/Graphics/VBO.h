@@ -29,12 +29,21 @@ namespace LOA::Graphics {
 		void bind();
 		void unbind();
 
+		//do not call this before buffer data
+		void bufferOrphan();
 		void bufferData(size_t bytes, void* data, BufferHint hint = BufferHint::STATIC_DRAW);
+		void bufferSubData(size_t offset, size_t bytes, void* data);
 
 		template<typename T>
 		void bufferData(const std::vector<T>& data, BufferHint hint = BufferHint::STATIC_DRAW) {
 			void* data_ptr = (void*)data.data();
 			bufferData(sizeof(T) * data.size(), data_ptr);
+		}
+
+		template<typename T>
+		void bufferSubData(const std::vector<T>& data) {
+			void* data_ptr = (void*)data.data();
+			bufferSubData(0, sizeof(T) * data.size(), data_ptr);
 		}
 
 		GLuint getID() const;

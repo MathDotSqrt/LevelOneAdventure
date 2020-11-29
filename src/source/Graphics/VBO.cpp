@@ -66,9 +66,18 @@ void VBO::unbind() {
 	glBindBuffer(toGL(type), 0);
 }
 
+void VBO::bufferOrphan() {
+	glBufferData(toGL(type), bytes, nullptr, GL_STREAM_DRAW);
+}
+
 void VBO::bufferData(size_t bytes, void* data, BufferHint hint) {
 	glBufferData(toGL(type), bytes, data, toGL(hint));
 	this->bytes = bytes;
+}
+
+void VBO::bufferSubData(size_t offset, size_t bytes, void* data) {
+	assert(bytes <= this->bytes);
+	glBufferSubData(toGL(type), offset, bytes, data);
 }
 
 void VBO::dispose() {

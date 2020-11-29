@@ -26,14 +26,14 @@ void ParticleGenerator::genParticles(int num) {
 	std::uniform_real<float> u_f(-.1f, .1f);
 	std::uniform_int<u8> u_i(0, 255);
 
-	for (int i = 0; i < num && particles.size() <= max_particles; i++) {
+	for (int i = 0; i < num && particles.size() < max_particles; i++) {
 		Particle p;
 		p.pos = glm::vec3(u_f(rng), u_f(rng), u_f(rng));
 		p.vel = glm::vec3(u_f(rng), u_f(rng), u_f(rng));
 		p.color = glm::u8vec4(u_i(rng), u_i(rng), u_i(rng), u_i(rng));
 		p.size = .1f;
 		p.angle = 0;
-		p.life = 10.0f;
+		p.life = 1.0f;
 
 		particles.push_back(p);
 	}

@@ -54,6 +54,6 @@ namespace LOA::Graphics {
 	typedef Attrib<NORMAL_ATTRIB_LOCATION, glm::vec3> NormalAttrib;
 	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::vec3> ColorAttrib;
 
-	typedef Attrib<POSITION_ATTRIB_LOCATION, glm::vec4> PositionSizeAttrib;
+	typedef Attrib<POSITION_SIZE_ATTRIB_LOCATION, glm::vec4> PositionSizeAttrib;
 	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::u8vec4> ParticleColorAttrib;
 }
