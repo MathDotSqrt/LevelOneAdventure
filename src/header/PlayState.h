@@ -4,6 +4,7 @@
 #include "Graphics/Scene.h"
 #include "Util/PackedFreeList.h"
 #include "Engine.h"
+#include "Graphics/ParticleGenerator.h"
 
 namespace LOA {
 	class PlayState {
@@ -15,5 +16,8 @@ namespace LOA {
 	
 	private:
 		Engine engine;
+		Graphics::ParticleGenerator generator;
+		ID id;
+
 	};
 }

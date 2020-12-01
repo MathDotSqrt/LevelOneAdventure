@@ -5,12 +5,13 @@
 #include "Systems/VelocitySystem.h"
 #include "Systems/RenderSystem.h"
 #include "Components.h"
+#include "Window.h"
 
 #include "Graphics/ParticleGenerator.h"
 
 using namespace LOA;
 
-PlayState::PlayState() {
+PlayState::PlayState() : generator(20000){
 	using namespace entt;
 	using namespace Component;
 
@@ -36,15 +37,8 @@ PlayState::PlayState() {
 	}
 	
 	{
-		Graphics::ParticleGenerator generator(1000);
-		
 		Graphics::ParticleMaterial material{0};
-		ID id = scene.createParticleInstance(generator.getMax(), material);
-		auto &system = scene.getParticleSystemInstance(id);
-
-		generator.genParticles(10);
-		generator.update(glm::vec3(0, 0, 0), .016f);
-		system.data.streamData(generator.getRenderData());
+		id = scene.createParticleInstance(generator.getMax(), material);
 	}
 
 	engine.addSystem<Systems::LevelSystem>();
@@ -56,11 +50,20 @@ PlayState::PlayState() {
 }
 
 void PlayState::update(float dt) {
-	//static 
-
 	engine.update(dt);
+	
+	auto camera = engine.getRegistry().view<Component::Camera>()[0];
+	glm::vec3 pos = engine.getRegistry().get<Component::Transformation>(camera).pos;;
+
+	auto& window = Window::getInstance();
+	if (!window.isPressed('p')) {
+		generator.genParticles(20);
+		generator.update(pos, dt / 4);
+	}
 }
 
-void PlayState::render() {
+void PlayState::render() {	
+	auto& system = engine.getScene().getParticleSystemInstance(id);
+	system.data.streamData(generator.getRenderData());
 	engine.render();
 }

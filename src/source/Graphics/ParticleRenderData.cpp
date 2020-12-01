@@ -32,6 +32,8 @@ ParticleRenderData::ParticleRenderData(size_t max_size) :
 }
 
 void ParticleRenderData::streamData(const std::vector<RenderData> &data) {
+	assert(data.size() <= max_size);
+
 	instance_data.bind();
 	instance_data.bufferOrphan();
 	instance_data.bufferSubData(data);

@@ -35,14 +35,19 @@ namespace LOA::Graphics {
 		template<typename T, glm::qualifier Q> struct AttribInfo<glm::vec<3, T, Q>> : AttribType<T>, AttribSize<3> {};
 		template<typename T, glm::qualifier Q> struct AttribInfo<glm::vec<4, T, Q>> : AttribType<T>, AttribSize<4> {};
 	}
+	
+	template<typename T>
+	GLenum getGLType();
 
-	template<u32 LOC, typename T>
+
+	template<u32 LOC, typename T, bool NORMALIZE=false>
 	class Attrib {
 	public:
 		typename typedef T Type;
 		typename typedef Implementation::AttribInfo<T>::ScalarType ScalarType;
 		constexpr static u8 NumComponents = Implementation::AttribInfo<T>::NumComponents;
 		constexpr static u32 Location = LOC;
+		constexpr static bool Normalize = NORMALIZE;
 
 		constexpr static size_t size() {
 			return sizeof(T);
@@ -55,5 +60,5 @@ namespace LOA::Graphics {
 	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::vec3> ColorAttrib;
 
 	typedef Attrib<POSITION_SIZE_ATTRIB_LOCATION, glm::vec4> PositionSizeAttrib;
-	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::u8vec4> ParticleColorAttrib;
+	typedef Attrib<COLOR_ATTRIB_LOCATION, glm::u8vec4, true> ParticleColorAttrib;
 }

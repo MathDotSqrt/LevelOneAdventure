@@ -15,7 +15,6 @@ namespace LOA::Graphics {
 	public:
 		ParticleRenderData(size_t max_size);
 		void streamData(const std::vector<RenderData>& data);
-	private:
 		VAO vao;
 		VBO quad;
 		VBO instance_data;

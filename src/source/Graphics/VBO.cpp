@@ -57,12 +57,12 @@ VBO& VBO::operator=(VBO &&other) noexcept {
 }
 
 
-void VBO::bind() {
+void VBO::bind() const {
 	assert(vboID);
 	glBindBuffer(toGL(type), vboID);
 }
 
-void VBO::unbind() {
+void VBO::unbind() const {
 	glBindBuffer(toGL(type), 0);
 }
 

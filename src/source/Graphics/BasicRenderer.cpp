@@ -32,10 +32,17 @@ void BasicRenderer::prerender(const Scene& scene) {
 		drawList.push_back(renderCall);
 	}
 
+	for (u32 i = 0; i < scene.particleSystemInstances.size(); i++) {
+		const auto& instance = scene.particleSystemInstances[i];
+		const RenderStateKey renderKey{ BlendType::MUL, instance.materialType };
+		const RenderStateKeyValue renderCall{ renderKey, i };
+		drawList.push_back(renderCall);
+	}
+
 	std::sort(drawList.begin(), drawList.end());
 }
 
-void BasicRenderer::setViewPort(const Scene& scene, draw_iterator current) {
+void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
 	auto& window = Window::getInstance();
 	int width = window.getWidth();
 	int height = window.getHeight();
@@ -47,18 +54,49 @@ void BasicRenderer::setViewPort(const Scene& scene, draw_iterator current) {
 	projection = glm::perspective(camera.fov, width / (float)height, camera.near, camera.far);
 }
 
+void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
+	switch (blend) {
+	case BlendType::OPAQUE:
+		glDisable(GL_BLEND);
+		break;
+	case BlendType::ADD:
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		break;
+	case BlendType::MUL:
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
+	default:
+		break;
+	}
+}
+
 void BasicRenderer::render(const Scene &scene) {
 	prerender(scene);
 
 	draw_iterator start = drawList.begin();
 	draw_iterator end = drawList.end();
 
-	setViewPort(scene, start);
+	ViewPort prev_viewport = ViewPort::NUM_VIEW_PORTS;	//dummy
+	BlendType prev_blend = BlendType::NUM_BLEND_TYPES;	//dummy
 
 	while (start != end) {
-		const RenderStateKey key = start->getKey();
-		const MaterialType current_material = key.getMaterialType();
+		RenderStateKey key = start->getKey();
+		
+		ViewPort current_viewport = key.getViewPort();
+		if (prev_viewport != current_viewport) {
+			setViewPort(scene, current_viewport);
+			prev_viewport = current_viewport;
+		}
 
+		BlendType current_blend = key.getBlendType();
+		if (prev_blend != current_blend) {
+			setBlendType(scene, current_blend);
+			prev_blend = current_blend;
+		}
+
+		MaterialType current_material = key.getMaterialType();
 		switch (current_material) {
 		case MaterialType::NORMAL_MATERIAL_ID:
 			start = renderNormal(scene, start, end);
@@ -68,6 +106,9 @@ void BasicRenderer::render(const Scene &scene) {
 			break;
 		case MaterialType::DISSOLVE_MATERIAL_ID:
 			start = renderDissolve(scene, start, end);
+			break;
+		case MaterialType::PARTICLE_MATERIAL_ID:
+			start = renderParticle(scene, start, end);
 			break;
 		default:
 			start++;
@@ -158,7 +199,7 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 		start++;
 	}
 
-	return end;
+	return start;
 }
 
 BasicRenderer::draw_iterator
@@ -211,7 +252,44 @@ BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iter
 		start++;
 	}
 
-	return end;
+	return start;
+}
+
+BasicRenderer::draw_iterator
+BasicRenderer::renderParticle(const Scene &scene, draw_iterator start, draw_iterator end) {
+	if (start == end) {
+		//nothing else to render
+		return end;
+	}
+
+	auto shader = shaders.getShader({ "particle/particle.vert", "particle/particle.frag" });
+	if (!shader) {
+		return end;
+	}
+
+	shader->start();
+	shader->setUniformMat4("P", projection);
+	shader->setUniformMat4("V", scene.mainCamera.transform);
+
+	const RenderStateKey current_state = start->getKey();
+	while (start != end && current_state == start->getKey()) {
+		auto instance_id = start->getValue();
+		auto& particle_system_instances = scene.particleSystemInstances[instance_id];
+		auto& render_data = particle_system_instances.data;
+		auto& transform = particle_system_instances.transform;
+		
+		shader->setUniformMat4("M", transform);
+		
+		render_data.vao.bind();
+		render_data.ebo.bind();
+		auto prim_count = render_data.instances;
+		glDrawElementsInstanced(GL_TRIANGLES, render_data.ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0, prim_count);
+		//glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, prim_count);
+
+		start++;
+	}
+
+	return start;
 }
 
 void BasicRenderer::clearOpenGLState() {

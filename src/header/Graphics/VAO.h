@@ -15,10 +15,10 @@ namespace LOA::Graphics {
 
 		VAO& operator=(VAO&& other);
 
-		void bind();
-		void unbind();
+		void bind() const;
+		void unbind() const;
 
-		void addVertexAttribPtr(u32 ptr, u8 num_components, size_t stride, size_t offset);
+		void addVertexAttribPtr(u32 ptr, u8 num_components, GLenum type, bool normalize, size_t stride, size_t offset);
 		void vertexAttribDivisor(u32 ptr, u32 divisor);
 
 		template<typename ...ATTRIBS>
@@ -46,7 +46,7 @@ namespace LOA::Graphics {
 
 		template<typename ATTRIB, typename ...U>
 		void setInterleavedAttribPointers(size_t stride, size_t offset, u32 divisor) {
-			addVertexAttribPtr(ATTRIB::Location, ATTRIB::NumComponents, stride, offset);
+			addVertexAttribPtr(ATTRIB::Location, ATTRIB::NumComponents, getGLType<ATTRIB::ScalarType>(), ATTRIB::Normalize, stride, offset);
 			vertexAttribDivisor(ATTRIB::Location, divisor);
 			if constexpr (sizeof...(U) > 0) {
 				setInterleavedAttribPointers<U...>(stride, offset + ATTRIB::size(), divisor);

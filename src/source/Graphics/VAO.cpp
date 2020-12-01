@@ -28,17 +28,17 @@ VAO& VAO::operator=(VAO&& other) {
 	return *this;
 }
 
-void VAO::bind() {
+void VAO::bind() const {
 	glBindVertexArray(vaoID);
 }
 
-void VAO::unbind() {
+void VAO::unbind() const {
 	glBindVertexArray(0);
 }
 
-void VAO::addVertexAttribPtr(u32 ptr, u8 num_components, size_t stride, size_t offset) {
+void VAO::addVertexAttribPtr(u32 ptr, u8 num_components, GLenum type, bool normalize, size_t stride, size_t offset) {
 	glEnableVertexAttribArray(ptr);
-	glVertexAttribPointer(ptr, num_components, GL_FLOAT, false, stride, (void*)offset);
+	glVertexAttribPointer(ptr, num_components, type, normalize, stride, (void*)offset);
 }
 
 void VAO::vertexAttribDivisor(u32 ptr, u32 divisor) {

@@ -29,11 +29,11 @@ void ParticleGenerator::genParticles(int num) {
 	for (int i = 0; i < num && particles.size() < max_particles; i++) {
 		Particle p;
 		p.pos = glm::vec3(u_f(rng), u_f(rng), u_f(rng));
-		p.vel = glm::vec3(u_f(rng), u_f(rng), u_f(rng));
-		p.color = glm::u8vec4(u_i(rng), u_i(rng), u_i(rng), u_i(rng));
-		p.size = .1f;
+		p.vel = glm::vec3(u_f(rng) * 40, glm::abs(u_f(rng) * 200) + .1f, u_f(rng) * 40);
+		p.color = glm::u8vec4(u_i(rng), u_i(rng), u_i(rng), 200);
+		p.size = u_f(rng) * 2;
 		p.angle = 0;
-		p.life = 1.0f;
+		p.life = 5.0f;
 
 		particles.push_back(p);
 	}
@@ -51,9 +51,10 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 			particle.camera_dist = -1;
 		}
 	}
+	//sortParticles();
 
 	auto sort_dist = [](const Particle& l, const Particle& r) {
-		return l.camera_dist < r.camera_dist;
+		return l.camera_dist > r.camera_dist;
 	};
 
 	auto find_dead = [](const Particle& p) {
@@ -66,7 +67,7 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 
 	renderData.clear();
 	for (const auto& p : particles) {
-		renderData.push_back({glm::vec4(p.pos, p.size), p.color});
+		renderData.push_back({ glm::vec4(p.pos, p.size), p.color });
 	}
 }
 

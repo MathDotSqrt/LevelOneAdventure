@@ -30,6 +30,11 @@ namespace LOA::Util {
 			return packed_array.at(index_array[id.index].index);
 		}
 
+		T& operator[](u32 index) {
+			assert(index < size());
+			return packed_array.at(index);
+		}
+
 		const T& operator[](u32 index) const {
 			assert(index < size());
 			return packed_array.at(index);

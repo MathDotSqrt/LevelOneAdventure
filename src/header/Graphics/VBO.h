@@ -26,8 +26,8 @@ namespace LOA::Graphics {
 		VBO& operator =(const VBO&) = delete;
 		VBO& operator=(VBO&& other) noexcept;
 
-		void bind();
-		void unbind();
+		void bind() const;
+		void unbind() const;
 
 		//do not call this before buffer data
 		void bufferOrphan();
