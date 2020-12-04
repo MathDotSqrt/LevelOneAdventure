@@ -27,7 +27,7 @@ PlayState::PlayState() : generator(200000){
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		entt::entity fire = registry.create();
 		registry.emplace<Transformation>(fire, glm::vec3(0));
-		registry.emplace<Velocity>(fire, glm::vec3(0, 0, .1f));
+		registry.emplace<Velocity>(fire, glm::vec3(0, 0, 0.0f));
 		registry.emplace<PointLight>(fire, point_light, glm::vec3(.1, .2, 1), 10.0f);
 		registry.emplace<FireParticle>(fire, 100.0f);
 	}

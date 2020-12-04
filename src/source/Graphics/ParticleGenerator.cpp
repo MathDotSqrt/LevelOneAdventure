@@ -1,6 +1,7 @@
 #include "Graphics/ParticleGenerator.h"
 
 #include <glm/gtx/norm.hpp>
+#include <Util/Polar.h>
 #include <assert.h>
 #include <random>
 #include <algorithm>
@@ -24,6 +25,10 @@ void ParticleGenerator::genParticles(float num, glm::vec3 pos) {
 	assert(num < max_particles);
 
 	accum += num;
+	
+	std::uniform_real<float> u_phi(0, glm::pi<float>() * 2);
+	std::uniform_real<float> u_rad(0, .2f);
+	glm::vec3 spherical = glm::vec3(u_phi(rng), u_phi(rng), u_rad(rng));
 
 	std::exponential_distribution u_Y(.7f);
 	std::uniform_real<float> u_X(-.2f, .2f);
@@ -33,8 +38,8 @@ void ParticleGenerator::genParticles(float num, glm::vec3 pos) {
 
 	while (accum > 1 && particles.size() < max_particles) {
 
-		glm::vec3 rand_pos = glm::vec3(u_X(rng), u_X(rng), u_X(rng)) + pos;
-		glm::vec3 rand_vel = glm::vec3(u_X(rng) * 2, u_Y(rng), u_X(rng) * 2);
+		glm::vec3 rand_pos = Util::cartesian(spherical) + pos;
+		glm::vec3 rand_vel = glm::vec3(u_X(rng) * 2, u_Y(rng) + .1f, u_X(rng) * 2);
 		glm::u8vec4 rand_color = glm::u8vec4(u_i(rng), u_i(rng), u_i(rng), 100);
 
 		Particle p;

@@ -45,6 +45,7 @@ set(HEADER_FILES ${HEADER_FILES}
 
 	"src/header/Util/Noise.h"
 	"src/header/Util/PackedFreeList.h"
+	"src/header/Util/Polar.h"
 	"src/header/Util/TransformUtil.h"
 
 	"src/header/common.h"
