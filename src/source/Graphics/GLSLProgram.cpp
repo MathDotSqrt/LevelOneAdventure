@@ -80,6 +80,17 @@ void GLSLProgram::setUniform1f(const std::string& uniform, float f) {
 	}
 }
 
+void GLSLProgram::setUniform2f(const std::string& uniform, const glm::vec2& v) {
+	setUniform2f(uniform, v.x, v.y);
+}
+
+void GLSLProgram::setUniform2f(const std::string& uniform, float x, float y) {
+	const auto loc = getUniformLocation(uniform);
+	if (loc != -1) {
+		glUniform2f(loc, x, y);
+	}
+}
+
 void GLSLProgram::setUniform3f(const std::string& uniform, const glm::vec3& vec3) {
 	setUniform3f(uniform, vec3.x, vec3.y, vec3.z);
 }

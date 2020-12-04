@@ -18,6 +18,18 @@ namespace LOA::Graphics {
 	private:
 		typedef std::vector<RenderStateKeyValue>::const_iterator draw_iterator;
 
+		std::vector<RenderStateKeyValue> drawList;
+		ShaderSet shaders;
+		glm::mat4 projection = glm::identity<glm::mat4>();
+
+		TEX noise3D;
+
+		FBO main;
+		Mesh quad;
+
+		int current_width = 0;
+		int current_height = 0;
+
 		void prerender(const Scene &scene);
 
 		void setViewPort(const Scene &scene, ViewPort viewport);
@@ -35,14 +47,5 @@ namespace LOA::Graphics {
 		void clearOpenGLState();
 		void loadPointLights(const Scene& scene, GLSLProgram &shader);
 		glm::mat4 makeTransform(const glm::vec3& t, const glm::quat& r, const glm::vec3& s) const;
-
-		std::vector<RenderStateKeyValue> drawList;
-		ShaderSet shaders;
-		glm::mat4 projection = glm::identity<glm::mat4>();
-
-		TEX noise3D;
-
-		FBO main;
-		Mesh quad;
 	};
 }

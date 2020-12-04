@@ -29,7 +29,7 @@ PlayState::PlayState() : generator(200000){
 		registry.emplace<Transformation>(fire, glm::vec3(0));
 		registry.emplace<Velocity>(fire, glm::vec3(0, 0, 0));
 		registry.emplace<PointLight>(fire, point_light, glm::vec3(.1, .2, 1), 10.0f);
-		registry.emplace<FireParticle>(fire, 10.0f);
+		registry.emplace<FireParticle>(fire, 100.0f);
 	}
 
 	//Camera 

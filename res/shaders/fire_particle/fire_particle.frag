@@ -30,5 +30,5 @@ void main(){
   vec2 uv = sample_grid(int(f_tex_index));
   float alpha = texture(diffuse, uv).a;
 
-  out_color = vec4(.1, .1, .1, alpha);
+  out_color = vec4(1, .1, .1, alpha / 4);
 }

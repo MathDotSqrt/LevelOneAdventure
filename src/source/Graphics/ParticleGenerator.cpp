@@ -27,6 +27,7 @@ void ParticleGenerator::genParticles(float num, glm::vec3 pos) {
 
 	std::exponential_distribution u_Y(.7f);
 	std::uniform_real<float> u_X(-.2f, .2f);
+	std::uniform_real<float> u_angle(0, 2 * glm::pi<float>());
 	std::uniform_int<u8> u_i(0, 255);
 	std::uniform_int<i32> u_index(0, 3);
 
@@ -41,7 +42,7 @@ void ParticleGenerator::genParticles(float num, glm::vec3 pos) {
 		p.vel = rand_vel;
 		p.color = rand_color;
 		p.size = 1.0f + u_X(rng);
-		p.angle = 0;
+		p.angle = u_angle(rng);
 		p.life = .4f;
 		p.index = u_index(rng);
 
@@ -77,7 +78,7 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 
 	renderData.clear();
 	for (const auto& p : particles) {
-		renderData.push_back({ glm::vec4(p.pos, p.size), p.color, p.index});
+		renderData.push_back({ glm::vec4(p.pos, p.size), p.color, glm::vec2(p.index, p.angle)});
 	}
 }
 

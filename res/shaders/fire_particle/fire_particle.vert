@@ -5,7 +5,7 @@ layout(location=POSITION_ATTRIB_LOCATION) in vec3 v_pos;
 layout(location=TEXCOORD_ATTRIB_LOCATION) in vec2 v_uv;
 layout(location=POSITION_SIZE_ATTRIB_LOCATION) in vec4 v_pos_size;
 layout(location=COLOR_ATTRIB_LOCATION) in vec4 v_color;
-layout(location=TEX_INDEX_ATTRIB_LOCATION) in float v_tex_index;
+layout(location=TEX_INDEX_ATTRIB_LOCATION) in vec2 v_tex_index_angle;
 
 uniform mat4 M;
 uniform mat4 V;
@@ -41,14 +41,41 @@ mat4 billboard(mat4 m, vec3 scale=vec3(1)){
   return m;
 }
 
+mat4 rotateZ(float angle){
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    return mat4(
+      c, -s, 0, 0,
+      s, c, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    );
+}
+
+mat4 rotate(float angle, vec3 axis){
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    return mat4(
+      oc * axis.x * axis.x + c, oc * axis.x * axis.y - axis.z * s, oc * axis.z * axis.x + axis.y * s, 0.0,
+      oc * axis.x * axis.y + axis.z * s, oc * axis.y * axis.y + c, oc * axis.y * axis.z - axis.x * s, 0.0,
+      oc * axis.z * axis.x - axis.y * s, oc * axis.y * axis.z + axis.x * s, oc * axis.z * axis.z + c, 0.0,
+      0.0, 0.0, 0.0, 1.0
+    );
+}
+
 void main(){
   vec3 offset = v_pos_size.xyz;
   float size = v_pos_size.w;
+  float tex_index = v_tex_index_angle.x;
+  float angle = v_tex_index_angle.y;
 
   mat4 MV = V * translate(M, offset);
-	gl_Position = P * billboard(MV, vec3(size)) * vec4(v_pos, 1);
+	gl_Position = P * billboard(MV, vec3(size)) * rotateZ(angle) * vec4(v_pos, 1);
 
   f_uv = v_uv;
   f_color = v_color;
-  f_tex_index = v_tex_index;
+  f_tex_index = tex_index;
 }

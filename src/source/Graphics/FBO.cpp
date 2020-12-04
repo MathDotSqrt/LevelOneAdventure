@@ -55,6 +55,10 @@ void FBO::dispose() {
 }
 
 void FBO::bind() const {
+	bind(this->width, this->height);
+}
+
+void FBO::bind(int width, int height) const {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 	glViewport(0, 0, width, height);
 }

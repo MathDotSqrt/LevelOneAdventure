@@ -25,6 +25,8 @@ namespace LOA::Graphics {
 
 		void setUniform1i(const std::string& uniform, int i);
 		void setUniform1f(const std::string& uniform, float f);
+		void setUniform2f(const std::string& uniform, float x, float y);
+		void setUniform2f(const std::string& uniform, const glm::vec2 &v);
 		void setUniform3f(const std::string& uniform, float x, float y, float z);
 		void setUniform3f(const std::string& uniform, float v[3]);
 		void setUniform3f(const std::string& uniform, const glm::vec3& vec3);

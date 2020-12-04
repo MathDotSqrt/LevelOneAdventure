@@ -21,6 +21,11 @@ BasicRenderer::BasicRenderer() :
 }
 
 void BasicRenderer::prerender(const Scene& scene) {
+	auto& window = Window::getInstance();
+
+	current_width = window.getWidth();
+	current_height = window.getHeight();
+
 	drawList.clear();
 
 	for (u32 i = 0; i < scene.instances.size(); i++) {
@@ -33,7 +38,7 @@ void BasicRenderer::prerender(const Scene& scene) {
 
 	for (u32 i = 0; i < scene.particleSystemInstances.size(); i++) {
 		const auto& instance = scene.particleSystemInstances[i];
-		const RenderStateKey renderKey{ BlendType::ADD, instance.materialType };
+		const RenderStateKey renderKey{ BlendType::MUL, instance.materialType };
 		const RenderStateKeyValue renderCall{ renderKey, i };
 		drawList.push_back(renderCall);
 	}
@@ -42,19 +47,14 @@ void BasicRenderer::prerender(const Scene& scene) {
 }
 
 void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
-	auto& window = Window::getInstance();
-	int width = window.getWidth();
-	int height = window.getHeight();
-
-	main.bind();
+	main.bind(current_width, current_height);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glViewport(0, 0, width, height);
 
 	const PerspectiveCamera camera = scene.mainCamera;
-	projection = glm::perspective(camera.fov, width / (float)height, camera.near, camera.far);
+	projection = glm::perspective(camera.fov, current_width / (float)current_height, camera.near, camera.far);
 }
 
 void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
@@ -69,6 +69,7 @@ void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		break;
 	case BlendType::MUL:
+		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
@@ -79,7 +80,6 @@ void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
 
 void BasicRenderer::render(const Scene &scene) {
 	prerender(scene);
-
 
 	draw_iterator start = drawList.begin();
 	draw_iterator end = drawList.end();
@@ -345,12 +345,15 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 }
 
 void BasicRenderer::renderPostprocess() {
+	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
 	auto &shader = shaders.getShader({"postprocess/pp.vert", "postprocess/pp.frag" });
 	assert(shader);
 
 	shader->start();
+	shader->setUniform2f("fbo_size", main.getWidth(), main.getHeight());
+	shader->setUniform2f("window_size", current_width, current_height);
 	shader->setUniform1i("color_attachment", 0);
 	main.getColorAttachment().bindActiveTexture(0);
 	

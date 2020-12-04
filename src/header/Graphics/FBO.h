@@ -15,6 +15,7 @@ namespace LOA::Graphics {
 		FBO& operator=(FBO&& other);
 
 		void bind() const;
+		void bind(int width, int height) const;
 		void unbind() const;
 
 		int getWidth() const;
