@@ -43,7 +43,7 @@ void ParticleGenerator::genParticles(float num, glm::vec3 pos) {
 		p.color = rand_color;
 		p.size = 1.0f + u_X(rng);
 		p.angle = u_angle(rng);
-		p.life = .4f;
+		p.life = .6f;
 		p.index = u_index(rng);
 
 		particles.push_back(p);
@@ -78,7 +78,7 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 
 	renderData.clear();
 	for (const auto& p : particles) {
-		renderData.push_back({ glm::vec4(p.pos, p.size), p.color, glm::vec2(p.index, p.angle)});
+		renderData.push_back({ glm::vec4(p.pos, p.size), p.color, glm::vec2(p.index, p.angle), p.life});
 	}
 }
 

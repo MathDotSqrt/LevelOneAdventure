@@ -10,6 +10,7 @@ namespace LOA::Graphics {
 		glm::vec4 pos_size;
 		glm::u8vec4 color;
 		glm::vec2 index_angle;
+		glm::f32 life_time;
 	};
 
 	class ParticleRenderData {
