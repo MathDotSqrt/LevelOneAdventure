@@ -41,18 +41,18 @@ TEX& TEX::operator=(TEX&& other) {
 	return *this;
 }
 
-void TEX::bind() {
+void TEX::bind() const{
 	glBindTexture(textureTarget, texID);
 }
 
-void TEX::bindActiveTexture(int unit) {
+void TEX::bindActiveTexture(int unit) const {
 	if (unit >= 0) {
 		glActiveTexture(GL_TEXTURE0 + unit);
 		bind();
 	}
 }
 
-void TEX::unbind() {
+void TEX::unbind() const {
 	glBindTexture(textureTarget, 0);
 }
 
@@ -120,6 +120,14 @@ TEX::Builder& TEX::Builder::unsignedByteType() {
 
 TEX::Builder& TEX::Builder::floatType() {
 	dataType = GL_FLOAT;
+
+	return *this;
+}
+
+
+
+TEX::Builder& TEX::Builder::multisample(GLsizei samples) {
+	this->samples = samples;
 
 	return *this;
 }
@@ -220,6 +228,51 @@ TEX TEX::Builder::buildTexture(std::string filename) {
 	glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, filter);
 
 	stbi_image_free(image);
+
+	glBindTexture(textureTarget, 0);
+
+	return TEX(*this);
+}
+
+TEX TEX::Builder::buildTexture(int width, int height) {
+	textureTarget = samples == 1 ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE;
+
+	int mipmapLevelCount = 0;
+
+	glGenTextures(1, &texID);
+	glBindTexture(textureTarget, texID);
+
+	if (samples == 1) {
+		glTexImage2D(textureTarget, mipmapLevelCount, storage, width, height, 0, components, dataType, nullptr);
+	}
+	else {
+		glTexImage2DMultisample(textureTarget, samples, storage, width, height, GL_TRUE);
+	}
+
+	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, wrapS);
+	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, wrapT);
+	glTexParameterfv(textureTarget, GL_TEXTURE_BORDER_COLOR, bgColor);
+
+	GLenum f;
+
+	if (useMipMap) {
+		glGenerateMipmap(textureTarget);
+
+		u8 bit1 = mipmap == GL_LINEAR;
+		u8 bit2 = filter == GL_LINEAR;
+		switch ((bit2 << 1) | bit1) {
+		case 0x0: f = GL_NEAREST_MIPMAP_NEAREST; break;
+		case 0x1: f = GL_LINEAR_MIPMAP_NEAREST; break;
+		case 0x2: f = GL_NEAREST_MIPMAP_LINEAR; break;
+		case 0x3: f = GL_LINEAR_MIPMAP_LINEAR; break;
+		}
+	}
+	else {
+		f = filter;
+	}
+
+	glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, f);
+	glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, filter);
 
 	glBindTexture(textureTarget, 0);
 

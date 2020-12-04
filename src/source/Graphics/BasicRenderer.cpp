@@ -4,20 +4,20 @@
 #include "common.h"
 #include "Window.h"
 #include "Util/Noise.h"
-
+#include "Graphics/GeometryBuilder.h"
 
 using namespace LOA::Graphics;
 
 
 
-BasicRenderer::BasicRenderer() : 
+BasicRenderer::BasicRenderer() :
 	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_simplex_3D_texture(64, .05)))
-	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f)))
+	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f))),
+	quad(gen_quad2D(2)),
+	main(3440, 1440) {
 
-{
 	glEnable(GL_CULL_FACE);
-
-	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_MULTISAMPLE);
 }
 
 void BasicRenderer::prerender(const Scene& scene) {
@@ -46,24 +46,25 @@ void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
 	int width = window.getWidth();
 	int height = window.getHeight();
 
+	main.bind();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, width, height);
+	//glViewport(0, 0, width, height);
 
 	const PerspectiveCamera camera = scene.mainCamera;
 	projection = glm::perspective(camera.fov, width / (float)height, camera.near, camera.far);
 }
 
 void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(1);
-
-
 	switch (blend) {
 	case BlendType::OPAQUE:
+		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
 		break;
 	case BlendType::ADD:
-		glDepthMask(0);
+		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		break;
@@ -124,6 +125,9 @@ void BasicRenderer::render(const Scene &scene) {
 
 		clearOpenGLState();
 	}
+
+	main.unbind();
+	renderPostprocess();
 
 }
 
@@ -338,6 +342,25 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 	}
 
 	return start;
+}
+
+void BasicRenderer::renderPostprocess() {
+	glDisable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT);
+	auto &shader = shaders.getShader({"postprocess/pp.vert", "postprocess/pp.frag" });
+	assert(shader);
+
+	shader->start();
+	shader->setUniform1i("color_attachment", 0);
+	main.getColorAttachment().bindActiveTexture(0);
+	
+	quad.vao.bind();
+	quad.ebo.bind();
+	
+	glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+	main.getColorAttachment().unbind();
+
+	shader->end();
 }
 
 void BasicRenderer::clearOpenGLState() {

@@ -15,9 +15,9 @@ namespace LOA::Graphics {
 		TEX& operator=(const TEX&) = delete;
 		TEX& operator=(TEX&& other);
 
-		void bind();
-		void bindActiveTexture(int unit);
-		void unbind();
+		void bind() const;
+		void bindActiveTexture(int unit) const;
+		void unbind() const;
 
 		GLuint getTexID() const;
 		int getWidth() const;
@@ -31,6 +31,7 @@ namespace LOA::Graphics {
 			GLuint texID;
 			GLenum textureTarget;
 
+			GLsizei samples = 1;
 			GLenum storage;
 			GLenum components;
 			GLenum dataType;
@@ -55,6 +56,7 @@ namespace LOA::Graphics {
 			Builder& unsignedByteType();
 			Builder& floatType();
 
+			Builder& multisample(GLsizei samples = 4);
 			Builder& repeat();
 			Builder& mirrorRepeat();
 			Builder& clampToEdge();
@@ -66,6 +68,7 @@ namespace LOA::Graphics {
 			Builder& mipmapLinear();
 
 			TEX buildTexture(std::string filename);
+			TEX buildTexture(int width, int height);
 			TEX buildTexture3D(const std::vector<float> &buffer);
 		};
 

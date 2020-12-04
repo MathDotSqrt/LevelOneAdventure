@@ -7,6 +7,7 @@
 #include "Graphics/ShaderSet.h"
 #include "Graphics/Scene.h"
 #include "Graphics/RenderStateKey.h"
+#include "Graphics/FBO.h"
 
 namespace LOA::Graphics {
 	class BasicRenderer {
@@ -29,6 +30,8 @@ namespace LOA::Graphics {
 		draw_iterator renderParticle(const Scene& scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderFireParticle(const Scene& scene, draw_iterator start, draw_iterator end);
 
+		void renderPostprocess();
+
 		void clearOpenGLState();
 		void loadPointLights(const Scene& scene, GLSLProgram &shader);
 		glm::mat4 makeTransform(const glm::vec3& t, const glm::quat& r, const glm::vec3& s) const;
@@ -38,5 +41,8 @@ namespace LOA::Graphics {
 		glm::mat4 projection = glm::identity<glm::mat4>();
 
 		TEX noise3D;
+
+		FBO main;
+		Mesh quad;
 	};
 }

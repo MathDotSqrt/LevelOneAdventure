@@ -17,3 +17,19 @@ Geometry<PositionAttrib, TexcoordAttrib> LOA::Graphics::gen_quad(float width) {
 
 	return geometry;
 }
+
+Geometry<Position2DAttrib, TexcoordAttrib> LOA::Graphics::gen_quad2D(float width) {
+	Geometry<Position2DAttrib, TexcoordAttrib> geometry;
+
+	float h = width / 2;
+
+	geometry.pushVertex(glm::vec2(-h, h), glm::vec2(0, 0));
+	geometry.pushVertex(glm::vec2(-h, -h), glm::vec2(0, 1));
+	geometry.pushVertex(glm::vec2(h, h), glm::vec2(1, 0));
+	geometry.pushVertex(glm::vec2(h, -h), glm::vec2(1, 1));
+
+	geometry.pushTriangle(0, 1, 2);
+	geometry.pushTriangle(2, 1, 3);
+
+	return geometry;
+}
