@@ -81,6 +81,13 @@ TEX::Builder::Builder() {
 	rgb().repeat().nearest().borderColor(1, 0, 1, 1).unsignedByteType();
 }
 
+TEX::Builder& TEX::Builder::a() {
+	components = GL_ALPHA;
+	storage = GL_ALPHA;
+
+	return *this;
+}
+
 TEX::Builder& TEX::Builder::r() {
 	components = GL_RED;
 	//storage = GL_R16F;

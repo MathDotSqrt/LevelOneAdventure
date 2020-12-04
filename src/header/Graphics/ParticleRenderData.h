@@ -6,9 +6,10 @@
 
 namespace LOA::Graphics {
 
-	struct RenderData {
+	struct alignas(4) RenderData {
 		glm::vec4 pos_size;
 		glm::u8vec4 color;
+		glm::f32 index;
 	};
 
 	class ParticleRenderData {

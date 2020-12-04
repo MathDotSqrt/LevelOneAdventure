@@ -2,25 +2,35 @@
 #include "Systems/LevelSystem.h"
 #include "Systems/InputSystem.h"
 #include "Systems/MovementSystem.h"
+#include "Systems/ParticleSystem.h"
 #include "Systems/VelocitySystem.h"
 #include "Systems/RenderSystem.h"
 #include "Components.h"
 #include "Window.h"
 
 #include "Graphics/ParticleGenerator.h"
+#include "Graphics/TEX.h"
 
 using namespace LOA;
 
-PlayState::PlayState() : generator(20000){
+PlayState::PlayState() : generator(200000){
 	using namespace entt;
 	using namespace Component;
 
 	auto& scene = engine.getScene();
-
-	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 0, 0), glm::vec3(.1, .2, 1), 10 });
 	scene.addPointLight(Graphics::PointLight{ glm::vec3(0, 5, -10), glm::vec3(1, .3, .2), 5 });
 
 	auto& registry = engine.getRegistry();
+
+	//Fire
+	{
+		ID point_light = scene.addPointLight(Graphics::PointLight{});
+		entt::entity fire = registry.create();
+		registry.emplace<Transformation>(fire, glm::vec3(0));
+		registry.emplace<Velocity>(fire, glm::vec3(0, 0, 0));
+		registry.emplace<PointLight>(fire, point_light, glm::vec3(.1, .2, 1), 10.0f);
+		registry.emplace<FireParticle>(fire, 10.0f);
+	}
 
 	//Camera 
 	{
@@ -36,12 +46,10 @@ PlayState::PlayState() : generator(20000){
 		registry.emplace<Input>(camera);
 	}
 	
-	{
-		Graphics::ParticleMaterial material{0};
-		id = scene.createParticleInstance(generator.getMax(), material);
-	}
-
 	engine.addSystem<Systems::LevelSystem>();
+	engine.addSystem<Systems::ParticleSystem>();
+
+
 	engine.addSystem<Systems::InputSystem>();
 	engine.addSystem<Systems::MovementSystem>();
 	engine.addSystem<Systems::VelocitySystem>();
@@ -51,19 +59,8 @@ PlayState::PlayState() : generator(20000){
 
 void PlayState::update(float dt) {
 	engine.update(dt);
-	
-	auto camera = engine.getRegistry().view<Component::Camera>()[0];
-	glm::vec3 pos = engine.getRegistry().get<Component::Transformation>(camera).pos;;
-
-	auto& window = Window::getInstance();
-	if (!window.isPressed('p')) {
-		generator.genParticles(20);
-		generator.update(pos, dt / 4);
-	}
 }
 
 void PlayState::render() {	
-	auto& system = engine.getScene().getParticleSystemInstance(id);
-	system.data.streamData(generator.getRenderData());
 	engine.render();
 }

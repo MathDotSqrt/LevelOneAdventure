@@ -27,9 +27,10 @@ GLenum LOA::Graphics::getGLType<u32>() {
 }
 
 template<>
-GLenum LOA::Graphics::getGLType<i64>() {
+GLenum LOA::Graphics::getGLType<i32>() {
 	return GL_INT;
 }
+
 
 template<>
 GLenum LOA::Graphics::getGLType<f32>() {

@@ -27,6 +27,7 @@ namespace LOA::Graphics {
 		draw_iterator renderDissolve(const Scene& scene, draw_iterator start, draw_iterator end);
 
 		draw_iterator renderParticle(const Scene& scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderFireParticle(const Scene& scene, draw_iterator start, draw_iterator end);
 
 		void clearOpenGLState();
 		void loadPointLights(const Scene& scene, GLSLProgram &shader);

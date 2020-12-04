@@ -15,7 +15,6 @@ BasicRenderer::BasicRenderer() :
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f)))
 
 {
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
 	glEnable(GL_MULTISAMPLE);
@@ -34,7 +33,7 @@ void BasicRenderer::prerender(const Scene& scene) {
 
 	for (u32 i = 0; i < scene.particleSystemInstances.size(); i++) {
 		const auto& instance = scene.particleSystemInstances[i];
-		const RenderStateKey renderKey{ BlendType::MUL, instance.materialType };
+		const RenderStateKey renderKey{ BlendType::ADD, instance.materialType };
 		const RenderStateKeyValue renderCall{ renderKey, i };
 		drawList.push_back(renderCall);
 	}
@@ -55,11 +54,16 @@ void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
 }
 
 void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(1);
+
+
 	switch (blend) {
 	case BlendType::OPAQUE:
 		glDisable(GL_BLEND);
 		break;
 	case BlendType::ADD:
+		glDepthMask(0);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		break;
@@ -74,6 +78,7 @@ void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
 
 void BasicRenderer::render(const Scene &scene) {
 	prerender(scene);
+
 
 	draw_iterator start = drawList.begin();
 	draw_iterator end = drawList.end();
@@ -109,6 +114,9 @@ void BasicRenderer::render(const Scene &scene) {
 			break;
 		case MaterialType::PARTICLE_MATERIAL_ID:
 			start = renderParticle(scene, start, end);
+			break;
+		case MaterialType::FIRE_PARTICLE_ID:
+			start = renderFireParticle(scene, start, end);
 			break;
 		default:
 			start++;
@@ -262,7 +270,7 @@ BasicRenderer::renderParticle(const Scene &scene, draw_iterator start, draw_iter
 		return end;
 	}
 
-	auto shader = shaders.getShader({ "particle/particle.vert", "particle/particle.frag" });
+	auto shader = shaders.getShader({ "color_particle/particle.vert", "color_particle/particle.frag" });
 	if (!shader) {
 		return end;
 	}
@@ -284,8 +292,48 @@ BasicRenderer::renderParticle(const Scene &scene, draw_iterator start, draw_iter
 		render_data.ebo.bind();
 		auto prim_count = render_data.instances;
 		glDrawElementsInstanced(GL_TRIANGLES, render_data.ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0, prim_count);
-		//glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, prim_count);
 
+		start++;
+	}
+
+	return start;
+}
+
+BasicRenderer::draw_iterator
+BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_iterator end) {
+	
+	if (start == end) {
+		//nothing else to render
+		return end;
+	}
+
+	auto shader = shaders.getShader({ "fire_particle/fire_particle.vert", "fire_particle/fire_particle.frag" });
+	if (!shader) {
+		return end;
+	}
+
+	shader->start();
+	shader->setUniformMat4("P", projection);
+	shader->setUniformMat4("V", scene.mainCamera.transform);
+
+	const RenderStateKey current_state = start->getKey();
+	while (start != end && current_state == start->getKey()) {
+		auto instance_id = start->getValue();
+		auto& particle_system_instances = scene.particleSystemInstances[instance_id];
+		auto& fire_material = scene.fireParticleMaterials[particle_system_instances.materialID];
+		auto& texture = scene.texCache.handle(fire_material.diffuse_grid);
+		auto& render_data = particle_system_instances.data;
+		auto& transform = particle_system_instances.transform;
+
+		shader->setUniformMat4("M", transform);
+		shader->setUniform1i("diffuse", 0);
+		texture->bindActiveTexture(0);
+
+		render_data.vao.bind();
+		render_data.ebo.bind();
+		auto prim_count = render_data.instances;
+		glDrawElementsInstanced(GL_TRIANGLES, render_data.ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0, prim_count);
+		texture->unbind();
 		start++;
 	}
 

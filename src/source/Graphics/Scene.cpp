@@ -58,6 +58,11 @@ LOA::ID Scene::createParticleInstance(size_t max, ParticleMaterial material) {
 	return particleSystemInstances.insert(ParticleSystemInstance{max, MaterialType::PARTICLE_MATERIAL_ID, id});
 }
 
+LOA::ID Scene::createParticleInstance(size_t max, FireParticleMaterial material) {
+	const auto id = fireParticleMaterials.insert(material);
+	return particleSystemInstances.insert(ParticleSystemInstance{ max, MaterialType::FIRE_PARTICLE_ID, id });
+}
+
 Instance& Scene::getInstance(ID id) {
 	return instances[id];
 }

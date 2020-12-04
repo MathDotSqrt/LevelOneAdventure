@@ -1,8 +1,8 @@
 #include "Graphics/ParticleGenerator.h"
 
 #include <glm/gtx/norm.hpp>
-#include <random>
 #include <assert.h>
+#include <random>
 #include <algorithm>
 #include "common.h"
 
@@ -17,25 +17,36 @@ ParticleGenerator::ParticleGenerator(size_t max) : max_particles(max) {
 
 }
 
-void ParticleGenerator::genParticles(int num) {
+void ParticleGenerator::genParticles(float num, glm::vec3 pos) {
 	static std::mt19937 rng(1337);
 
 	assert(num >= 0);
 	assert(num < max_particles);
-	
-	std::uniform_real<float> u_f(-.1f, .1f);
-	std::uniform_int<u8> u_i(0, 255);
 
-	for (int i = 0; i < num && particles.size() < max_particles; i++) {
+	accum += num;
+
+	std::exponential_distribution u_Y(.7f);
+	std::uniform_real<float> u_X(-.2f, .2f);
+	std::uniform_int<u8> u_i(0, 255);
+	std::uniform_int<i32> u_index(0, 3);
+
+	while (accum > 1 && particles.size() < max_particles) {
+
+		glm::vec3 rand_pos = glm::vec3(u_X(rng), u_X(rng), u_X(rng)) + pos;
+		glm::vec3 rand_vel = glm::vec3(u_X(rng) * 2, u_Y(rng), u_X(rng) * 2);
+		glm::u8vec4 rand_color = glm::u8vec4(u_i(rng), u_i(rng), u_i(rng), 100);
+
 		Particle p;
-		p.pos = glm::vec3(u_f(rng), u_f(rng), u_f(rng));
-		p.vel = glm::vec3(u_f(rng) * 40, glm::abs(u_f(rng) * 200) + .1f, u_f(rng) * 40);
-		p.color = glm::u8vec4(u_i(rng), u_i(rng), u_i(rng), 200);
-		p.size = u_f(rng) * 2;
+		p.pos = rand_pos;
+		p.vel = rand_vel;
+		p.color = rand_color;
+		p.size = 1.0f + u_X(rng);
 		p.angle = 0;
-		p.life = 5.0f;
+		p.life = .4f;
+		p.index = u_index(rng);
 
 		particles.push_back(p);
+		accum -= 1;
 	}
 }
 
@@ -43,7 +54,7 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 	for (auto& particle : particles) {
 		particle.life -= delta;
 		if (particle.life > 0) {
-			particle.vel += glm::vec3(0, -9.81, 0) * delta * .5f;
+			particle.vel += glm::vec3(0, .05f, 0) * delta * .5f;
 			particle.pos += particle.vel * delta;
 			particle.camera_dist = glm::length2(camera_pos - particle.pos);
 		}
@@ -51,7 +62,6 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 			particle.camera_dist = -1;
 		}
 	}
-	//sortParticles();
 
 	auto sort_dist = [](const Particle& l, const Particle& r) {
 		return l.camera_dist > r.camera_dist;
@@ -67,7 +77,7 @@ void ParticleGenerator::update(glm::vec3 camera_pos, float delta) {
 
 	renderData.clear();
 	for (const auto& p : particles) {
-		renderData.push_back({ glm::vec4(p.pos, p.size), p.color });
+		renderData.push_back({ glm::vec4(p.pos, p.size), p.color, p.index});
 	}
 }
 

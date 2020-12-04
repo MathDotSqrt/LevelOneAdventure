@@ -62,4 +62,8 @@ namespace LOA::Component {
 		glm::vec3 color;
 		float intensity;
 	};
+
+	struct FireParticle {
+		float spawn_rate;
+	};
 }

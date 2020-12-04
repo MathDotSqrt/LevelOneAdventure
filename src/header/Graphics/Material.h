@@ -36,6 +36,7 @@ namespace LOA::Graphics {
 		DISSOLVE_MATERIAL_ID,
 
 		PARTICLE_MATERIAL_ID,
+		FIRE_PARTICLE_ID,
 
 		NUM_MATERIAL_ID
 	};
@@ -68,5 +69,14 @@ namespace LOA::Graphics {
 		constexpr static id_type ShaderID = "ParticleShader"_hs;
 
 		entt::id_type diffuse;
+	};
+
+	struct FireParticleMaterial {
+		constexpr static MaterialType Type = MaterialType::FIRE_PARTICLE_ID;
+		constexpr static id_type ShaderID = "FireParticleShader"_hs;
+
+		entt::id_type diffuse_grid;
+		glm::vec3 base_color;
+		glm::vec3 outer_color;
 	};
 }

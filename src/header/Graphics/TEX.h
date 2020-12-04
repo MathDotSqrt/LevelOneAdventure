@@ -47,6 +47,7 @@ namespace LOA::Graphics {
 		public:
 			Builder();
 
+			Builder& a();
 			Builder& r();
 			Builder& rgb();
 			Builder& rgba();

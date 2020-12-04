@@ -21,7 +21,7 @@ ParticleRenderData::ParticleRenderData(size_t max_size) :
 	quad.unbind();
 
 	instance_data.bind();
-	vao.addVertexAttribPtr<PositionSizeAttrib, ParticleColorAttrib>(1);
+	vao.addVertexAttribPtr<PositionSizeAttrib, ParticleColorAttrib, TexIndexAttrib>(1);
 	instance_data.bufferData(sizeof(RenderData) * max_size, nullptr, VBO::BufferHint::STREAM_DRAW);
 	instance_data.unbind();
 

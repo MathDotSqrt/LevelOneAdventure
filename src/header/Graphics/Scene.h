@@ -71,6 +71,7 @@ namespace LOA::Graphics {
 		ID addPointLight(PointLight light);
 
 		ID createParticleInstance(size_t max_particles, ParticleMaterial material);
+		ID createParticleInstance(size_t max_particles, FireParticleMaterial material);
 
 
 		Instance& getInstance(ID id);
@@ -90,6 +91,7 @@ namespace LOA::Graphics {
 		Util::PackedFreeList<BasicLitMaterial> basicLitMaterials;
 		Util::PackedFreeList<DissolveMaterial> dissolveMaterials;
 		Util::PackedFreeList<ParticleMaterial> particleMaterials;
+		Util::PackedFreeList<FireParticleMaterial> fireParticleMaterials;
 		
 		Util::PackedFreeList<ParticleSystemInstance> particleSystemInstances;
 		
