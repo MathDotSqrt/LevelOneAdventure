@@ -29,14 +29,18 @@ vec4 lerp3(vec4 c0, vec4 c1, vec4 c2, float t){
 }
 
 void main(){
-  vec4 c1 = vec4(vec3(219/255.0, 70/255.0, 47/255.0), .7);
-  vec4 c0 = vec4(vec3(255.0/255.0, 183/255.0, 49/255.0), .1);
-  vec4 c2 = vec4(vec3(0, 0, .1), 0);
+  // vec4 c0 = vec4(vec3(255.0/255.0, 183/255.0, 49/255.0), .1);
+  // vec4 c1 = vec4(vec3(219/255.0, 70/255.0, 47/255.0), .7);
+  // vec4 c2 = vec4(vec3(0, 0, .1), 0);
+
+  vec4 c0 = vec4(vec3(1, 1, .0) * 10, .1);
+  vec4 c1 = vec4(vec3(1, 1, .0) * 10, .7);
+  vec4 c2 = vec4(vec3(1, 1, .0) * 10, .0);
 
   vec2 uv = sample_grid(int(f_tex_index));
   float alpha = texture(diffuse, uv).a;
   float t = 1 - f_lifetime / .6;
 
   vec4 mix_color = lerp3(c0, c1, c2, t);
-  out_color = vec4(mix_color.rgb, mix_color.a * alpha);
+  out_color = vec4(mix_color.rgb, alpha * mix_color.a);
 }

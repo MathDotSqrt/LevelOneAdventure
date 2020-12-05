@@ -49,8 +49,6 @@ vec3 calc_light(){
 	}
 
 	diffuse_light_color += ambient_color();
-
-	diffuse_light_color = min(diffuse_light_color, vec3(1));
 	return diffuse_light_color;
 }
 
@@ -80,10 +78,10 @@ void main(){
 	if(noise - u_dissolve < u_offset){
 		float mix_factor = (noise - u_dissolve) / u_offset;
 		vec3 mix_color = mix(u_dissolve_color, f_color, pow(mix_factor, 40));
-		out_color = vec4(toGamma(u_dissolve_color), 1);
+		out_color = vec4(u_dissolve_color, 1);
 	}
 	else{
-		out_color = vec4(toGamma(f_color), 1);
+		out_color = vec4(f_color, 1);
 	}
 
 }

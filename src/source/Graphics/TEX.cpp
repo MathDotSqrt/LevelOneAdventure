@@ -107,6 +107,12 @@ TEX::Builder& TEX::Builder::rgba() {
 	return *this;
 }
 
+TEX::Builder& TEX::Builder::rgb16f() {
+	components = GL_RGB;
+	storage = GL_RGB16F;
+	return *this;
+}
+
 TEX::Builder& TEX::Builder::depth24() {
 	components = GL_DEPTH_COMPONENT;
 	storage = GL_DEPTH_COMPONENT24;

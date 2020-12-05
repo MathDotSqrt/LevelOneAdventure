@@ -10,7 +10,7 @@ using namespace LOA::Graphics;
 FBO::FBO(int width, int height) : 
 	width(width), 
 	height(height), 
-	color(TEX::Builder().rgb().clampToEdge().linear().buildTexture(width, height)),
+	color(TEX::Builder().rgb16f().clampToEdge().linear().buildTexture(width, height)),
 	depth(TEX::Builder().depth24().clampToEdge().linear().buildTexture(width, height)){
 
 	glGenFramebuffers(1, &fboID);

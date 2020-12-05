@@ -52,6 +52,7 @@ namespace LOA::Graphics {
 			Builder& r();
 			Builder& rgb();
 			Builder& rgba();
+			Builder& rgb16f();
 			Builder& depth24();
 			Builder& unsignedByteType();
 			Builder& floatType();

@@ -1,6 +1,8 @@
 #include "postprocess/pp_base.frag"
 #include "math.glsl"
 
+out vec4 out_color;
+
 void main(){
   vec3 tex_color = texture(color_attachment, getUV()).rgb;
 
