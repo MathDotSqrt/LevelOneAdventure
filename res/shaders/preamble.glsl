@@ -10,6 +10,6 @@
 
 #define LIFE_TIME_LOCATION 6
 
-#define MAX_POINT_LIGHTS 4
+#define MAX_POINT_LIGHTS 8
 
 #endif

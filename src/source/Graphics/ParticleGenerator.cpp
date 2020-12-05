@@ -46,7 +46,7 @@ void ParticleGenerator::genParticles(float num, glm::vec3 pos) {
 		p.pos = rand_pos;
 		p.vel = rand_vel;
 		p.color = rand_color;
-		p.size = 1.0f + u_X(rng);
+		p.size = .8f + u_X(rng);
 		p.angle = u_angle(rng);
 		p.life = .6f;
 		p.index = u_index(rng);

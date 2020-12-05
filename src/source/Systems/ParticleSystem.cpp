@@ -18,7 +18,7 @@ void ParticleSystem::init(Engine& engine) {
 
 	Graphics::Scene &scene = engine.getScene();
 	auto settings = Graphics::TEX::Builder().linear().rgba();
-	scene.loadTEX("FireParticle"_hs, settings, "./res/textures/FireParticle.png");
+	scene.loadTEX("FireParticle"_hs, settings, "./res/textures/firebit2.png");
 
 	Graphics::FireParticleMaterial material;
 	material.diffuse_grid = "FireParticle"_hs;

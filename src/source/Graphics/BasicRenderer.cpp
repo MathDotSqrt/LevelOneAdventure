@@ -13,8 +13,7 @@ using namespace LOA::Graphics;
 BasicRenderer::BasicRenderer() :
 	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_simplex_3D_texture(64, .05)))
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f))),
-	quad(gen_quad2D(2)),
-	main(3440, 1440) {
+	postProcess(3440, 1440) {
 
 	glEnable(GL_CULL_FACE);
 	//glEnable(GL_MULTISAMPLE);
@@ -47,7 +46,7 @@ void BasicRenderer::prerender(const Scene& scene) {
 }
 
 void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
-	main.bind(current_width, current_height);
+	postProcess.bindMainViewPort(current_width, current_height);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -126,8 +125,8 @@ void BasicRenderer::render(const Scene &scene) {
 		clearOpenGLState();
 	}
 
-	main.unbind();
-	renderPostprocess();
+	postProcess.unbind();
+	postProcess.renderPostProcess(current_width, current_height);
 
 }
 
@@ -345,25 +344,7 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 }
 
 void BasicRenderer::renderPostprocess() {
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT);
-	auto &shader = shaders.getShader({"postprocess/pp.vert", "postprocess/pp.frag" });
-	assert(shader);
-
-	shader->start();
-	shader->setUniform2f("fbo_size", main.getWidth(), main.getHeight());
-	shader->setUniform2f("window_size", current_width, current_height);
-	shader->setUniform1i("color_attachment", 0);
-	main.getColorAttachment().bindActiveTexture(0);
 	
-	quad.vao.bind();
-	quad.ebo.bind();
-	
-	glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
-	main.getColorAttachment().unbind();
-
-	shader->end();
 }
 
 void BasicRenderer::clearOpenGLState() {

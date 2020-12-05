@@ -7,7 +7,7 @@
 #include "Graphics/ShaderSet.h"
 #include "Graphics/Scene.h"
 #include "Graphics/RenderStateKey.h"
-#include "Graphics/FBO.h"
+#include "Graphics/PostProcessPipeline.h"
 
 namespace LOA::Graphics {
 	class BasicRenderer {
@@ -24,8 +24,7 @@ namespace LOA::Graphics {
 
 		TEX noise3D;
 
-		FBO main;
-		Mesh quad;
+		PostProcessPipeline postProcess;
 
 		int current_width = 0;
 		int current_height = 0;

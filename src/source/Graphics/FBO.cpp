@@ -60,7 +60,21 @@ void FBO::bind() const {
 
 void FBO::bind(int width, int height) const {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboID);
-	glViewport(0, 0, width, height);
+
+	const float fbo_aspect = (float)getWidth() / getHeight();
+	const float aspect = width / (float)height;
+
+	if (width <= getWidth() && height <= getHeight()) {
+		glViewport(0, 0, width, height);
+	}
+	else if(aspect > fbo_aspect) {	//align via width
+		glViewport(0, 0, getWidth(), getWidth() / aspect);
+	}
+	else {	//align via height
+		float a = getHeight() * aspect;
+		float b = getHeight();
+		glViewport(0, 0, getHeight() * aspect, getHeight());
+	}
 }
 
 void FBO::unbind() const {
