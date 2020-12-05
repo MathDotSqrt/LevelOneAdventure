@@ -146,6 +146,20 @@ if(WIN32)
 		$<TARGET_FILE_DIR:${PROJECT_NAME}>)
 endif()
 
+# Create symlink
+function(create_symlink src dest)
+	message("Creating Symlink: ${src} ${dest}")
+
+	if (UNIX)
+		execute_process(COMMAND "${CMAKE_COMMAND}" -E create_symlink "${src}" "${dest}")
+	else()
+		file(TO_NATIVE_PATH "${dest}" _dstDir)
+		file(TO_NATIVE_PATH "${src}" _srcDir)
+		execute_process(COMMAND cmd.exe /c mklink /J "${_dstDir}" "${_srcDir}")
+	endif()
+endfunction(create_symlink)
+
+create_symlink("${CMAKE_CURRENT_SOURCE_DIR}/res/" "${CMAKE_CURRENT_BINARY_DIR}/res/")
 
 # Scan through resource folder for updated files and copy if none existing or changed
 set(RES_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/res")
@@ -158,7 +172,7 @@ foreach(resource ${resources})
 	file(RELATIVE_PATH rel_path ${RES_FILE_PATH} ${dir})
  
 	set(output "${CMAKE_CURRENT_BINARY_DIR}/res/${rel_path}/${filename}")
-	message("OUTPUT_NAME ${output}")
+	# message("OUTPUT_NAME ${output}")
 	add_custom_command(
 		COMMENT "Moving updated resource-file '${filename}'"
 		OUTPUT ${output}
@@ -167,7 +181,7 @@ foreach(resource ${resources})
 		${resource}
 		${output}
 	)
-	add_custom_target(${filename} ALL DEPENDS ${resource} ${output})
+	# add_custom_target(${filename} ALL DEPENDS ${resource} ${output})
  
 endforeach()
 
