@@ -28,32 +28,32 @@ void PostProcessPipeline::renderPostProcess(int width, int height) {
 
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
-	{
-		blurX.bind(width, height);
-		auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp_filter.frag" });
-		shader->start();
-		renderStage(width, height, mainViewPort, *shader);
-		shader->end();
-		blurX.unbind();
-	}
+	//{
+	//	blurX.bind(width, height);
+	//	auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp_filter.frag" });
+	//	shader->start();
+	//	renderStage(width, height, mainViewPort, *shader);
+	//	shader->end();
+	//	blurX.unbind();
+	//}
 
-	{
-		blurY.bind(width, height);
-		auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp_blurY.frag" });
-		shader->start();
-		renderStage(450, 360, blurX, *shader);
-		shader->end();
-		blurY.unbind();
-	}
+	//{
+	//	blurY.bind(width, height);
+	//	auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp_blurX.frag" });
+	//	shader->start();
+	//	renderStage(450, 360, blurX, *shader);
+	//	shader->end();
+	//	blurY.unbind();
+	//}
 
-	{
-		final.bind(width, height);
-		auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp_blurX.frag" });
-		shader->start();
-		renderStage(450, 360, blurY, *shader);
-		shader->end();
-		final.unbind();
-	}
+	//{
+	//	final.bind(width, height);
+	//	auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp_blurY.frag" });
+	//	shader->start();
+	//	renderStage(450, 360, blurY, *shader);
+	//	shader->end();
+	//	final.unbind();
+	//}
 
 	{
 		auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp.frag" });
@@ -69,8 +69,8 @@ void PostProcessPipeline::renderPostProcess(int width, int height) {
 void PostProcessPipeline::renderStage(int width, int height, const FBO &fbo, GLSLProgram &shader) {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	shader.setUniform2f("fbo_size", fbo.getWidth(), fbo.getHeight());
-	shader.setUniform2f("window_size", width, height);
+	shader.setUniform2f("color_attachment_size.fbo_size", fbo.getWidth(), fbo.getHeight());
+	shader.setUniform2f("color_attachment_size.window_size", width, height);
 	shader.setUniform1i("color_attachment", 0);
 	fbo.getColorAttachment().bindActiveTexture(0);
 

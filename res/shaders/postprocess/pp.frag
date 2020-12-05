@@ -3,5 +3,5 @@
 uniform sampler2D blur;
 
 void main(){
-  out_color = texture(color_attachment, getUV());
+  out_color = texture(color_attachment, getUV(color_attachment_size));
 }
