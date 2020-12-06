@@ -38,7 +38,7 @@ vec3 point_color(PointLight light){
 }
 
 vec3 ambient_color(){
-	return vec3(.6, .3, 1) * .01;
+	return vec3(1) * .1;
 }
 
 vec3 calc_light(){
@@ -73,7 +73,7 @@ void main(){
 	}
 
 	vec3 diffuse_texture = pow(texture(diffuse, f_uv).rgb, vec3(2.2));
-	vec3 f_color = diffuse_texture * calc_light();
+	vec3 f_color = diffuse_texture * calc_light() * 1;
 
 	if(noise - u_dissolve < u_offset){
 		float mix_factor = (noise - u_dissolve) / u_offset;

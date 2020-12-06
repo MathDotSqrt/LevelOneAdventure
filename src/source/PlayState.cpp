@@ -28,7 +28,7 @@ PlayState::PlayState() : generator(2000){
 		entt::entity fire = registry.create();
 		registry.emplace<Transformation>(fire, glm::vec3(0));
 		registry.emplace<Velocity>(fire, glm::vec3(0, 0, 0));
-		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 1.0f);
+		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 10.0f);
 		registry.emplace<FireParticle>(fire, 100.0f);
 	}
 

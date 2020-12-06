@@ -24,14 +24,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void internal_focus_callback(GLFWwindow* window, int focused) {
-    if (focused) {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        has_focus = true;
-    }
-    else {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        has_focus = false;
-    }
+    //if (focused) {
+    //    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //    has_focus = true;
+    //}
+    //else {
+    //    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    //    has_focus = false;
+    //}
 }
 
 void internal_mouse_callback(GLFWwindow* window, int button, int action, int mods) {
