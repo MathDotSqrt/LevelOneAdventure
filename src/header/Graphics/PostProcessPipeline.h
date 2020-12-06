@@ -12,7 +12,7 @@ namespace LOA::Graphics {
 		void bindMainViewPort(int current_width, int current_height) const;
 		void unbind() const;
 
-		void renderPostProcess(int current_width, int current_height);
+		void renderPostProcess(ShaderSet &shaders, int current_width, int current_height);
 		void renderStage(int width, int height, const FBO& fbo, GLSLProgram &shader);
 	private:
 		FBO mainViewPort;
@@ -21,9 +21,6 @@ namespace LOA::Graphics {
 		FBO final;
 
 		Mesh quad;
-
-		ShaderSet shaders;
-
 
 	};
 }

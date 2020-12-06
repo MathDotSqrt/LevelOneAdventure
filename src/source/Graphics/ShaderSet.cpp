@@ -181,11 +181,11 @@ GLuint create_shader(const std::string& shader) {
 }
 
 std::shared_ptr<GLSLProgram>
-create_program(const std::vector<std::string>& shaders) {
+create_program(const std::string &vert, const std::string &frag) {
 	assert(shaders.size() >= 2);
 
-	GLSLProgram::VertexID vertex = create_shader(shaders[0]);
-	GLSLProgram::FragmentID fragment = create_shader(shaders[1]);
+	GLSLProgram::VertexID vertex = create_shader(vert);
+	GLSLProgram::FragmentID fragment = create_shader(frag);
 
 	if (vertex == 0 || fragment == 0) {
 		glDeleteShader(vertex);
@@ -204,23 +204,46 @@ create_program(const std::vector<std::string>& shaders) {
 }
 
 std::shared_ptr<GLSLProgram>
-ShaderSet::getShader(const std::vector<std::string>& shaders) {
-	const auto name = get_program_name(shaders);
+ShaderLoader::load(const std::string& vert, const std::string &frag) const {
 
-	const auto it = shaderSet.find(name);
-	if (it == shaderSet.end()) {
-		std::cout << "Creating program: " << name << "\n";
-
-		auto program = create_program(shaders);
-
-		if (!program) {
-			std::cerr << "Failed to create program: " << name << "\n";
-			return nullptr;
-		}
-
-		shaderSet[name] = program;
-		return program;
+	std::cout << "Creating program: " << vert << " | " << frag << "\n";
+	auto program = create_program(vert, frag);
+	if (!program) {
+		std::cerr << "Failed to create program\n";
+		return nullptr;
 	}
 
-	return it->second;
+	return program;
 }
+
+entt::resource_handle<GLSLProgram>
+ShaderSet::get(entt::id_type id) {
+	return cache.handle(id);
+}
+
+entt::resource_handle<GLSLProgram>
+ShaderSet::load(entt::id_type id, std::string vert, std::string frag) {
+	return cache.load<ShaderLoader>(id, vert, frag);
+}
+
+//std::shared_ptr<GLSLProgram>
+//ShaderSet::getShader(const std::vector<std::string>& shaders) {
+//	const auto name = get_program_name(shaders);
+//
+//	const auto it = shaderSet.find(name);
+//	if (it == shaderSet.end()) {
+//		std::cout << "Creating program: " << name << "\n";
+//
+//		auto program = create_program(shaders);
+//
+//		if (!program) {
+//			std::cerr << "Failed to create program: " << name << "\n";
+//			return nullptr;
+//		}
+//
+//		shaderSet[name] = program;
+//		return program;
+//	}
+//
+//	return it->second;
+//}

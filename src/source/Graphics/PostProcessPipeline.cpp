@@ -1,6 +1,7 @@
 #include "Graphics/PostProcessPipeline.h"
 #include "Graphics/GeometryBuilder.h"
 #include "GL/glew.h"
+#include "entt/core/hashed_string.hpp"
 
 #include <iostream>
 
@@ -23,7 +24,9 @@ void PostProcessPipeline::unbind() const {
 	mainViewPort.unbind();
 }
 
-void PostProcessPipeline::renderPostProcess(int width, int height) {
+void PostProcessPipeline::renderPostProcess(ShaderSet &shaders, int width, int height) {
+	using namespace entt;
+	
 	mainViewPort.unbind();
 
 	glDisable(GL_BLEND);
@@ -56,7 +59,7 @@ void PostProcessPipeline::renderPostProcess(int width, int height) {
 	//}
 
 	{
-		auto& shader = shaders.getShader({ "postprocess/pp.vert", "postprocess/pp.frag" });
+		auto& shader = shaders.get("FinalPP"_hs);
 		shader->start();
 		//shader->setUniform1i("blur", 1);
 		//blurY.getColorAttachment().bindActiveTexture(1);

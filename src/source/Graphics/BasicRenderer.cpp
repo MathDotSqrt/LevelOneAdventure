@@ -15,7 +15,16 @@ BasicRenderer::BasicRenderer() :
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f))),
 	postProcess(3440, 1440) {
 
+	using namespace entt;
+
 	glEnable(GL_CULL_FACE);
+	
+	shaders.load(NormalMaterial::ShaderID, "normal/normal.vert", "normal/normal.frag");
+	shaders.load(BasicLitMaterial::ShaderID, "basic_lit/basic_lit.vert", "basic_lit/basic_lit.frag");
+	shaders.load(DissolveMaterial::ShaderID, "dissolve_lit/dissolve_lit.vert", "dissolve_lit/dissolve_lit.frag");
+	shaders.load(ParticleMaterial::ShaderID, "color_particle/particle.vert", "color_particle/particle.frag");
+	shaders.load(FireParticleMaterial::ShaderID, "fire_particle/fire_particle.vert", "fire_particle/fire_particle.frag");
+	shaders.load("FinalPP"_hs, "postprocess/pp.vert", "postprocess/pp.frag");
 	//glEnable(GL_MULTISAMPLE);
 }
 
@@ -126,7 +135,7 @@ void BasicRenderer::render(const Scene &scene) {
 	}
 
 	postProcess.unbind();
-	postProcess.renderPostProcess(current_width, current_height);
+	postProcess.renderPostProcess(shaders, current_width, current_height);
 
 }
 
@@ -136,7 +145,7 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 		return end;
 	}
 
-	auto shader = shaders.getShader({ "normal/normal.vert", "normal/normal.frag" });
+	auto shader = shaders.get(NormalMaterial::ShaderID);
 	if (!shader) {
 		return end;
 	}
@@ -173,7 +182,7 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 		return end;
 	}
 
-	auto shader = shaders.getShader({ "basic_lit/basic_lit.vert", "basic_lit/basic_lit.frag" });
+	auto shader = shaders.get(BasicLitMaterial::ShaderID);
 	if (!shader) {
 		return end;
 	}
@@ -220,7 +229,7 @@ BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iter
 		return end;
 	}
 
-	auto shader = shaders.getShader({ "dissolve_lit/dissolve_lit.vert", "dissolve_lit/dissolve_lit.frag" });
+	auto shader = shaders.get(DissolveMaterial::ShaderID);
 	if (!shader) {
 		return end;
 	}
@@ -273,7 +282,7 @@ BasicRenderer::renderParticle(const Scene &scene, draw_iterator start, draw_iter
 		return end;
 	}
 
-	auto shader = shaders.getShader({ "color_particle/particle.vert", "color_particle/particle.frag" });
+	auto shader = shaders.get(ParticleMaterial::ShaderID);
 	if (!shader) {
 		return end;
 	}
@@ -310,7 +319,7 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 		return end;
 	}
 
-	auto shader = shaders.getShader({ "fire_particle/fire_particle.vert", "fire_particle/fire_particle.frag" });
+	auto shader = shaders.get(FireParticleMaterial::ShaderID);
 	if (!shader) {
 		return end;
 	}
