@@ -38,14 +38,14 @@ vec3 point_color(PointLight light){
 }
 
 vec3 ambient_color(){
-	return vec3(1) * .01;
+	return vec3(1) * .05;
 }
 
 vec3 calc_light(){
 	vec3 diffuse_light_color = vec3(0);
 
 	for(int i = 0; i < u_num_point_lights; i++){
-		diffuse_light_color += point_color(u_point_lights[i]) * .2;
+		diffuse_light_color += point_color(u_point_lights[i]);
 	}
 
 	diffuse_light_color += ambient_color();

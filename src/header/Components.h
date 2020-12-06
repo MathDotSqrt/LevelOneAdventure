@@ -37,11 +37,13 @@ namespace LOA::Component {
 		float forward = 0;
 		float strafe = 0;
 		float fly = 0;
+		bool fire = false;
 		glm::vec2 rotate = glm::vec2(0);
 	};
 
 	struct Input {
 		glm::vec2 lastCursorPos = glm::vec2(0);
+		bool lastFire = false;
 	};
 
 	struct Camera {

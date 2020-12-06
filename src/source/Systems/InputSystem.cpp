@@ -49,6 +49,11 @@ void InputSystem::update(Engine& engine, float delta) {
 		if (window.isPressed(Window::Keys::LEFT_SHIFT))
 			movement.fly -= 1;
 
+		if (window.isPressed('p')) {
+			movement.fire = !input.lastFire;
+		}
+		input.lastFire = window.isPressed('p');
+
 		glm::vec2 delta = pos - input.lastCursorPos;
 
 		movement.rotate = -delta;

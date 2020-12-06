@@ -46,6 +46,10 @@ LOA::ID Scene::addInstance(entt::id_type meshID, DissolveMaterial material) {
 	return instances.insert(Instance(meshCache.handle(meshID), MaterialType::DISSOLVE_MATERIAL_ID, id));
 }
 
+LOA::ID Scene::addPointLight() {
+	return addPointLight(PointLight{});
+}
+
 LOA::ID Scene::addPointLight(PointLight light) {
 	if (pointLights.size() < MAX_POINT_LIGHTS)
 		return pointLights.insert(light);

@@ -25,6 +25,13 @@ glm::mat4 makeViewTransform(const Component::Transformation& transform) {
 	return transformation;
 }
 
+void RenderSystem::init(Engine& engine) {
+	auto& registry = engine.getRegistry();
+	
+
+	//registry.on_construct<Component::PointLight>().connect();
+}
+
 void RenderSystem::update(Engine &engine, float delta) {
 	using namespace Component;
 

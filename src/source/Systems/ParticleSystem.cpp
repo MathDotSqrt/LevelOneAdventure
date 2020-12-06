@@ -38,9 +38,9 @@ void ParticleSystem::update(Engine& engine, float dt) {
 
 		for (auto entity : view) {
 			auto& particle = view.get<FireParticle>(entity);
-			auto& pos = view.get<Transformation>(entity).pos;
+			auto& transform = view.get<Transformation>(entity);
 
-			fireGenerator.genParticles(particle.spawn_rate * dt, pos);
+			fireGenerator.genParticles(particle.spawn_rate * dt, transform.pos);
 		}
 	}
 

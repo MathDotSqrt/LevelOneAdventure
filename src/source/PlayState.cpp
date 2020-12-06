@@ -26,31 +26,10 @@ PlayState::PlayState() : generator(2000){
 	{
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		entt::entity fire = registry.create();
-		registry.emplace<Transformation>(fire, glm::vec3(0));
-		registry.emplace<Velocity>(fire, glm::vec3(0, 0, 0));
-		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 10.0f);
+		registry.emplace<Transformation>(fire, glm::vec3(0), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(0, 0, 1)));
+		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 2.0f);
 		registry.emplace<FireParticle>(fire, 100.0f);
 	}
-
-	////Fire2
-	//{
-	//	ID point_light = scene.addPointLight(Graphics::PointLight{});
-	//	entt::entity fire = registry.create();
-	//	registry.emplace<Transformation>(fire, glm::vec3(0));
-	//	registry.emplace<Velocity>(fire, glm::vec3(-1, 0, .5f));
-	//	registry.emplace<PointLight>(fire, point_light, glm::vec3(.1, .1, .1), 10.0f);
-	//	registry.emplace<FireParticle>(fire, 100.0f);
-	//}
-
-	////Fire3
-	//{
-	//	ID point_light = scene.addPointLight(Graphics::PointLight{});
-	//	entt::entity fire = registry.create();
-	//	registry.emplace<Transformation>(fire, glm::vec3(0));
-	//	registry.emplace<Velocity>(fire, glm::vec3(-1, 0, 1.0f));
-	//	registry.emplace<PointLight>(fire, point_light, glm::vec3(.1, .1, .1), 10.0f);
-	//	registry.emplace<FireParticle>(fire, 100.0f);
-	//}
 
 	//Camera 
 	{
@@ -62,7 +41,7 @@ PlayState::PlayState() : generator(2000){
 		registry.emplace<Camera>(camera, glm::radians(80.0f), 1.0f, .01f, 1000.0f);
 		registry.emplace<Direction>(camera, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		registry.emplace<MovementState>(camera);
-		registry.emplace<PointLight>(camera, camera_light, glm::vec3(1, .3, .2) * .4f, .5f);
+		//registry.emplace<PointLight>(camera, camera_light, glm::vec3(1, .3, .2) * .4f, 1.0f);
 		registry.emplace<Input>(camera);
 	}
 	

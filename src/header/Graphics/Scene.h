@@ -68,6 +68,7 @@ namespace LOA::Graphics {
 		ID addInstance(entt::id_type meshID, BasicLitMaterial material);
 		ID addInstance(entt::id_type meshID, DissolveMaterial material);
 
+		ID addPointLight();
 		ID addPointLight(PointLight light);
 
 		ID createParticleInstance(size_t max_particles, ParticleMaterial material);
