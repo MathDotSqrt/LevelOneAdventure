@@ -24,3 +24,6 @@ Graphics::Scene& Engine::getScene() {
 	return scene;
 }
 
+Graphics::BasicRenderer& Engine::getRenderer() {
+	return renderer;
+}

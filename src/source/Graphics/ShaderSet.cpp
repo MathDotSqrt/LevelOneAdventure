@@ -182,8 +182,6 @@ GLuint create_shader(const std::string& shader) {
 
 std::shared_ptr<GLSLProgram>
 create_program(const std::string &vert, const std::string &frag) {
-	assert(shaders.size() >= 2);
-
 	GLSLProgram::VertexID vertex = create_shader(vert);
 	GLSLProgram::FragmentID fragment = create_shader(frag);
 
@@ -216,6 +214,11 @@ ShaderLoader::load(const std::string& vert, const std::string &frag) const {
 	return program;
 }
 
+std::shared_ptr<GLSLProgram>
+ShaderLoader::load(std::shared_ptr<GLSLProgram> program) const {
+	return program;
+}
+
 entt::resource_handle<GLSLProgram>
 ShaderSet::get(entt::id_type id) {
 	return cache.handle(id);
@@ -223,7 +226,31 @@ ShaderSet::get(entt::id_type id) {
 
 entt::resource_handle<GLSLProgram>
 ShaderSet::load(entt::id_type id, std::string vert, std::string frag) {
-	return cache.load<ShaderLoader>(id, vert, frag);
+	auto handle = cache.load<ShaderLoader>(id, vert, frag);
+	if (handle) {
+		loadedFiles.insert(vert);
+		loadedFiles.insert(frag);
+		loadedShaders[id] = std::make_pair(vert, frag);
+	}
+	
+	return handle;
+}
+
+void ShaderSet::reload(std::string shaderFile) {
+	for (auto& key_value : loadedShaders) {
+		const auto shaderID = key_value.first;
+		const auto& value = key_value.second;
+
+		const auto& vert = value.first;
+		const auto& frag = value.second;
+		if (vert == shaderFile || frag == shaderFile) {
+			auto program = create_program(vert, frag);
+			if (program) {
+				std::cout << "Reload\n";
+				cache.reload<ShaderLoader>(shaderID, program);
+			}
+		}
+	}
 }
 
 //std::shared_ptr<GLSLProgram>

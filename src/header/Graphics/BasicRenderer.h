@@ -9,9 +9,15 @@
 #include "Graphics/RenderStateKey.h"
 #include "Graphics/PostProcessPipeline.h"
 
+namespace LOA::Systems {
+	class ShaderSystem;
+}
+
 namespace LOA::Graphics {
 	class BasicRenderer {
 	public:
+		friend class LOA::Systems::ShaderSystem;
+
 		BasicRenderer();
 		void render(const Scene &scene);
 

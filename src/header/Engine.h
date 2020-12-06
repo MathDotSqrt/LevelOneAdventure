@@ -26,6 +26,7 @@ namespace LOA {
 
 		entt::registry& getRegistry();
 		Graphics::Scene& getScene();
+		Graphics::BasicRenderer& getRenderer();
 
 	private:
 		entt::registry registry;

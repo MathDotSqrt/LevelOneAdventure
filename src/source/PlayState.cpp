@@ -5,6 +5,7 @@
 #include "Systems/ParticleSystem.h"
 #include "Systems/VelocitySystem.h"
 #include "Systems/RenderSystem.h"
+#include "Systems/ShaderSystem.h"
 #include "Components.h"
 #include "Window.h"
 
@@ -67,6 +68,7 @@ PlayState::PlayState() : generator(2000){
 	
 	engine.addSystem<Systems::LevelSystem>();
 	engine.addSystem<Systems::ParticleSystem>();
+	engine.addSystem<Systems::ShaderSystem>();
 
 
 	engine.addSystem<Systems::InputSystem>();
