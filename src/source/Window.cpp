@@ -8,6 +8,8 @@ using namespace LOA;
 
 Window* Window::singleton = nullptr;
 
+bool has_focus = true;
+
 void error_callback(int error, const char* description) {
     fputs(description, stderr);
 }
@@ -15,22 +17,27 @@ void error_callback(int error, const char* description) {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     //if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     //    glfwSetWindowShouldClose(window, GL_TRUE);
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        has_focus = false;
+    }
 }
 
 void internal_focus_callback(GLFWwindow* window, int focused) {
     if (focused) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        has_focus = true;
     }
     else {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        has_focus = false;
     }
 }
 
 void internal_mouse_callback(GLFWwindow* window, int button, int action, int mods) {
     if (action == GLFW_PRESS) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        has_focus = true;
     }
 }
 
@@ -113,7 +120,8 @@ bool Window::shouldClose() const {
 
 glm::vec2 Window::getMousePos() const {
     static double x, y;
-    glfwGetCursorPos(window, &x, &y);
+    if(has_focus)
+        glfwGetCursorPos(window, &x, &y);
     return glm::vec2(x, y);
 }
 

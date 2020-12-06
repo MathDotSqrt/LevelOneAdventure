@@ -252,25 +252,3 @@ void ShaderSet::reload(std::string shaderFile) {
 		}
 	}
 }
-
-//std::shared_ptr<GLSLProgram>
-//ShaderSet::getShader(const std::vector<std::string>& shaders) {
-//	const auto name = get_program_name(shaders);
-//
-//	const auto it = shaderSet.find(name);
-//	if (it == shaderSet.end()) {
-//		std::cout << "Creating program: " << name << "\n";
-//
-//		auto program = create_program(shaders);
-//
-//		if (!program) {
-//			std::cerr << "Failed to create program: " << name << "\n";
-//			return nullptr;
-//		}
-//
-//		shaderSet[name] = program;
-//		return program;
-//	}
-//
-//	return it->second;
-//}
