@@ -13,7 +13,7 @@ using namespace LOA::Graphics;
 BasicRenderer::BasicRenderer() :
 	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_simplex_3D_texture(64, .05)))
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f))),
-	postProcess(3440, 1440) {
+	postProcess(shaders, 3440, 1440) {
 
 	using namespace entt;
 
@@ -24,7 +24,6 @@ BasicRenderer::BasicRenderer() :
 	shaders.load(DissolveMaterial::ShaderID, "dissolve_lit/dissolve_lit.vert", "dissolve_lit/dissolve_lit.frag");
 	shaders.load(ParticleMaterial::ShaderID, "color_particle/particle.vert", "color_particle/particle.frag");
 	shaders.load(FireParticleMaterial::ShaderID, "fire_particle/fire_particle.vert", "fire_particle/fire_particle.frag");
-	shaders.load("FinalPP"_hs, "postprocess/pp.vert", "postprocess/pp.frag");
 	//glEnable(GL_MULTISAMPLE);
 }
 

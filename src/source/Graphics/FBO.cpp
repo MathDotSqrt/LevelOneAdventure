@@ -61,20 +61,8 @@ void FBO::bind() const {
 void FBO::bind(int width, int height) const {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
-	const float fbo_aspect = (float)getWidth() / getHeight();
-	const float aspect = width / (float)height;
-
-	if (width <= getWidth() && height <= getHeight()) {
-		glViewport(0, 0, width, height);
-	}
-	else if(aspect > fbo_aspect) {	//align via width
-		glViewport(0, 0, getWidth(), getWidth() / aspect);
-	}
-	else {	//align via height
-		float a = getHeight() * aspect;
-		float b = getHeight();
-		glViewport(0, 0, getHeight() * aspect, getHeight());
-	}
+	glm::vec2 size = getActualSize(glm::vec2(width, height));
+	glViewport(0, 0, size.x, size.y);
 }
 
 void FBO::unbind() const {
@@ -82,6 +70,26 @@ void FBO::unbind() const {
 
 	auto& window = Window::getInstance();
 	glViewport(0, 0, window.getWidth(), window.getHeight());
+}
+
+glm::vec2 FBO::getActualSize(glm::vec2 window_size) const {
+	const float width = window_size.x;
+	const float height = window_size.y;
+
+	const float fbo_aspect = (float)getWidth() / getHeight();
+	const float aspect = width / (float)height;
+
+	if (width <= getWidth() && height <= getHeight()) {
+		return glm::vec2(window_size);
+	}
+	else if (aspect > fbo_aspect) {	//align via width
+		return glm::vec2(getWidth(), getWidth() / aspect);
+	}
+	else {	//align via height
+		float a = getHeight() * aspect;
+		float b = getHeight();
+		return glm::vec2(getHeight() * aspect, getHeight());
+	}
 }
 
 int FBO::getWidth() const {

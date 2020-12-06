@@ -1,7 +1,7 @@
 #include "postprocess/pp_base.frag"
 
-uniform sampler2D blur;
-
+uniform fbo_attachment_size blur_attachment_size;
+uniform sampler2D blur_attachment;
 out vec4 out_color;
 
 vec3 tonemapFilmic(vec3 x) {
@@ -31,11 +31,12 @@ vec3 exposure(vec3 color, float exposure){
 }
 
 void main(){
+  vec3 blur_color = texture(blur_attachment, getUV(blur_attachment_size)).rgb;
   vec3 hdr_color = texture(color_attachment, getUV(color_attachment_size)).rgb;
 
   //vec3 mapped = hdr_color / (hdr_color + vec3(1));
 
   //out_color = vec4(exposure(hdr_color, 5), 1);
-  out_color = vec4(unreal(hdr_color), 1);
+  out_color = vec4(unreal(hdr_color + blur_color * .7), 1);
 
 }

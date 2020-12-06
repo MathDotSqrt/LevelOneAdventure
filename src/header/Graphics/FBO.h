@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "Graphics/TEX.h"
+#include <glm/glm.hpp>
 
 namespace LOA::Graphics {
 	class FBO {
@@ -17,6 +18,8 @@ namespace LOA::Graphics {
 		void bind() const;
 		void bind(int width, int height) const;
 		void unbind() const;
+
+		glm::vec2 getActualSize(glm::vec2 window_size) const;
 
 		int getWidth() const;
 		int getHeight() const;

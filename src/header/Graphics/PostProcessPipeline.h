@@ -7,7 +7,7 @@
 namespace LOA::Graphics {
 	class PostProcessPipeline {
 	public:
-		PostProcessPipeline(int max_width, int max_height);
+		PostProcessPipeline(ShaderSet &shaders, int max_width, int max_height);
 
 		void bindMainViewPort(int current_width, int current_height) const;
 		void unbind() const;
