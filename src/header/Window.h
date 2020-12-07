@@ -6,6 +6,13 @@
 struct GLFWwindow;
 
 namespace LOA {
+
+	//free functions for glfw's c style callbacks
+	void key_callback(GLFWwindow*, int, int, int, int);
+	void internal_focus_callback(GLFWwindow*, int);
+	void internal_mouse_callback(GLFWwindow*, int, int, int);
+	void internal_scroll_callback(GLFWwindow*, double, double);
+
 	class Window {
 	public:
 		enum class Keys {
@@ -14,28 +21,45 @@ namespace LOA {
 			ESC
 		};
 
+		enum class Mouse {
+			RIGHT_CLICK,
+			LEFT_CLICK
+		};
+
+
 		static Window& createInstance(int width, int height, std::string title);
 		static Window& getInstance();
 		static void destroyInstance();
 
-		void update() const;
+		void update();
 
 		bool isPressed(char c) const;
 		bool isPressed(Keys keys) const;
+		bool isClick(Mouse mouse) const;
 		bool shouldClose() const;
 
 		glm::vec2 getMousePos() const;
+		float getScrollDelta() const;
 
 		int getWidth() const;
 		int getHeight() const;
+
+		//allow access to window private variables
+		friend void key_callback(GLFWwindow*, int, int, int, int);
+		friend void internal_focus_callback(GLFWwindow*, int);
+		friend void internal_mouse_callback(GLFWwindow*, int, int, int);
+		friend void internal_scroll_callback(GLFWwindow*, double, double);
 
 	private:
 		static Window* singleton;
 		GLFWwindow* window;
 		int width;
 		int height;
+		float scrollDelta = 0;
+		bool hasFocus = true;
 		bool isMouseDisabled;
 
 		Window(int width, int height, std::string title);
+	
 	};
 }

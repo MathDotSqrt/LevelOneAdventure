@@ -3,6 +3,10 @@
 #include "Engine.h"
 #include "Components.h"
 
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/intersect.hpp>
+#include <assert.h>
+
 using namespace LOA;
 using namespace LOA::Systems;
 
@@ -13,6 +17,13 @@ glm::quat remove_pitch_rot(glm::quat rot) {
 
 	return glm::quat(eular);
 }
+
+glm::quat look_at(glm::vec3 target, glm::vec3 source, glm::vec3 up) {
+	glm::vec3 dir = normalize(target - source);
+	up = glm::normalize(up);
+	assert(glm::abs(glm::dot(dir, up)) < .999);
+	return glm::quatLookAt(dir, up);
+}	
 
 void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	using namespace Component;
@@ -36,12 +47,12 @@ void MovementSystem::update(Engine& engine, float delta) {
 	auto& registry = engine.getRegistry();
 
 	//camera fly controls
-	auto camera_view = registry.view<Transformation, MovementState, Direction, Velocity, Camera>();
-	for (auto entity : camera_view) {
-		auto& transform = camera_view.get<Transformation>(entity);
-		auto& movement = camera_view.get<MovementState>(entity);
-		auto& dir = camera_view.get<Direction>(entity);
-		auto& vel = camera_view.get<Velocity>(entity);
+	auto fly_camera_view = registry.view<Transformation, MovementState, Direction, Velocity, Camera>();
+	for (auto entity : fly_camera_view) {
+		auto& transform = fly_camera_view.get<Transformation>(entity);
+		auto& movement = fly_camera_view.get<MovementState>(entity);
+		auto& dir = fly_camera_view.get<Direction>(entity);
+		auto& vel = fly_camera_view.get<Velocity>(entity);
 		glm::quat pitch = glm::angleAxis(movement.rotate.y / 500.0f, dir.right);
 		glm::quat yaw = glm::angleAxis(movement.rotate.x / 500.0f, dir.up);
 
@@ -66,10 +77,10 @@ void MovementSystem::update(Engine& engine, float delta) {
 	//player movement controls
 	auto player_view = registry.view<Transformation, MovementState, Direction, Velocity>(entt::exclude<Camera>);
 	for (auto entity : player_view) {
-		auto& transform = camera_view.get<Transformation>(entity);
-		auto& movement = camera_view.get<MovementState>(entity);
-		auto& dir = camera_view.get<Direction>(entity);
-		auto& vel = camera_view.get<Velocity>(entity);
+		auto& transform = player_view.get<Transformation>(entity);
+		auto& movement = player_view.get<MovementState>(entity);
+		auto& dir = player_view.get<Direction>(entity);
+		auto& vel = player_view.get<Velocity>(entity);
 
 
 		glm::vec3 forward = camera_transform.rot * camera_dir.up;
@@ -87,4 +98,44 @@ void MovementSystem::update(Engine& engine, float delta) {
 		}
 	}
 
+
+
+	//Camera Follow
+	auto camera_follow_view = registry.view<Transformation, Direction, Camera, Input>();
+	for (auto entity : camera_follow_view) {
+		auto& transform = camera_follow_view.get<Transformation>(entity);
+		auto& dir = camera_follow_view.get<Direction>(entity);
+		auto& camera = camera_follow_view.get<Camera>(entity);
+		auto& input = camera_follow_view.get<Input>(entity);
+		if (!registry.valid(camera.player)) {
+			continue;
+		}
+		auto& player_transform = registry.get<Transformation>(camera.player);
+		auto& player_dir = registry.get<Direction>(camera.player);
+		
+
+		////Follow Char
+		//{
+		//	glm::vec3 plane_origin = player_transform.pos;
+		//	float distance = 0;
+		//	bool intersected = glm::intersectRayPlane(transform.pos, transform.rot * dir.forward, plane_origin, glm::vec3(0, 1, 0), distance);
+		//	assert(intersected);
+
+		//	glm::vec3 floor_pos = transform.pos + glm::normalize(transform.rot * dir.forward) * distance;
+
+		//	glm::vec3 delta = player_transform.pos - floor_pos;
+		//	transform.pos += delta;
+		//}
+
+		//camera.phi += .01f;
+
+		camera.phi = glm::min(camera.phi, glm::pi<float>() / 2.5f);
+		camera.distance = camera.phi * 20;
+
+		glm::quat pitch = glm::angleAxis(camera.phi, dir.right);
+		glm::quat theta = glm::angleAxis(camera.theta, dir.up);
+
+		transform.pos = theta * (pitch * dir.forward * camera.distance) + player_transform.pos;
+		transform.rot = look_at(player_transform.pos, transform.pos, dir.up);
+	}
 }

@@ -34,19 +34,7 @@ PlayState::PlayState(){
 		registry.emplace<FireParticle>(fire, 100.0f);
 	}
 
-	//Camera 
-	{
-		ID camera_light = scene.addPointLight(Graphics::PointLight{});
-
-		camera = registry.create();
-		registry.emplace<Transformation>(camera, glm::vec3(-2.5, 10, 10), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(-1, 0, 0)));
-		registry.emplace<Velocity>(camera, glm::vec3(0, 0, 0));
-		registry.emplace<Camera>(camera, glm::radians(80.0f), 1.0f, .01f, 1000.0f);
-		registry.emplace<Direction>(camera, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
-		//registry.emplace<MovementState>(camera);
-		//registry.emplace<PointLight>(camera, camera_light, glm::vec3(1, .3, .2) * .4f, 1.0f);
-		registry.emplace<Input>(camera);
-	}
+	
 
 	//Player
 	{
@@ -54,13 +42,27 @@ PlayState::PlayState(){
 		ID cubeID = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
 
 		player = registry.create();
-		registry.emplace<Transformation>(player);
+		registry.emplace<Transformation>(player, glm::vec3(0, -1, 0));
 		registry.emplace<Velocity>(player, glm::vec3(0, 0, 0));
 		registry.emplace<Direction>(player, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		registry.emplace<MovementState>(player);
 		registry.emplace<Input>(player);
 		registry.emplace<Renderable>(player, cubeID);
 
+	}
+
+	//Camera 
+	{
+		ID camera_light = scene.addPointLight(Graphics::PointLight{});
+
+		camera = registry.create();
+		registry.emplace<Transformation>(camera, glm::vec3(-2.5, 10, 10), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(-1, 0, 0)));
+		registry.emplace<Velocity>(camera, glm::vec3(0, 0, 0));
+		registry.emplace<Camera>(camera, glm::radians(80.0f), 1.0f, .01f, 1000.0f, player);
+		registry.emplace<Direction>(camera, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+		//registry.emplace<MovementState>(camera);
+		//registry.emplace<PointLight>(camera, camera_light, glm::vec3(1, .3, .2) * .4f, 1.0f);
+		registry.emplace<Input>(camera);
 	}
 	
 	engine.addSystem<Systems::LevelSystem>();
@@ -70,8 +72,9 @@ PlayState::PlayState(){
 
 	engine.addSystem<Systems::InputSystem>();
 	engine.addSystem<Systems::MovementSystem>();
-	engine.addSystem<Systems::VelocitySystem>();
 	engine.addSystem<Systems::RenderSystem>();
+
+	engine.addSystem<Systems::VelocitySystem>();
 
 }
 

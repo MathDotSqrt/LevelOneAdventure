@@ -3,27 +3,26 @@
 #include <cctype>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 using namespace LOA;
 
 Window* Window::singleton = nullptr;
 
-bool has_focus = true;
-
 void error_callback(int error, const char* description) {
     fputs(description, stderr);
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+static void LOA::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     //if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     //    glfwSetWindowShouldClose(window, GL_TRUE);
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        has_focus = false;
+        Window::getInstance().hasFocus = false;
     }
 }
 
-void internal_focus_callback(GLFWwindow* window, int focused) {
+static void LOA::internal_focus_callback(GLFWwindow* window, int focused) {
     //if (focused) {
     //    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     //    has_focus = true;
@@ -34,11 +33,15 @@ void internal_focus_callback(GLFWwindow* window, int focused) {
     //}
 }
 
-void internal_mouse_callback(GLFWwindow* window, int button, int action, int mods) {
+static void LOA::internal_mouse_callback(GLFWwindow* window, int button, int action, int mods) {
     if (action == GLFW_PRESS) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        has_focus = true;
+        Window::getInstance().hasFocus = true;
     }
+}
+
+static void LOA::internal_scroll_callback(GLFWwindow* window, double x, double y) {
+    Window::getInstance().scrollDelta = y;
 }
 
 Window& Window::createInstance(int width, int height, std::string title) {
@@ -82,7 +85,7 @@ Window::Window(int width, int height, std::string title) : width(width), height(
     glfwSetKeyCallback(window, key_callback);
     glfwSetWindowFocusCallback(window, internal_focus_callback);
     glfwSetMouseButtonCallback(window, internal_mouse_callback);
-
+    glfwSetScrollCallback(window, LOA::internal_scroll_callback);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPos(window, 0, 0);
@@ -92,7 +95,8 @@ Window::Window(int width, int height, std::string title) : width(width), height(
 
 }
 
-void Window::update() const {
+void Window::update() {
+    scrollDelta = 0;
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
@@ -102,6 +106,7 @@ bool Window::isPressed(char c) const {
 }
 
 bool Window::isPressed(Keys key) const {
+
     switch (key) {
     case Keys::LEFT_SHIFT:
         return GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
@@ -114,15 +119,30 @@ bool Window::isPressed(Keys key) const {
     }
 }
 
+bool Window::isClick(Mouse mouse) const {
+    switch (mouse) {
+    case Mouse::LEFT_CLICK:
+        return GLFW_PRESS == glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    case Mouse::RIGHT_CLICK:
+        return GLFW_PRESS == glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+    default:
+        return false;
+    }
+}
+
 bool Window::shouldClose() const {
     return glfwWindowShouldClose(window);
 }
 
 glm::vec2 Window::getMousePos() const {
     static double x, y;
-    if(has_focus)
+    if(hasFocus)
         glfwGetCursorPos(window, &x, &y);
     return glm::vec2(x, y);
+}
+
+float Window::getScrollDelta() const {
+    return scrollDelta;
 }
 
 int Window::getWidth() const {

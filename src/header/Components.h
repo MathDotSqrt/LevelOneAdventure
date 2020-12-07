@@ -51,6 +51,13 @@ namespace LOA::Component {
 		float aspect;
 		float near;
 		float far;
+
+		entt::entity player;
+
+
+		float theta = 0;
+		float phi = glm::pi<float>() / 4;
+		float distance = 10;
 	};
 
 	struct Dissolve {

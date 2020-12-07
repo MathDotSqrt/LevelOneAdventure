@@ -60,4 +60,15 @@ void InputSystem::update(Engine& engine, float delta) {
 
 		input.lastCursorPos = pos;
 	}
+
+	auto camera_view = registry.view<Input, Camera>();
+	for (auto entity : camera_view) {
+		auto& input = camera_view.get<Input>(entity);
+		auto& camera = camera_view.get<Camera>(entity);
+		
+		camera.distance += window.getScrollDelta() / 1.0f;
+		camera.phi += window.getScrollDelta() / 10;
+		camera.theta -= window.isClick(Window::Mouse::RIGHT_CLICK) ? (pos.x - input.lastCursorPos.x) / 200 : 0;
+		input.lastCursorPos = pos;
+	}
 }
