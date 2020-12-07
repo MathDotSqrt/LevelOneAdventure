@@ -33,17 +33,15 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 
 void MovementSystem::update(Engine& engine, float delta) {
 	using namespace Component;
-
 	auto& registry = engine.getRegistry();
-	auto view = registry.view<Transformation, MovementState, Direction, Velocity>();
-	for (auto entity : view) {
-		auto& transform = view.get<Transformation>(entity);
-		auto& movement = view.get<MovementState>(entity);
-		auto& dir = view.get<Direction>(entity);
-		auto& vel = view.get<Velocity>(entity);
 
-		
-
+	//camera fly controls
+	auto camera_view = registry.view<Transformation, MovementState, Direction, Velocity, Camera>();
+	for (auto entity : camera_view) {
+		auto& transform = camera_view.get<Transformation>(entity);
+		auto& movement = camera_view.get<MovementState>(entity);
+		auto& dir = camera_view.get<Direction>(entity);
+		auto& vel = camera_view.get<Velocity>(entity);
 		glm::quat pitch = glm::angleAxis(movement.rotate.y / 500.0f, dir.right);
 		glm::quat yaw = glm::angleAxis(movement.rotate.x / 500.0f, dir.up);
 
@@ -60,4 +58,33 @@ void MovementSystem::update(Engine& engine, float delta) {
 			spawnFireball(engine, transform.pos, new_rot * dir.forward);
 		}
 	}
+
+	auto camera = registry.view<Transformation, Direction, Camera>().front();
+	auto& camera_transform = registry.get<Transformation>(camera);
+	auto& camera_dir = registry.get<Direction>(camera);
+
+	//player movement controls
+	auto player_view = registry.view<Transformation, MovementState, Direction, Velocity>(entt::exclude<Camera>);
+	for (auto entity : player_view) {
+		auto& transform = camera_view.get<Transformation>(entity);
+		auto& movement = camera_view.get<MovementState>(entity);
+		auto& dir = camera_view.get<Direction>(entity);
+		auto& vel = camera_view.get<Velocity>(entity);
+
+
+		glm::vec3 forward = camera_transform.rot * camera_dir.up;
+		forward.y = 0;
+		forward = glm::normalize(forward);
+
+		glm::vec3 right = camera_transform.rot * camera_dir.right;
+		right = glm::normalize(right);
+
+		vel = -10.0f * forward * movement.forward + 10.0f * right * movement.strafe;
+
+
+		if (movement.fire) {
+			spawnFireball(engine, transform.pos, transform.rot * dir.forward);
+		}
+	}
+
 }

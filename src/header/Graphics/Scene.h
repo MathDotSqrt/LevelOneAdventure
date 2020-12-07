@@ -60,7 +60,7 @@ namespace LOA::Graphics {
 		MeshCache meshCache;
 		TEXCache texCache;
 
-		entt::resource_handle<Mesh> loadMesh(entt::id_type meshID, std::string path, glm::vec3 offset=glm::vec3(0));
+		entt::resource_handle<Mesh> loadMesh(entt::id_type meshID, std::string path, glm::vec3 offset = glm::vec3(0));
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, std::string path);
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, TEX::Builder settings, std::string path);
 

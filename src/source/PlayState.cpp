@@ -11,6 +11,7 @@
 
 #include "Graphics/ParticleGenerator.h"
 #include "Graphics/TEX.h"
+#include "Graphics/GeometryBuilder.h"
 
 using namespace LOA;
 
@@ -19,6 +20,8 @@ PlayState::PlayState(){
 	using namespace Component;
 
 	auto& scene = engine.getScene();
+
+	
 
 	auto& registry = engine.getRegistry();
 
@@ -35,14 +38,29 @@ PlayState::PlayState(){
 	{
 		ID camera_light = scene.addPointLight(Graphics::PointLight{});
 
-		entt::entity camera = registry.create();
-		registry.emplace<Transformation>(camera, glm::vec3(0, 0, 0));
+		camera = registry.create();
+		registry.emplace<Transformation>(camera, glm::vec3(-2.5, 10, 10), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(-1, 0, 0)));
 		registry.emplace<Velocity>(camera, glm::vec3(0, 0, 0));
 		registry.emplace<Camera>(camera, glm::radians(80.0f), 1.0f, .01f, 1000.0f);
 		registry.emplace<Direction>(camera, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
-		registry.emplace<MovementState>(camera);
+		//registry.emplace<MovementState>(camera);
 		//registry.emplace<PointLight>(camera, camera_light, glm::vec3(1, .3, .2) * .4f, 1.0f);
 		registry.emplace<Input>(camera);
+	}
+
+	//Player
+	{
+		scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
+		ID cubeID = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
+
+		player = registry.create();
+		registry.emplace<Transformation>(player);
+		registry.emplace<Velocity>(player, glm::vec3(0, 0, 0));
+		registry.emplace<Direction>(player, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+		registry.emplace<MovementState>(player);
+		registry.emplace<Input>(player);
+		registry.emplace<Renderable>(player, cubeID);
+
 	}
 	
 	engine.addSystem<Systems::LevelSystem>();
@@ -58,6 +76,21 @@ PlayState::PlayState(){
 }
 
 void PlayState::update(float dt) {
+	auto& window = Window::getInstance();
+
+	if (window.isPressed('t') && !swap) {
+		auto& registry = engine.getRegistry();
+		if (registry.has<Component::MovementState>(camera)) {
+			registry.remove<Component::MovementState>(camera);
+			registry.emplace<Component::MovementState>(player);
+		}
+		else{
+			registry.emplace<Component::MovementState>(camera);
+			registry.remove<Component::MovementState>(player);
+		}
+	}
+	swap = window.isPressed('t');
+
 	engine.update(dt);
 }
 
