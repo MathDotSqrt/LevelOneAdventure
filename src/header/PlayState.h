@@ -16,8 +16,6 @@ namespace LOA {
 	
 	private:
 		Engine engine;
-		Graphics::ParticleGenerator generator;
-		ID id;
 
 	};
 }

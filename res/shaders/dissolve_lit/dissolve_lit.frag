@@ -26,6 +26,11 @@ uniform vec3 u_dissolve_color = vec3(1, 1, 1);
 uniform sampler3D noise;
 uniform sampler2D diffuse;
 
+vec3 to_linear(vec3 color){
+	const float gamma = 2.2;
+	return pow(color, vec3(gamma));
+}
+
 vec3 point_color(PointLight light){
 	float dist = length(light.pos - f_world_pos);
 	vec3 light_dir = normalize(light.pos - f_world_pos);
@@ -33,12 +38,12 @@ vec3 point_color(PointLight light){
 	d = max(d * light.intensity, 0);
 
 	float attenuation = 1 / pow(dist, 2);
-	vec3 light_color = light.color * d * attenuation;
+	vec3 light_color = to_linear(light.color) * d * attenuation;
 	return light_color;
 }
 
 vec3 ambient_color(){
-	return vec3(1) * .05;
+	return to_linear(vec3(1)) * .05;
 }
 
 vec3 calc_light(){
@@ -52,10 +57,6 @@ vec3 calc_light(){
 	return diffuse_light_color;
 }
 
-vec3 toGamma(vec3 linear_color){
-	vec3 gamma = pow(linear_color, vec3(1/2.2));
-	return gamma;
-}
 
 float sampleNoise(vec3 pos){
 	float value = texture(noise, pos * .01).r * 2/4;
@@ -72,13 +73,13 @@ void main(){
 		discard;
 	}
 
-	vec3 diffuse_texture = pow(texture(diffuse, f_uv).rgb, vec3(2.2));
+	vec3 diffuse_texture = to_linear(texture(diffuse, f_uv).rgb);
 	vec3 f_color = diffuse_texture * calc_light() * 1;
 
 	if(noise - u_dissolve < u_offset){
 		float mix_factor = (noise - u_dissolve) / u_offset;
 		vec3 mix_color = mix(u_dissolve_color, f_color, pow(mix_factor, 40));
-		out_color = vec4(u_dissolve_color, 1);
+		out_color = vec4(to_linear(u_dissolve_color), 1);
 	}
 	else{
 		out_color = vec4(f_color, 1);

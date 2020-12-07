@@ -14,7 +14,7 @@
 
 using namespace LOA;
 
-PlayState::PlayState() : generator(2000){
+PlayState::PlayState(){
 	using namespace entt;
 	using namespace Component;
 
@@ -27,7 +27,7 @@ PlayState::PlayState() : generator(2000){
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		entt::entity fire = registry.create();
 		registry.emplace<Transformation>(fire, glm::vec3(0), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(0, 0, 1)));
-		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 2.0f);
+		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 5.0f);
 		registry.emplace<FireParticle>(fire, 100.0f);
 	}
 

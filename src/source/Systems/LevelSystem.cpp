@@ -23,7 +23,7 @@ ID loadRoom(Engine &engine, entt::id_type model, entt::id_type tex, glm::ivec2 l
 	
 	auto& registry = engine.getRegistry();
 	auto entity = registry.create();
-	registry.emplace<Component::Dissolve>(entity, 0.0f, .05f, glm::vec3(.4f, .2f, .6f));
+	registry.emplace<Component::Dissolve>(entity, 0.0f, .05f, glm::vec3(.7f, .4f, .1f));
 	registry.emplace<Component::Renderable>(entity, id);
 	
 	return id;
