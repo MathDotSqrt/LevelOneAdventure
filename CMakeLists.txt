@@ -48,6 +48,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Util/Noise.h"
 	"src/header/Util/PackedFreeList.h"
 	"src/header/Util/Polar.h"
+	"src/header/Util/Timer.h"
 	"src/header/Util/TransformUtil.h"
 
 	"src/header/common.h"
@@ -86,6 +87,7 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Systems/VelocitySystem.cpp"
 
 	"src/source/Util/Noise.cpp"
+	"src/source/Util/Timer.cpp"
 	"src/source/Util/TransformUtil.cpp"
 
 	"src/source/Engine.cpp"

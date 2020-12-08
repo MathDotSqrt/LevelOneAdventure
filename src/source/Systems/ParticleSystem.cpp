@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "entt/entt.hpp"
 #include "Components.h"
+#include "Util/Timer.h"
 
 //Design: 
 //Many potential generators: compute vel and pos given component transform
@@ -29,6 +30,8 @@ void ParticleSystem::init(Engine& engine) {
 
 void ParticleSystem::update(Engine& engine, float dt) {
 	using namespace Component;
+
+	Util::Timer timer("ParticleSystem");
 
 	auto& registry = engine.getRegistry();
 

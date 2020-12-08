@@ -45,13 +45,24 @@ void LevelSystem::init(Engine &engine) {
 	scene.loadTEX("demo_diffuse"_hs, "res/models/demo_room/room.png");
 	scene.loadTEX("thirsty_diffuse"_hs, "res/models/thirsty_room/thirsty_room.png");
 
-	loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(0, 0), 0);
-	loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(-1, 0), 1);
-	loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(-1, 1), 2);
-	loadRoom(engine, "thirsty_room"_hs, "thirsty_diffuse"_hs, glm::ivec2(0, 1), 3);
-	loadRoom(engine, "thirsty_room"_hs, "thirsty_diffuse"_hs, glm::ivec2(0, 2), 2);
-	loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(1, 2), 2);
-	loadRoom(engine, "thirsty_room"_hs, "thirsty_diffuse"_hs, glm::ivec2(0, 3), 4);
+	//loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(0, 0), 0);
+	//loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(-1, 0), 1);
+	//loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(-1, 1), 2);
+	//loadRoom(engine, "thirsty_room"_hs, "thirsty_diffuse"_hs, glm::ivec2(0, 1), 3);
+	//loadRoom(engine, "thirsty_room"_hs, "thirsty_diffuse"_hs, glm::ivec2(0, 2), 2);
+	//loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(1, 2), 2);
+	//loadRoom(engine, "thirsty_room"_hs, "thirsty_diffuse"_hs, glm::ivec2(0, 3), 4);
+
+	for (int i = -10; i <= 10; i++) {
+		for (int j = -10; j <= 10; j++) {
+			if ((int)(pow(i + 3 * j, 1.1)) % 2 == 0) {
+				loadRoom(engine, "boss_room"_hs, "boss_diffuse"_hs, glm::ivec2(i, j), (i + j) % 4);
+			}
+			else {
+				loadRoom(engine, "thirsty_room"_hs, "thirsty_diffuse"_hs, glm::ivec2(i, j), (3 * i + 7 * j) % 4);
+			}
+		}
+	}
 }
 
 void LevelSystem::update(Engine& engine, float delta) {

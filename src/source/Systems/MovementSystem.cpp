@@ -129,7 +129,7 @@ void MovementSystem::update(Engine& engine, float delta) {
 
 		//camera.phi += .01f;
 
-		camera.phi = glm::min(camera.phi, glm::pi<float>() / 2.5f);
+		camera.phi = glm::max(glm::min(camera.phi, glm::pi<float>() / 2.5f), 0.1f);
 		camera.distance = camera.phi * 20;
 
 		glm::quat pitch = glm::angleAxis(camera.phi, dir.right);

@@ -1,6 +1,7 @@
 #include "Systems/RenderSystem.h"
 #include "Engine.h"
 #include "Components.h"
+#include "Util/Timer.h"
 
 using namespace LOA;
 using namespace LOA::Systems;
@@ -34,6 +35,8 @@ void RenderSystem::init(Engine& engine) {
 
 void RenderSystem::update(Engine &engine, float delta) {
 	using namespace Component;
+
+	Util::Timer timer("RenderSystem");
 
 	auto& scene = engine.getScene();
 	auto& registry = engine.getRegistry();

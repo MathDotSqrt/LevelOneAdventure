@@ -13,6 +13,8 @@
 #include "Graphics/TEX.h"
 #include "Graphics/GeometryBuilder.h"
 
+#include "Util/Timer.h"
+
 using namespace LOA;
 
 PlayState::PlayState(){
@@ -38,6 +40,7 @@ PlayState::PlayState(){
 
 	//Player
 	{
+		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
 		ID cubeID = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
 
@@ -48,6 +51,7 @@ PlayState::PlayState(){
 		registry.emplace<MovementState>(player);
 		registry.emplace<Input>(player);
 		registry.emplace<Renderable>(player, cubeID);
+		registry.emplace<PointLight>(player, point_light, glm::vec3(.5, .3, .1), 5.0f);
 
 	}
 
@@ -67,8 +71,8 @@ PlayState::PlayState(){
 	
 	engine.addSystem<Systems::LevelSystem>();
 	engine.addSystem<Systems::ParticleSystem>();
-	engine.addSystem<Systems::ShaderSystem>();
 
+	engine.addSystem<Systems::ShaderSystem>();
 
 	engine.addSystem<Systems::InputSystem>();
 	engine.addSystem<Systems::MovementSystem>();

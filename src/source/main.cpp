@@ -8,6 +8,7 @@
 #include "common.h"
 #include "PlayState.h"
 #include "Window.h"
+#include "Util/Timer.h"
 
 
 using namespace glm;
@@ -26,17 +27,26 @@ int main(void) {
         std::cout << "FATAL\n";
     }
 
-    float t = 0;
 
+    int count = 0;
     LOA::PlayState state;
-
+    auto& manager = LOA::Util::TimerManager::getInstance();
     while (!window.shouldClose()) {
-        state.update(1/60.0f);
-        state.render();
-
+        {
+            LOA::Util::Timer timer("Main");
+            state.update(1 / 60.0f);
+            state.render();
+        }
+        
         window.update();
 
-        t += .01f;
+        if (count >= 60) {
+            manager.display();
+            count -= 60;
+        }
+        manager.clear();
+
+        count++;
     }
 
     LOA::Window::destroyInstance();

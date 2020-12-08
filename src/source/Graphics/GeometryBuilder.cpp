@@ -52,8 +52,8 @@ Geometry<PositionAttrib, TexcoordAttrib, NormalAttrib> LOA::Graphics::gen_cube(f
 			pos[component] = sign * h;
 
 			glm::vec2 tex;
-			tex[first] = 0;
-			tex[second] = 0;
+			tex[0] = 0;
+			tex[1] = 0;
 
 			glm::vec3 norm(0);
 			norm[component] = sign;
@@ -68,8 +68,8 @@ Geometry<PositionAttrib, TexcoordAttrib, NormalAttrib> LOA::Graphics::gen_cube(f
 			pos[component] = sign * h;
 
 			glm::vec2 tex;
-			tex[first] = 0;
-			tex[second] = 1;
+			tex[0] = 0;
+			tex[1] = 1;
 
 			glm::vec3 norm(0);
 			norm[component] = sign;
@@ -84,8 +84,8 @@ Geometry<PositionAttrib, TexcoordAttrib, NormalAttrib> LOA::Graphics::gen_cube(f
 			pos[component] = sign * h;
 
 			glm::vec2 tex;
-			tex[first] = 1;
-			tex[second] = 0;
+			tex[0] = 1;
+			tex[1] = 0;
 
 			glm::vec3 norm(0);
 			norm[component] = sign;
@@ -100,8 +100,8 @@ Geometry<PositionAttrib, TexcoordAttrib, NormalAttrib> LOA::Graphics::gen_cube(f
 			pos[component] = sign * h;
 
 			glm::vec2 tex;
-			tex[first] = 1;
-			tex[second] = 1;
+			tex[0] = 1;
+			tex[1] = 1;
 
 			glm::vec3 norm(0);
 			norm[component] = sign;
