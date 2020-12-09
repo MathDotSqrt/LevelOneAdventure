@@ -5,6 +5,7 @@
 #include "Window.h"
 #include "Util/Noise.h"
 #include "Graphics/GeometryBuilder.h"
+#include "Util/Timer.h"
 
 using namespace LOA::Graphics;
 
@@ -28,6 +29,7 @@ BasicRenderer::BasicRenderer() :
 }
 
 void BasicRenderer::prerender(const Scene& scene) {
+	Util::Timer timer("Prerender");
 	auto& window = Window::getInstance();
 
 	current_width = window.getWidth();
@@ -87,6 +89,9 @@ void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
 
 void BasicRenderer::render(const Scene &scene) {
 	prerender(scene);
+
+
+	Util::Timer timer("Render");
 
 	draw_iterator start = drawList.begin();
 	draw_iterator end = drawList.end();

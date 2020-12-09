@@ -59,7 +59,8 @@ void LevelSystem::init(Engine &engine) {
 
 	for (int i = -10; i <= 10; i++) {
 		for (int j = -10; j <= 10; j++) {
-			loadRoom(engine, "floor1"_hs, "floor1_diffuse"_hs, glm::ivec2(i, j), 1);
+			if(glm::length(glm::vec2(i, j)) < 10)
+				loadRoom(engine, "floor1"_hs, "floor1_diffuse"_hs, glm::ivec2(i, j), 1);
 		}
 	}
 }
