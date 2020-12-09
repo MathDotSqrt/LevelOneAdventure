@@ -31,13 +31,14 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
 
-	ID id = scene.addPointLight();
+	//ID id = scene.addPointLight();
 
 	entt::entity fireball = registry.create();
 	
 	registry.emplace<Transformation>(fireball, pos);
 	registry.emplace<Velocity>(fireball, glm::normalize(forward) * 20.0f);
 	registry.emplace<FireParticle>(fireball, 200.0f);
+	//registry.emplace<PointLight>(fireball, id, glm::vec3(1), 10.0f);
 
 
 }
@@ -101,7 +102,7 @@ void MovementSystem::update(Engine& engine, float delta) {
 
 
 	//Camera Follow
-	auto camera_follow_view = registry.view<Transformation, Direction, Camera, Input>();
+	auto camera_follow_view = registry.view<Transformation, Direction, Camera, Input>(entt::exclude<MovementState>);
 	for (auto entity : camera_follow_view) {
 		auto& transform = camera_follow_view.get<Transformation>(entity);
 		auto& dir = camera_follow_view.get<Direction>(entity);

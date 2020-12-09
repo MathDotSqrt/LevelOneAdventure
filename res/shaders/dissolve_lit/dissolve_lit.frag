@@ -43,7 +43,7 @@ vec3 point_color(PointLight light){
 }
 
 vec3 ambient_color(){
-	return to_linear(vec3(1)) * .05;
+	return to_linear(vec3(1)) * .1;
 }
 
 vec3 calc_light(){
