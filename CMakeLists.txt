@@ -112,6 +112,11 @@ add_subdirectory("thirdparty/assimp")
 include_directories(
 	"thirdparty/assimp/include")
 
+# Q3
+set(qu3e_build_demo OFF CACHE BOOL "" FORCE)
+add_subdirectory("thirdparty/qu3e") 
+include_directories(
+	"thirdparty/qu3e/src")
 
 # ENTT
 add_subdirectory("thirdparty/entt")

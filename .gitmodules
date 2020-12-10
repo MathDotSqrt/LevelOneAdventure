@@ -12,4 +12,4 @@
 	url = https://github.com/skypjack/entt.git
 [submodule "thirdparty/qu3e"]
 	path = thirdparty/qu3e
-	url = https://github.com/RandyGaul/qu3e.git
+	url = https://github.com/MathDotSqrt/qu3e.git
