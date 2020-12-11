@@ -108,11 +108,16 @@ add_subdirectory("thirdparty/assimp")
 include_directories(
 	"thirdparty/assimp/include")
 
-# Q3
-set(qu3e_build_demo OFF CACHE BOOL "" FORCE)
-add_subdirectory("thirdparty/qu3e") 
-include_directories(
-	"thirdparty/qu3e/src")
+# React Physics 3D
+if(WIN32) 
+  list(APPEND CMAKE_PREFIX_PATH "C:\\Program Files (x86)\\ReactPhysics3D") 
+elseif(APPLE) 
+  list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib/cmake/ReactPhysics3D") 
+endif()
+
+find_package(ReactPhysics3D REQUIRED)
+
+
 
 # ENTT
 add_subdirectory("thirdparty/entt")
@@ -137,7 +142,7 @@ find_package(OpenGL REQUIRED)
 set(LIBS 
 	EnTT::EnTT
 	assimp
-	qu3e
+	ReactPhysics3D::ReactPhysics3D
 	glfw 
 	"${CMAKE_SOURCE_DIR}/lib/glew32.lib"
 	OpenGL::GL)

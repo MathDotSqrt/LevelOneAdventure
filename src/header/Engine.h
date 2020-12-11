@@ -8,7 +8,6 @@
 #include "Graphics/BasicRenderer.h"
 #include "Systems/System.h"
 
-class q3Scene;
 
 namespace LOA {
 	class Engine {
@@ -31,7 +30,6 @@ namespace LOA {
 
 		entt::registry& getRegistry();
 		Graphics::Scene& getScene();
-		q3Scene& getPhysicsScene();
 		Graphics::BasicRenderer& getRenderer();
 
 	private:
