@@ -10,6 +10,3 @@
 [submodule "thirdparty/entt"]
 	path = thirdparty/entt
 	url = https://github.com/skypjack/entt.git
-[submodule "thirdparty/reactphysics3d"]
-	path = thirdparty/reactphysics3d
-	url = https://github.com/DanielChappuis/reactphysics3d.git
