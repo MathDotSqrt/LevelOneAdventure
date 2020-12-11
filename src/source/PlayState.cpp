@@ -24,7 +24,8 @@ PlayState::PlayState(){
 
 	auto& scene = engine.getScene();
 
-	
+	scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
+
 
 	auto& registry = engine.getRegistry();
 

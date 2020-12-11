@@ -27,17 +27,20 @@ glm::quat look_at(glm::vec3 target, glm::vec3 source, glm::vec3 up) {
 
 void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	using namespace Component;
-	
+	using namespace entt;
+
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
 
+	ID id = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
 	//ID id = scene.addPointLight();
 
 	entt::entity fireball = registry.create();
 	
 	registry.emplace<Transformation>(fireball, pos);
 	registry.emplace<Velocity>(fireball, glm::normalize(forward) * 20.0f);
-	registry.emplace<FireParticle>(fireball, 200.0f);
+	//registry.emplace<FireParticle>(fireball, 200.0f);
+	registry.emplace<Renderable>(fireball, id);
 	registry.emplace<Collision>(fireball);
 
 	//registry.emplace<PointLight>(fireball, id, glm::vec3(1), 10.0f);

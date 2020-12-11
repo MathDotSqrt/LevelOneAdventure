@@ -18,6 +18,7 @@ void spawn(entt::registry& registry, entt::entity entity) {
 	
 	auto& collision = registry.get<Component::Collision>(entity);
 	auto& transform = registry.get<Component::Transformation>(entity);
+	auto& vel = registry.get<Component::Velocity>(entity);
 
 	glm::vec3 pos = transform.pos;
 	glm::quat rot = transform.rot;
@@ -26,12 +27,12 @@ void spawn(entt::registry& registry, entt::entity entity) {
 	Quaternion physics_quat(rot.x, rot.y, rot.z, rot.w);
 	Transform physics_transform(physics_pos, physics_quat);
 
-	BoxShape* shape = common.createBoxShape(Vector3(1, 1, 1));
+	BoxShape* shape = common.createBoxShape(Vector3(.5f, .5f, .5f));
 
 	RigidBody* body = world->createRigidBody(physics_transform);
 	body->setType(BodyType::DYNAMIC);
+	body->setLinearVelocity(Vector3(vel.x, vel.y, vel.z));
 	Collider* collider = body->addCollider(shape, Transform::identity());
-
 	collision.body = body;
 }
 
@@ -48,7 +49,10 @@ void PhysicsSystem::init(Engine& engine) {
 
 	BoxShape* shape = common.createBoxShape(Vector3(100, 1.0f, 100.0f));
 
-	plane = world.createRigidBody(Transform::identity());
+	Transform t = Transform::identity();
+	t.setPosition(Vector3(0, -2.2, 0));
+
+	plane = world.createRigidBody(t);
 	plane->setType(BodyType::STATIC);
 	plane->setIsActive(true);
 	Collider* collider = plane->addCollider(shape, Transform::identity());
@@ -74,6 +78,7 @@ void PhysicsSystem::update(Engine& engine, float delta) {
 
 
 		transform.pos = glm::vec3(pos.x, pos.y, pos.z);
+		transform.rot = glm::quat(quat.w, quat.x, quat.y, quat.z);
 	}
 
 }
