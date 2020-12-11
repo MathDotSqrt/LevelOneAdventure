@@ -141,6 +141,7 @@ find_package(OpenGL REQUIRED)
 set(LIBS 
 	EnTT::EnTT
 	assimp
+	qu3e
 	glfw 
 	"${CMAKE_SOURCE_DIR}/lib/glew32.lib"
 	OpenGL::GL)

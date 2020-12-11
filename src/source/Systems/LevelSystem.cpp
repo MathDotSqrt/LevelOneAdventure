@@ -67,6 +67,8 @@ void LevelSystem::init(Engine &engine) {
 				loadRoom(engine, "floor1"_hs, "floor1_diffuse"_hs, glm::ivec2(i, j), 1);
 		}
 	}
+
+	q3Scene collisionScene(1 / 60.0f);
 }
 
 void LevelSystem::update(Engine& engine, float delta) {
