@@ -39,6 +39,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Systems/LevelSystem.h"
 	"src/header/Systems/MovementSystem.h"
 	"src/header/Systems/ParticleSystem.h"
+	"src/header/Systems/PhysicsSystem.h"
 	"src/header/Systems/RenderSystem.h"
 	"src/header/Systems/ShaderSystem.h"
 	"src/header/Systems/System.h"
@@ -82,6 +83,7 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Systems/LevelSystem.cpp"
 	"src/source/Systems/MovementSystem.cpp"
 	"src/source/Systems/ParticleSystem.cpp"
+	"src/source/Systems/PhysicsSystem.cpp"
 	"src/source/Systems/RenderSystem.cpp"
 	"src/source/Systems/ShaderSystem.cpp"
 	"src/source/Systems/VelocitySystem.cpp"
@@ -94,12 +96,6 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/PlayState.cpp"
 	"src/source/main.cpp"
 	"src/source/Window.cpp"
-)
-
-
-set(RES_FILES ${RES_FILES}
-	"res/shaders/basic.vert"
-	"res/shaders/basic.frag"
 )
 
 # Generate executable

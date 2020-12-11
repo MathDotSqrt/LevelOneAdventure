@@ -41,7 +41,7 @@ int main(void) {
         window.update();
 
         if (count >= 60) {
-            manager.display();
+            //manager.display();
             count -= 60;
         }
         manager.clear();

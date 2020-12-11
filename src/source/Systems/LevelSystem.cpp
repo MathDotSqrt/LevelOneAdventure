@@ -4,7 +4,6 @@
 #include "Util/TransformUtil.h"
 #include "Components.h"
 #include "Window.h"
-#include "q3.h"
 
 
 
@@ -68,7 +67,6 @@ void LevelSystem::init(Engine &engine) {
 		}
 	}
 
-	q3Scene collisionScene(1 / 60.0f);
 }
 
 void LevelSystem::update(Engine& engine, float delta) {

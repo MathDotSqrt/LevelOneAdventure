@@ -3,6 +3,7 @@
 #include "Systems/InputSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/ParticleSystem.h"
+#include "Systems/PhysicsSystem.h"
 #include "Systems/VelocitySystem.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/ShaderSystem.h"
@@ -78,6 +79,7 @@ PlayState::PlayState(){
 	engine.addSystem<Systems::MovementSystem>();
 	engine.addSystem<Systems::RenderSystem>();
 
+	engine.addSystem<Systems::PhysicsSystem>();
 	engine.addSystem<Systems::VelocitySystem>();
 
 }

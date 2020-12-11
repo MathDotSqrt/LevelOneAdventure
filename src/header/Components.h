@@ -7,6 +7,8 @@
 #include "common.h"
 #include "Util/PackedFreeList.h"
 
+class q3Body;
+
 namespace LOA::Component {
 	struct Transformation {
 		glm::vec3 pos = glm::vec3(0);
@@ -74,5 +76,9 @@ namespace LOA::Component {
 
 	struct FireParticle {
 		float spawn_rate;
+	};
+
+	struct Collision {
+		q3Body* body = nullptr;
 	};
 }
