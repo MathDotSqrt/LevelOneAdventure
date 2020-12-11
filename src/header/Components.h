@@ -7,6 +7,8 @@
 #include "common.h"
 #include "Util/PackedFreeList.h"
 
+class btRigidBody;
+
 namespace LOA::Component {
 	struct Transformation {
 		glm::vec3 pos = glm::vec3(0);
@@ -77,5 +79,6 @@ namespace LOA::Component {
 	};
 
 	struct Collision {
+		btRigidBody* body;
 	};
 }

@@ -8,7 +8,7 @@ void VelocitySystem::update(Engine &engine, float delta) {
 	using namespace Component;
 
 	auto& registry = engine.getRegistry();
-	auto view = registry.view<Transformation, Velocity>();
+	auto view = registry.view<Transformation, Velocity>(entt::exclude<Collision>);
 	auto a_view = registry.view<Velocity>(entt::exclude<Camera>);
 
 	//for (auto entity : a_view) {

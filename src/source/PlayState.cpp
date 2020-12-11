@@ -29,6 +29,18 @@ PlayState::PlayState(){
 
 	auto& registry = engine.getRegistry();
 
+	engine.addSystem<Systems::LevelSystem>();
+	engine.addSystem<Systems::ParticleSystem>();
+
+	engine.addSystem<Systems::ShaderSystem>();
+
+	engine.addSystem<Systems::InputSystem>();
+	engine.addSystem<Systems::MovementSystem>();
+	engine.addSystem<Systems::RenderSystem>();
+
+	engine.addSystem<Systems::PhysicsSystem>();
+	engine.addSystem<Systems::VelocitySystem>();
+
 	//Fire
 	{
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
@@ -47,13 +59,14 @@ PlayState::PlayState(){
 		ID cubeID = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
 
 		player = registry.create();
-		registry.emplace<Transformation>(player, glm::vec3(0, -1, 0));
+		registry.emplace<Transformation>(player, glm::vec3(0, 1, 0));
 		registry.emplace<Velocity>(player, glm::vec3(0, 0, 0));
 		registry.emplace<Direction>(player, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		registry.emplace<MovementState>(player);
 		registry.emplace<Input>(player);
 		registry.emplace<Renderable>(player, cubeID);
 		registry.emplace<PointLight>(player, point_light, glm::vec3(.5, .3, .1), 5.0f);
+		registry.emplace<Collision>(player);
 
 	}
 
@@ -71,17 +84,7 @@ PlayState::PlayState(){
 		registry.emplace<Input>(camera);
 	}
 	
-	engine.addSystem<Systems::LevelSystem>();
-	engine.addSystem<Systems::ParticleSystem>();
-
-	engine.addSystem<Systems::ShaderSystem>();
-
-	engine.addSystem<Systems::InputSystem>();
-	engine.addSystem<Systems::MovementSystem>();
-	engine.addSystem<Systems::RenderSystem>();
-
-	engine.addSystem<Systems::PhysicsSystem>();
-	engine.addSystem<Systems::VelocitySystem>();
+	
 
 }
 

@@ -1,9 +1,10 @@
 #include "Engine.h"
+#include "Physics/PhysicsScene.h"
 
 using namespace LOA;
 
 Engine::Engine() {
-
+	registry.set<Physics::PhysicsScene>();
 }
 
 void Engine::update(float delta){
@@ -29,5 +30,5 @@ Graphics::BasicRenderer& Engine::getRenderer() {
 }
 
 Physics::PhysicsScene& Engine::getPhysicsScene() {
-	return physicsScene;
+	return 	registry.ctx<Physics::PhysicsScene>();
 }
