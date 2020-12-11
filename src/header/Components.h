@@ -7,7 +7,9 @@
 #include "common.h"
 #include "Util/PackedFreeList.h"
 
-class q3Body;
+namespace reactphysics3d {
+	class RigidBody;
+}
 
 namespace LOA::Component {
 	struct Transformation {
@@ -61,7 +63,7 @@ namespace LOA::Component {
 		float phi = glm::pi<float>() / 4;
 		float distance = 10;
 	};
-
+	 
 	struct Dissolve {
 		float time = 0;
 		float offset = 0;
@@ -79,6 +81,6 @@ namespace LOA::Component {
 	};
 
 	struct Collision {
-		q3Body* body = nullptr;
+		reactphysics3d::RigidBody* body = nullptr;
 	};
 }

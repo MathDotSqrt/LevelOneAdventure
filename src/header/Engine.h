@@ -8,6 +8,10 @@
 #include "Graphics/BasicRenderer.h"
 #include "Systems/System.h"
 
+namespace reactphysics3d {
+	class PhysicsCommon;
+	class PhysicsWorld;
+}
 
 namespace LOA {
 	class Engine {
@@ -31,6 +35,8 @@ namespace LOA {
 		entt::registry& getRegistry();
 		Graphics::Scene& getScene();
 		Graphics::BasicRenderer& getRenderer();
+		reactphysics3d::PhysicsWorld& getPhysicsWorld();
+		reactphysics3d::PhysicsCommon& getPhysicsCommon();
 
 	private:
 		entt::registry registry;
