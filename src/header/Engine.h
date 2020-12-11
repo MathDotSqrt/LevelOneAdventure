@@ -7,6 +7,7 @@
 #include "Graphics/Scene.h"
 #include "Graphics/BasicRenderer.h"
 #include "Systems/System.h"
+#include "Physics/PhysicsScene.h"
 
 namespace reactphysics3d {
 	class PhysicsCommon;
@@ -35,13 +36,12 @@ namespace LOA {
 		entt::registry& getRegistry();
 		Graphics::Scene& getScene();
 		Graphics::BasicRenderer& getRenderer();
-		reactphysics3d::PhysicsWorld& getPhysicsWorld();
-		reactphysics3d::PhysicsCommon& getPhysicsCommon();
-
+		Physics::PhysicsScene& getPhysicsScene();
 	private:
 		entt::registry registry;
 		Graphics::Scene scene;
 		Graphics::BasicRenderer renderer;
+		Physics::PhysicsScene physicsScene;
 
 		std::vector<std::unique_ptr<Systems::BaseSystem>> systems;
 	};

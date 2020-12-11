@@ -14,6 +14,8 @@ include_directories(
 
 # Add new header files here
 set(HEADER_FILES ${HEADER_FILES} 
+	"src/header/Physics/PhysicsScene.h"
+
 	"src/header/Graphics/Attrib.h"
 	"src/header/Graphics/BasicRenderer.h"
 	"src/header/Graphics/FBO.h"
@@ -63,6 +65,8 @@ set(HEADER_FILES ${HEADER_FILES}
 
 # Add new source files here
 set(SOURCE_FILES ${SOURCE_FILES} 
+	"src/source/Physics/PhysicsScene.cpp"
+
 	"src/source/Graphics/Attrib.cpp"
 	"src/source/Graphics/BasicRenderer.cpp"
 	"src/source/Graphics/FBO.cpp"

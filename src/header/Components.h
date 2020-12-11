@@ -7,10 +7,6 @@
 #include "common.h"
 #include "Util/PackedFreeList.h"
 
-namespace reactphysics3d {
-	class RigidBody;
-}
-
 namespace LOA::Component {
 	struct Transformation {
 		glm::vec3 pos = glm::vec3(0);
@@ -81,6 +77,5 @@ namespace LOA::Component {
 	};
 
 	struct Collision {
-		reactphysics3d::RigidBody* body = nullptr;
 	};
 }
