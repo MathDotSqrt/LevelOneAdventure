@@ -120,8 +120,6 @@ endif()
 
 find_package(ReactPhysics3D REQUIRED)
 
-
-
 # ENTT
 add_subdirectory("thirdparty/entt")
 include_directories(
@@ -141,10 +139,24 @@ add_subdirectory("thirdparty/glfw")
 # OpenGL
 find_package(OpenGL REQUIRED)
 
+# Bullet3
+if(WIN32) 
+	set(BULLET_ROOT "C:\\Program Files (x86)\\BULLET_PHYSICS")
+elseif(APPLE) 
+	set(BULLET_ROOT "/usr/local/lib/cmake/ReactPhysics3D") 
+endif()
+
+find_package(Bullet REQUIRED)
+include_directories(${BULLET_INCLUDE_DIR})
+
+
+# include_directories(${BULLET_INCLUDE_DIRS})
+
 # Link libs
 set(LIBS 
 	EnTT::EnTT
 	assimp
+	${BULLET_LIBRARIES}
 	ReactPhysics3D::ReactPhysics3D
 	glfw 
 	"${CMAKE_SOURCE_DIR}/lib/glew32.lib"
