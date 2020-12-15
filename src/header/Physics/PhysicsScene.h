@@ -23,7 +23,7 @@ namespace LOA::Physics {
 		void update(float delta);
 		void setGravity(glm::vec3 g);
 
-		btRigidBody* createBox(glm::vec3 pos, glm::vec3 dimensions);
+		btRigidBody* createBox(glm::vec3 pos, glm::vec3 dimensions, float mass=1);
 		btRigidBody* createStaticPlane(glm::vec3 normal, float scalar);
 	private:
 		btDefaultCollisionConfiguration* config;

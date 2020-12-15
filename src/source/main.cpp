@@ -11,12 +11,6 @@
 #include "Util/Timer.h"
 
 
-using namespace glm;
-
-#define GLSL(src) #src
-
-
-
 int main(void) {
 
     LOA::Window &window = LOA::Window::createInstance(1280, 1024, "Level One Adventure");

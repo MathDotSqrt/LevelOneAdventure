@@ -39,9 +39,9 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	
 	registry.emplace<Transformation>(fireball, pos);
 	registry.emplace<Velocity>(fireball, glm::normalize(forward) * 20.0f);
-	//registry.emplace<FireParticle>(fireball, 200.0f);
-	registry.emplace<Renderable>(fireball, id);
-	registry.emplace<Collision>(fireball);
+	registry.emplace<FireParticle>(fireball, 200.0f);
+	//registry.emplace<Renderable>(fireball, id);
+	registry.emplace<Collision>(fireball, .1f);
 
 
 	//registry.emplace<PointLight>(fireball, id, glm::vec3(1), 10.0f);

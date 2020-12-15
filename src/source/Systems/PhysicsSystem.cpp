@@ -14,7 +14,7 @@ void spawn(entt::registry& registry, entt::entity entity) {
 	auto& scene = registry.ctx<Physics::PhysicsScene>();
 	auto& transform = registry.get<Component::Transformation>(entity);
 	auto& collision = registry.get<Component::Collision>(entity);
-	collision.body = scene.createBox(transform.pos, glm::vec3(.5));
+	collision.body = scene.createBox(transform.pos, glm::vec3(.5), collision.mass);
 }
 
 

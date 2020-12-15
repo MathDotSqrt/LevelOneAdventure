@@ -79,6 +79,9 @@ namespace LOA::Component {
 	};
 
 	struct Collision {
+		float mass;
 		btRigidBody* body;
+
+		Collision(float mass=1) : mass(mass), body(nullptr){}
 	};
 }
