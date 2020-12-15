@@ -45,9 +45,10 @@ void PhysicsSystem::update(Engine& engine, float delta) {
 
 	engine.getPhysicsScene().update(delta);
 
-	auto view = registry.view<Transformation, Collision>();
+	auto view = registry.view<Transformation, Velocity, Collision>();
 	for (auto entity : view) {
 		auto& transform = view.get<Transformation>(entity);
+		auto& vel = view.get<Velocity>(entity);
 		auto& collision = view.get<Collision>(entity);
 
 		auto& bt_transform = collision.body->getWorldTransform();
@@ -55,5 +56,8 @@ void PhysicsSystem::update(Engine& engine, float delta) {
 		auto& quat = bt_transform.getRotation();
 		transform.pos = glm::vec3(origin.x(), origin.y(), origin.z());
 		transform.rot = glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
+
+		btVector3 btVel = collision.body->getLinearVelocity();
+		vel = glm::vec3(btVel.x(), btVel.y(), btVel.z());
 	}
 }

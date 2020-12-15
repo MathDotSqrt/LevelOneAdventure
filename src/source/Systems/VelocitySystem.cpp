@@ -14,6 +14,7 @@ void VelocitySystem::update(Engine &engine, float delta) {
 	//for (auto entity : a_view) {
 	//	view.get<Velocity>(entity).y -= 20 * delta * .5f;
 	//}
+
 	for (auto entity : view) {
 		auto& transformation = view.get<Transformation>(entity);
 		auto& velocity = view.get<Velocity>(entity);

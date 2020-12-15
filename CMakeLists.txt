@@ -113,16 +113,16 @@ include_directories(
 	"thirdparty/assimp/include")
 
 # React Physics 3D
-if(WIN32) 
-	list(APPEND CMAKE_PREFIX_PATH "C:\\Program Files (x86)\\ReactPhysics3D") 
-	find_library(react3D_debug "reactphysics3d_debug.lib")
-	target_link_libraries(${PROJECT_NAME} debug ${react3D_debug})
+# if(WIN32) 
+#	list(APPEND CMAKE_PREFIX_PATH "C:\\Program Files (x86)\\ReactPhysics3D") 
+#	find_library(react3D_debug "reactphysics3d_debug.lib")
+#	target_link_libraries(${PROJECT_NAME} debug ${react3D_debug})
 
-elseif(APPLE) 
-	list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib/cmake/ReactPhysics3D") 
-endif()
+#elseif(APPLE) 
+#	list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib/cmake/ReactPhysics3D") 
+#endif()
 
-find_package(ReactPhysics3D REQUIRED)
+#find_package(ReactPhysics3D REQUIRED)
 
 # ENTT
 add_subdirectory("thirdparty/entt")
@@ -147,21 +147,17 @@ find_package(OpenGL REQUIRED)
 if(WIN32) 
 	set(BULLET_ROOT "C:\\Program Files (x86)\\BULLET_PHYSICS")
 elseif(APPLE) 
-	set(BULLET_ROOT "/usr/local/lib/cmake/ReactPhysics3D") 
+	set(BULLET_ROOT "/usr/local/lib/cmake/BULLET_PHYSICS") 
 endif()
 
 find_package(Bullet REQUIRED)
 include_directories(${BULLET_INCLUDE_DIR})
-
-
-# include_directories(${BULLET_INCLUDE_DIRS})
 
 # Link libs
 set(LIBS 
 	EnTT::EnTT
 	assimp
 	${BULLET_LIBRARIES}
-	ReactPhysics3D::ReactPhysics3D
 	glfw 
 	"${CMAKE_SOURCE_DIR}/lib/glew32.lib"
 	OpenGL::GL)

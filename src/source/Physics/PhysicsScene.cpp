@@ -39,14 +39,15 @@ void PhysicsScene::setGravity(glm::vec3 g) {
 
 btRigidBody* PhysicsScene::createBox(glm::vec3 pos, glm::vec3 dim) {
 	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
-	shape->calculateLocalInertia(1, btVector3(1, 1, 1));
+	btVector3 inertia(1, 1, 1);
+	shape->calculateLocalInertia(1, inertia);
 
 	shapes.push_back(shape);
 
 	btTransform groundTransform;
 	groundTransform.setIdentity();
 	groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(1, nullptr, shape);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(1, nullptr, shape, inertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
 	body->setWorldTransform(groundTransform);
