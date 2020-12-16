@@ -76,6 +76,8 @@ namespace LOA::Graphics {
 			return instance;
 		}
 
+		void removeInstance(ID instance);
+
 		//When creating a new material, add a new function
 		void newMaterial(ID instance, NormalMaterial newMaterial);
 		void newMaterial(ID instance, BasicLitMaterial newMaterial);
@@ -83,6 +85,8 @@ namespace LOA::Graphics {
 
 		ID addPointLight();
 		ID addPointLight(PointLight light);
+		void removePointLight(ID id);
+
 
 		ID createParticleInstance(size_t max_particles, ParticleMaterial material);
 		ID createParticleInstance(size_t max_particles, FireParticleMaterial material);

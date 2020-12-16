@@ -36,6 +36,25 @@ LOA::ID Scene::addInstance(entt::id_type meshID) {
 	return instances.insert(Instance{meshCache.handle(meshID), MaterialType::NUM_MATERIAL_ID});
 }
 
+void Scene::removeInstance(ID id) {
+	assert(instances.has(id));
+
+	Instance& instance = instances[id];
+	ID materialID = instance.materialID;
+	MaterialType type = instance.materialType;
+
+	switch (type) {
+	case MaterialType::BASIC_LIT_MATERIAL_ID:
+		basicLitMaterials.remove(materialID);
+		break;
+	case MaterialType::DISSOLVE_MATERIAL_ID:
+		dissolveMaterials.remove(materialID);
+		break;
+	default:
+		break;
+	}
+}
+
 void Scene::newMaterial(LOA::ID id, NormalMaterial material) {
 	auto& instance = instances[id];
 	removeMaterial(instance.materialID, instance.materialType);
@@ -81,6 +100,10 @@ LOA::ID Scene::addPointLight(PointLight light) {
 		return pointLights.insert(light);
 	else 
 		return NullID;
+}
+
+void Scene::removePointLight(ID id) {
+	pointLights.remove(id);
 }
 
 LOA::ID Scene::createParticleInstance(size_t max, ParticleMaterial material) {

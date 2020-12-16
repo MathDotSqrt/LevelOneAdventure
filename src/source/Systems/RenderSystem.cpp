@@ -26,27 +26,31 @@ glm::mat4 makeViewTransform(const Component::Transformation& transform) {
 	return transformation;
 }
 
-void RenderSystem::createInstance(entt::registry& registry, entt::entity entity) {
+void RenderSystem::deleteInstance(entt::registry& registry, entt::entity entity) {
 	using namespace Component;
-
 	Renderable& renderable = registry.get<Renderable>(entity);
+	if (renderable.instance_id != LOA::NullID) {
+		Graphics::Scene& scene = engine.getScene();
 
-	//If renderable component was created without an instance id
-	//we will create a render instance here
-	if (renderable.instance_id == LOA::NullID) {
-		auto& scene = engine.getScene();
-		renderable.instance_id = scene.addInstance(renderable.mesh_id);
+		scene.removeInstance(renderable.instance_id);
 	}
 }
 
-void RenderSystem::deleteInstance(entt::registry& registry, entt::entity entity) {
+void RenderSystem::deletePointLight(entt::registry& registry, entt::entity entity) {
+	using namespace Component;
+	PointLight& light = registry.get<PointLight>(entity);
+	if (light.instance_id != LOA::NullID) {
+		Graphics::Scene& scene = engine.getScene();
 
+		scene.removePointLight(light.instance_id);
+	}
 }
+
 
 void RenderSystem::init() {
 	auto& registry = engine.getRegistry();
 	
-	registry.on_construct<Component::Renderable>().connect<&RenderSystem::createInstance>(this);
+	registry.on_destroy<Component::Renderable>().connect<&RenderSystem::deleteInstance>(this);
 }
 
 void RenderSystem::update(float delta) {
@@ -77,16 +81,17 @@ void RenderSystem::update(float delta) {
 		instance.intensity = point.intensity;
 	}
 
-	auto dissolve_view = registry.view<Renderable, Dissolve>();
+	auto dissolve_view = registry.view<Renderable, Graphics::DissolveMaterial>();
 	for (auto entity : dissolve_view) {
 		auto& render = dissolve_view.get<Renderable>(entity);
-		auto& dissolve = dissolve_view.get<Dissolve>(entity);
+		auto& dissolve = dissolve_view.get<Graphics::DissolveMaterial>(entity);
 
 		auto& instance = scene.getInstance(render.instance_id);
 
 		if (instance.materialType != Graphics::MaterialType::DISSOLVE_MATERIAL_ID) {
-			continue;
+			scene.newMaterial(render.instance_id, dissolve);
 		}
+
 		auto& material = scene.getDissolveMaterial(instance.materialID);
 
 		material.time = dissolve.time;

@@ -30,24 +30,7 @@ namespace LOA::Component {
 	};
 
 	struct Renderable {
-		friend class LOA::Systems::RenderSystem;
-		
 		LOA::ID instance_id;
-
-		Renderable(LOA::ID id) : 
-			instance_id(id),
-			mesh_id(0),
-			type(Graphics::MaterialType::NUM_MATERIAL_ID){}
-		
-		Renderable(entt::id_type mesh) :
-			instance_id(LOA::NullID),
-			mesh_id(mesh),
-			type(Graphics::MaterialType::NUM_MATERIAL_ID) {}
-
-	private:
-		entt::id_type mesh_id;
-		Graphics::MaterialType type;
-
 	};
 
 	struct Direction {
@@ -82,12 +65,6 @@ namespace LOA::Component {
 		float phi = glm::pi<float>() / 4;
 		float distance = 10;
 	};
-	 
-	struct Dissolve {
-		float time = 0;
-		float offset = 0;
-		glm::vec3 dissolve_color = glm::vec3(1);
-	};
 
 	struct PointLight {
 		LOA::ID instance_id;
@@ -97,6 +74,7 @@ namespace LOA::Component {
 
 	struct FireParticle {
 		float spawn_rate;
+		float life_time = 2.0f;
 	};
 
 	struct Collision {

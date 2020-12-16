@@ -18,28 +18,30 @@ using namespace LOA::Systems;
 static std::string asset = "./res/scene/dungeon_asset.yaml";
 static i64 last_time = 0;
 
-ID loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
+void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
 	using namespace entt;
 
 	const glm::vec3 size(3);
 
 	auto& scene = engine.getScene();
 
-	Graphics::DissolveMaterial material;
-	material.diffuse = "dungeon_pallet"_hs;
-	ID id = scene.addInstance(model, material);
-
-	Graphics::Instance& instance = scene.getInstance(id);
+	//create instance
+	LOA::ID id = scene.addInstance(model);
+	auto& instance = scene.getInstance(id);
 	glm::vec3 pos(-size.x * loc.x, 0, -size.z * loc.y);
 	glm::quat rotation = glm::angleAxis(glm::pi<float>() * rot / 2.0f, glm::vec3(0, 1, 0));
 	instance.transform = Util::make_transform(pos, rotation);
-	
+
+	Graphics::DissolveMaterial material;
+	material.diffuse = "dungeon_pallet"_hs;
+	material.dissolve_color = glm::vec3(.7f, .4f, .1f);
+	material.offset = .05f;
+	material.time = 0.0f;
+
 	auto& registry = engine.getRegistry();
 	auto entity = registry.create();
-	registry.emplace<Component::Dissolve>(entity, 0.0f, .05f, glm::vec3(.7f, .4f, .1f));
+	registry.emplace<Graphics::DissolveMaterial>(entity, material);
 	registry.emplace<Component::Renderable>(entity, id);
-	
-	return id;
 }
 
 void erase_char(std::string& str, char c) {
@@ -126,11 +128,11 @@ void LevelSystem::update(float delta) {
 	
 	auto& registry = engine.getRegistry();
 
-	auto view = registry.view<Component::Dissolve>();
+	auto view = registry.view<Graphics::DissolveMaterial>();
 	for (auto entity : view) {
 		if (Window::getInstance().isPressed('e'))
-			view.get<Component::Dissolve>(entity).time += delta / 2.0f;
+			view.get<Graphics::DissolveMaterial>(entity).time += delta / 2.0f;
 		else if(Window::getInstance().isPressed('q'))
-			view.get<Component::Dissolve>(entity).time -= delta / 2.0f;
+			view.get<Graphics::DissolveMaterial>(entity).time -= delta / 2.0f;
 	}
 }

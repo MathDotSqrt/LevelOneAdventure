@@ -38,13 +38,18 @@ void ParticleSystem::update(float dt) {
 	//Spawns particles
 	{
 		auto view = registry.view<FireParticle, Transformation>();
-
 		for (auto entity : view) {
 			auto& particle = view.get<FireParticle>(entity);
 			auto& transform = view.get<Transformation>(entity);
 
 			fireGenerator.genParticles(particle.spawn_rate * dt, transform.pos);
+			particle.life_time -= dt;
+			if (particle.life_time < 0) {
+				//ok to destroy current entity when iterating
+				registry.destroy(entity);
+			}
 		}
+
 	}
 
 	//Updates particles
@@ -57,8 +62,10 @@ void ParticleSystem::update(float dt) {
 			camera_pos = transform.pos;
 		}
 
+		//Sorts the particles by distance from camera
 		fireGenerator.update(camera_pos, dt);
 
+		//uploads particle simulation to renderer every frame
 		auto& system = engine.getScene().getParticleSystemInstance(fireInstanceID);
 		system.data.streamData(fireGenerator.getRenderData());
 	}

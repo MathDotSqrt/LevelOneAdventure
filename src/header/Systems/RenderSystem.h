@@ -10,8 +10,8 @@ namespace LOA::Systems {
 		void init();
 		void update(float delta);
 	private:
-		void createInstance(entt::registry& registry, entt::entity entity);
 		void deleteInstance(entt::registry& registry, entt::entity entity);
+		void deletePointLight(entt::registry& registry, entt::entity entity);
 
 	};
 }
