@@ -6,12 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 # Name of the project
 project(LevelOneAdventure)
 
-# General Includes
-include_directories(
-	"include" 
-	"src/header"
-	"res/shaders")
-
 # Add new header files here
 set(HEADER_FILES ${HEADER_FILES} 
 	"src/header/Physics/PhysicsScene.h"
@@ -105,6 +99,9 @@ set(SOURCE_FILES ${SOURCE_FILES}
 # Generate executable
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} )
 
+# YAML
+add_subdirectory("thirdparty/rapidyaml")
+
 # ASSIMP
 set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -131,9 +128,6 @@ add_subdirectory("thirdparty/glfw")
 # OpenGL
 find_package(OpenGL REQUIRED)
 
-# YAML
-add_subdirectory("thirdparty/rapidyaml" ryml2)
-
 # Bullet3
 if(WIN32) 
 	set(BULLET_ROOT "C:\\Program Files (x86)\\BULLET_PHYSICS")
@@ -146,6 +140,7 @@ include_directories(${BULLET_INCLUDE_DIR})
 
 # Link libs
 set(LIBS 
+	ryml
 	EnTT::EnTT
 	assimp
 	glfw 
@@ -154,6 +149,12 @@ set(LIBS
 	OpenGL::GL)
 
 target_link_libraries(${PROJECT_NAME} ${LIBS})
+
+# General Includes
+include_directories(
+	"include" 
+	"src/header"
+	"res/shaders")
 
 # Copy dlls
 if(WIN32)

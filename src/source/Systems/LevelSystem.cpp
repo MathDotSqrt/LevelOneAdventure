@@ -5,6 +5,8 @@
 #include "Components.h"
 #include "Window.h"
 
+#include <ryml.hpp>
+
 #include <iostream>
 #include <fstream>
 
@@ -36,11 +38,14 @@ ID loadRoom(Engine &engine, entt::id_type model, entt::id_type tex, glm::ivec2 l
 
 void load_assets(Engine &engine) {
 	auto& scene = engine.getScene();
+	volatile ryml::Tree tree = ryml::parse("{foo: 1}");
 
 }
 
 void LevelSystem::init(Engine &engine) {
 	using namespace entt;
+
+	load_assets(engine);
 
 	std::string rel = "./res/models/dungeon_assets/";
 
