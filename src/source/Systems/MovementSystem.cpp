@@ -32,8 +32,8 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
 
-	ID id = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
-	//ID id = scene.addPointLight();
+	//ID id = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
+	ID id = scene.addPointLight();
 
 	entt::entity fireball = registry.create();
 	

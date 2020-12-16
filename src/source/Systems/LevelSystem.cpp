@@ -16,7 +16,9 @@ using namespace LOA;
 using namespace LOA::Systems;
 
 static std::string asset = "./res/scene/dungeon_asset.yaml";
+static std::string tiles = "./res/scene/scene_tiles.yaml";
 static i64 last_time = 0;
+static i64 last_time_tiles = 0;
 
 void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
 	using namespace entt;
@@ -42,11 +44,17 @@ void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
 	auto entity = registry.create();
 	registry.emplace<Graphics::DissolveMaterial>(entity, material);
 	registry.emplace<Component::Renderable>(entity, id);
+	registry.emplace<Component::LevelTile>(entity);
 }
 
 void erase_char(std::string& str, char c) {
 	std::string::iterator end_pos = std::remove(str.begin(), str.end(), c);
 	str.erase(end_pos, str.end());
+}
+
+bool read_int(c4::csubstr buffer, int& f) {
+	size_t pos = c4::unformat(buffer, "{}", f);
+	return pos != c4::csubstr::npos;
 }
 
 bool read_float(c4::csubstr buffer, float &f) {
@@ -91,6 +99,40 @@ void load_assets(Engine &engine) {
 
 }
 
+void load_tiles(Engine& engine) {
+	auto& scene = engine.getScene();
+	auto file_str = LOA::Util::read_file(tiles);
+	if (file_str.has_value()) {
+		std::string content = file_str.value();
+		erase_char(content, '\r');
+		erase_char(content, '\t');
+
+		c4::csubstr src_view(c4::to_csubstr(content.c_str()));
+		ryml::Tree tree = ryml::parse(src_view);
+
+		ryml::NodeRef root = tree.rootref();
+		ryml::NodeRef tiles = root["tiles"];
+		for (ryml::NodeRef& node : tiles) {
+			std::string tileType;
+			int rot;
+
+			c4::from_chars(node["tile"].val(), &tileType);
+			read_int(node["rot"].val(), rot);
+
+			for (ryml::NodeRef& loc : node["locations"]) {
+				int x, z;
+				read_int(loc[0].val(), x);
+				read_int(loc[1].val(), z);
+
+				glm::ivec2 l(x, z);
+				loadRoom(engine, entt::hashed_string(tileType.c_str()), l, rot);
+			}
+		}
+	}
+
+	last_time_tiles = Util::last_write(asset).value();
+}
+
 void LevelSystem::init() {
 	using namespace entt;
 
@@ -98,34 +140,30 @@ void LevelSystem::init() {
 	scene.loadTEX("dungeon_pallet"_hs,"./res/models/dungeon_assets/dungeon-texture.png");
 	
 	load_assets(engine);
-
-	//walls
-	{
-		loadRoom(engine, "wall_1"_hs, glm::ivec2(0, 0), 2);
-		loadRoom(engine, "wall_3"_hs, glm::ivec2(0, 1), 3);
-	}
-	
-	//floor
-	{
-		loadRoom(engine, "floor_stone1"_hs, glm::ivec2(0, 0), 0);
-		loadRoom(engine, "floor_stone1"_hs, glm::ivec2(1, 0), 0);
-		loadRoom(engine, "floor_stone2"_hs, glm::ivec2(1, 1), 0);
-		loadRoom(engine, "floor_stone1"_hs, glm::ivec2(0, 1), 0);
-	}
-	
-	//pillar
-	{
-		loadRoom(engine, "pillar_1"_hs, glm::ivec2(0, 1), 0);
-	}
+	load_tiles(engine);
 
 }
 
 void LevelSystem::update(float delta) {
 
+	auto destroy_tiles = [&]() {
+		entt::registry& registry = engine.getRegistry();
+		auto view = registry.view<Component::LevelTile>();
+		registry.destroy(view.begin(), view.end());
+	};
+
 	if (i64 time = Util::last_write(asset).value(); time > last_time) {
+		destroy_tiles();
 		load_assets(engine);
+		load_tiles(engine);
 	}
 	
+	if (i64 time = Util::last_write(tiles).value(); time > last_time_tiles) {
+		destroy_tiles();
+
+		load_tiles(engine);
+	}
+
 	auto& registry = engine.getRegistry();
 
 	auto view = registry.view<Graphics::DissolveMaterial>();

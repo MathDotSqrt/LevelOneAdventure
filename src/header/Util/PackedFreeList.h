@@ -66,19 +66,19 @@ namespace LOA::Util {
 				return { index, generation };
 			}
 			else {
-
-				ID& free_element = index_array[free_index];
+				u32 new_index = free_index;
+				ID& free_element = index_array[new_index];
 				u32 next_index = free_element.index;
 
 				free_element.index = packed_index;
 				free_element.generation += 1;
 
 				packed_array.push_back(std::move(item));
-				back_packed_array.push_back(free_index);
+				back_packed_array.push_back(new_index);
 				free_index = next_index;
 				free_length -= 1;
 
-				return { free_index, free_element.generation };
+				return { new_index, free_element.generation };
 			}
 		}
 
@@ -88,7 +88,7 @@ namespace LOA::Util {
 			u32 element_index = index_array[id.index].index;
 
 			const auto &back_element = packed_array.back();
-			const auto back_index = *back_packed_array.begin();
+			const auto back_index = back_packed_array.back();
 
 			index_array[back_index].index = element_index;
 			

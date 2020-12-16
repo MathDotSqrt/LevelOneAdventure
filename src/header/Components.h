@@ -77,6 +77,10 @@ namespace LOA::Component {
 		float life_time = 2.0f;
 	};
 
+	struct LevelTile {
+
+	};
+
 	struct Collision {
 		float mass;
 		btRigidBody* body;

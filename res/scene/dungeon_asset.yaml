@@ -15,7 +15,7 @@
 	pillar_1: {
 		path: "./res/models/dungeon_assets/dungeon/pillar-1.fbx",
 		pallet: "dungeon_pallet",
-		offset: "glm::vec3(0, 1, 0)",
+		offset: "glm::vec3(0, 0, 0)",
 		scale: .1
 	},
 

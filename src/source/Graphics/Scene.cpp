@@ -53,6 +53,8 @@ void Scene::removeInstance(ID id) {
 	default:
 		break;
 	}
+
+	instances.remove(id);
 }
 
 void Scene::newMaterial(LOA::ID id, NormalMaterial material) {

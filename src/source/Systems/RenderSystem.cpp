@@ -51,6 +51,7 @@ void RenderSystem::init() {
 	auto& registry = engine.getRegistry();
 	
 	registry.on_destroy<Component::Renderable>().connect<&RenderSystem::deleteInstance>(this);
+	registry.on_destroy<Component::PointLight>().connect<&RenderSystem::deletePointLight>(this);
 }
 
 void RenderSystem::update(float delta) {
@@ -61,51 +62,63 @@ void RenderSystem::update(float delta) {
 	auto& scene = engine.getScene();
 	auto& registry = engine.getRegistry();
 
-	auto mesh_view = registry.view<Transformation, Renderable>();
-	for (auto entity : mesh_view) {
-		auto& trans = mesh_view.get<Transformation>(entity);
-		auto& renderable = mesh_view.get<Renderable>(entity);
+	//Copy mesh state to the renderer
+	{
+		auto mesh_view = registry.view<Transformation, Renderable>();
+		for (auto entity : mesh_view) {
+			auto& trans = mesh_view.get<Transformation>(entity);
+			auto& renderable = mesh_view.get<Renderable>(entity);
 
-		auto& instance = scene.getInstance(renderable.instance_id);
-		instance.transform = makeTransform(trans);;
-	}
-
-	auto point_view = registry.view<Transformation, PointLight>();
-	for (auto entity : point_view) {
-		auto& trans = point_view.get<Transformation>(entity);
-		auto& point = point_view.get<PointLight>(entity);
-
-		auto& instance = scene.getPointLight(point.instance_id);
-		instance.position = trans.pos;
-		instance.color = point.color;
-		instance.intensity = point.intensity;
-	}
-
-	auto dissolve_view = registry.view<Renderable, Graphics::DissolveMaterial>();
-	for (auto entity : dissolve_view) {
-		auto& render = dissolve_view.get<Renderable>(entity);
-		auto& dissolve = dissolve_view.get<Graphics::DissolveMaterial>(entity);
-
-		auto& instance = scene.getInstance(render.instance_id);
-
-		if (instance.materialType != Graphics::MaterialType::DISSOLVE_MATERIAL_ID) {
-			scene.newMaterial(render.instance_id, dissolve);
+			auto& instance = scene.getInstance(renderable.instance_id);
+			instance.transform = makeTransform(trans);;
 		}
+	}
+	
+	//Copy point light state to renderer
+	{
+		auto point_view = registry.view<Transformation, PointLight>();
+		for (auto entity : point_view) {
+			auto& trans = point_view.get<Transformation>(entity);
+			auto& point = point_view.get<PointLight>(entity);
 
-		auto& material = scene.getDissolveMaterial(instance.materialID);
-
-		material.time = dissolve.time;
-		material.offset = dissolve.offset;
-		material.dissolve_color = dissolve.dissolve_color;
+			auto& instance = scene.getPointLight(point.instance_id);
+			instance.position = trans.pos;
+			instance.color = point.color;
+			instance.intensity = point.intensity;
+		}
 	}
 
-	auto camera_view = registry.view<Transformation, Camera>();
-	for (auto entity : camera_view) {
-		auto& trans = camera_view.get<Transformation>(entity);
-		auto& camera = camera_view.get<Camera>(entity);
+	//Copy camera positions to renderer
+	{
+		auto camera_view = registry.view<Transformation, Camera>();
+		for (auto entity : camera_view) {
+			auto& trans = camera_view.get<Transformation>(entity);
+			auto& camera = camera_view.get<Camera>(entity);
 
-		auto& scene_camera = scene.getMainCamera();
-		scene_camera.transform = makeViewTransform(trans);
-		scene_camera.fov = camera.fov;
+			auto& scene_camera = scene.getMainCamera();
+			scene_camera.transform = makeViewTransform(trans);
+			scene_camera.fov = camera.fov;
+		}
+	}
+
+	//Copy dissolve state to renderer
+	{
+		auto dissolve_view = registry.view<Renderable, Graphics::DissolveMaterial>();
+		for (auto entity : dissolve_view) {
+			auto& render = dissolve_view.get<Renderable>(entity);
+			auto& dissolve = dissolve_view.get<Graphics::DissolveMaterial>(entity);
+
+			auto& instance = scene.getInstance(render.instance_id);
+
+			if (instance.materialType != Graphics::MaterialType::DISSOLVE_MATERIAL_ID) {
+				scene.newMaterial(render.instance_id, dissolve);
+			}
+
+			auto& material = scene.getDissolveMaterial(instance.materialID);
+
+			material.time = dissolve.time;
+			material.offset = dissolve.offset;
+			material.dissolve_color = dissolve.dissolve_color;
+		}
 	}
 }

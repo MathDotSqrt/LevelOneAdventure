@@ -1,0 +1,14 @@
+{
+	tiles: [
+		{
+			tile: "floor_stone1",
+			locations: [[0, 0], [0, 1], [0, 2]],
+			rot: 0
+		},
+		{
+			tile: "floor_stone2",
+			locations: [[2, 0], [2, 1]],
+			rot: 0
+		}
+	]
+}
