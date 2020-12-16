@@ -20,8 +20,8 @@ ParticleSystemInstance::ParticleSystemInstance(ParticleRenderData &&data, Materi
 ParticleSystemInstance::ParticleSystemInstance(size_t max, MaterialType type, ID matID)
 	: data(max), materialType(type), materialID(matID) {}
 
-entt::resource_handle<Mesh> Scene::loadMesh(entt::id_type id, std::string filename, glm::vec3 offset) {
-	return meshCache.load<Graphics::MeshLoader>(id, filename, offset);
+entt::resource_handle<Mesh> Scene::loadMesh(entt::id_type id, std::string filename, glm::vec3 offset, glm::vec3 scale) {
+	return meshCache.load<Graphics::MeshLoader>(id, filename, offset, scale);
 }
 
 entt::resource_handle<TEX> Scene::loadTEX(entt::id_type id, std::string filename) {
