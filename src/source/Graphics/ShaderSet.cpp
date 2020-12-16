@@ -7,23 +7,12 @@
 #include <fstream>
 #include <sstream>
 
+#include "util/FileUtil.h"
 #include <GL/glew.h>
 
 using namespace LOA::Graphics;
 
-std::optional<std::string> read_file(const std::string& filename) {
-	std::ifstream reader("res/shaders/" + filename);
-	if (reader) {
-		std::stringstream buffer;
-		buffer << reader.rdbuf();
-		std::string file = buffer.str();
-		return file;
-	}
-	else {
-		std::cerr << "ERROR: Could not find file: ./res/shaders/" << filename << "\n";
-		return {};
-	}
-}
+
 
 
 std::string get_program_name(const std::vector<std::string>& shaders) {
@@ -77,7 +66,7 @@ std::optional<std::string> preprocessor(std::string& source) {
 	include_file.erase(0, 1);						//erase first "
 	include_file.erase(include_file.size() - 1);	//erase last  "
 
-	auto replace_string = read_file(include_file);
+	auto replace_string = LOA::Util::read_file("./res/shaders/" + include_file);
 	if (replace_string.has_value()) {
 		const auto iter = std::find(replace_string->begin(), replace_string->end(), '\0');
 		replace_string->erase(iter, replace_string->end());
@@ -169,7 +158,7 @@ GLuint create_shader(const std::string& shader) {
 		return 0;
 	}
 
-	auto source = read_file(shader);
+	auto source = LOA::Util::read_file("./res/shaders/" + shader);
 	if (source) {
 		const auto processedSource = preprocessor(source.value());
 		if (processedSource) {
