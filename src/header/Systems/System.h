@@ -11,14 +11,18 @@ namespace LOA::Systems {
 	
 	class BaseSystem {
 	public:
+		BaseSystem(LOA::Engine &engine) : engine(engine){}
 		virtual ~BaseSystem() {}
 
 		//Optional to override
-		virtual void init(Engine& engine) {
+		virtual void init() {
 		
 		}
 
 		//Abstract function
-		virtual void update(Engine& engine, float delta) = 0;
+		virtual void update(float delta) = 0;
+
+	protected:
+		LOA::Engine& engine;
 	};
 }

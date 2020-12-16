@@ -4,6 +4,8 @@
 namespace LOA::Systems {
 	class VelocitySystem : public BaseSystem {
 	public:
-		void update(Engine& engine, float delta);
+		VelocitySystem(LOA::Engine& engine) : BaseSystem(engine) {}
+
+		void update(float delta);
 	};
 }

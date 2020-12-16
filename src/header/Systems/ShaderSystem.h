@@ -9,8 +9,9 @@
 namespace LOA::Systems {
 	class ShaderSystem : public BaseSystem {
 	public:
-		void init(Engine &engine);
-		void update(Engine &engine, float delta);
+		ShaderSystem(LOA::Engine& engine) : BaseSystem(engine) {}
+		void init();
+		void update(float delta);
 
 	private:
 		std::queue<std::string> files;

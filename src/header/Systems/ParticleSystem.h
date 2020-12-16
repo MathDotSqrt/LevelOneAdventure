@@ -7,10 +7,10 @@
 namespace LOA::Systems {
 	class ParticleSystem : public BaseSystem {
 	public:
-		ParticleSystem();
+		ParticleSystem(LOA::Engine &engine);
 
-		void init(Engine& engine);
-		void update(Engine& engine, float delta);
+		void init();
+		void update(float delta);
 	private:
 
 		LOA::ID fireInstanceID;

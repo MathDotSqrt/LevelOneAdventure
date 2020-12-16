@@ -11,18 +11,21 @@ using namespace LOA::Systems;
 using namespace LOA::Physics;
 
 void spawn(entt::registry& registry, entt::entity entity) {
-	auto& scene = registry.ctx<Physics::PhysicsScene>();
+	
+}
+
+void PhysicsSystem::spawnRigidBody(entt::registry& registry, entt::entity entity) {
+	auto& scene = engine.getPhysicsScene();
 	auto& transform = registry.get<Component::Transformation>(entity);
 	auto& collision = registry.get<Component::Collision>(entity);
 	collision.body = scene.createBox(transform.pos, glm::vec3(.5), collision.mass);
 }
 
-
-void PhysicsSystem::init(Engine& engine) {
+void PhysicsSystem::init() {
 	using namespace entt;
 
 	auto& registry = engine.getRegistry();
-	registry.on_construct<Component::Collision>().connect<&spawn>();
+	registry.on_construct<Component::Collision>().connect<&PhysicsSystem::spawnRigidBody>(this);
 
 
 	auto& scene = engine.getPhysicsScene();
@@ -31,7 +34,7 @@ void PhysicsSystem::init(Engine& engine) {
 	scene.setGravity(glm::vec3(0, -10, 0));
 }
 
-void PhysicsSystem::update(Engine& engine, float delta) {
+void PhysicsSystem::update(float delta) {
 	using namespace Component;
 	auto& registry = engine.getRegistry();
 	

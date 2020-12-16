@@ -4,6 +4,8 @@
 namespace LOA::Systems {
 	class MovementSystem : public BaseSystem {
 	public:
-		void update(Engine& engine, float delta);
+		MovementSystem(LOA::Engine& engine) : BaseSystem(engine) {}
+
+		void update(float delta);
 	};
 }

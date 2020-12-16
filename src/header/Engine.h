@@ -24,11 +24,8 @@ namespace LOA {
 
 		template<typename T>
 		void addSystem() {
-			systems.push_back(std::make_unique<T>());
-
-			//dereference this pointer
-			Engine& reference = *this;
-			systems.back()->init(reference);
+			systems.push_back(std::make_unique<T>(*this));
+			systems.back()->init();
 		}
 
 		entt::registry& getRegistry();

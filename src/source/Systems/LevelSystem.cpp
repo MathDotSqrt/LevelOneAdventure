@@ -89,7 +89,7 @@ void load_assets(Engine &engine) {
 
 }
 
-void LevelSystem::init(Engine &engine) {
+void LevelSystem::init() {
 	using namespace entt;
 
 	auto& scene = engine.getScene();
@@ -118,7 +118,7 @@ void LevelSystem::init(Engine &engine) {
 
 }
 
-void LevelSystem::update(Engine& engine, float delta) {
+void LevelSystem::update(float delta) {
 
 	if (i64 time = Util::last_write(asset).value(); time > last_time) {
 		load_assets(engine);

@@ -4,7 +4,7 @@
 
 using namespace LOA::Systems;
 
-void VelocitySystem::update(Engine &engine, float delta) {
+void VelocitySystem::update(float delta) {
 	using namespace Component;
 
 	auto& registry = engine.getRegistry();

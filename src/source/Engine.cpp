@@ -9,7 +9,7 @@ Engine::Engine() {
 
 void Engine::update(float delta){
 	for (auto& system : systems) {
-		system->update(*this, delta);
+		system->update(delta);
 	}
 }
 

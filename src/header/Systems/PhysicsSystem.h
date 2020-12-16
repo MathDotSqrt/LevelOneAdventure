@@ -1,10 +1,15 @@
 #pragma once
 #include "System.h"
+#include <entt/entt.hpp>
 
 namespace LOA::Systems {
 	class PhysicsSystem : public BaseSystem {
 	public:
-		void init(Engine& engine);
-		void update(Engine& engine, float dt);
+		PhysicsSystem(LOA::Engine& engine) : BaseSystem(engine) {}
+		void init();
+		void update(float dt);
+
+	private:
+		void spawnRigidBody(entt::registry& registry, entt::entity entity);
 	};
 }

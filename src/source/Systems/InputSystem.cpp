@@ -6,7 +6,7 @@
 
 using namespace LOA::Systems;
 
-void InputSystem::init(Engine &engine) {
+void InputSystem::init() {
 	using namespace Component;
 
 	auto pos = Window::getInstance().getMousePos();
@@ -18,7 +18,7 @@ void InputSystem::init(Engine &engine) {
 	});
 }
 
-void InputSystem::update(Engine& engine, float delta) {
+void InputSystem::update(float delta) {
 	using namespace Component;
 	auto& window = Window::getInstance();
 	

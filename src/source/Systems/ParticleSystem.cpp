@@ -10,11 +10,11 @@
 
 using namespace LOA::Systems;
 
-ParticleSystem::ParticleSystem() : fireInstanceID(LOA::NullID), fireGenerator(10000){
+ParticleSystem::ParticleSystem(LOA::Engine &engine) : BaseSystem(engine), fireInstanceID(LOA::NullID), fireGenerator(10000){
 
 }
 
-void ParticleSystem::init(Engine& engine) {
+void ParticleSystem::init() {
 	using namespace entt;
 
 	Graphics::Scene &scene = engine.getScene();
@@ -28,7 +28,7 @@ void ParticleSystem::init(Engine& engine) {
 
 
 
-void ParticleSystem::update(Engine& engine, float dt) {
+void ParticleSystem::update(float dt) {
 	using namespace Component;
 
 	Util::Timer timer("ParticleSystem");

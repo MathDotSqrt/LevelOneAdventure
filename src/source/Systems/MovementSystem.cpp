@@ -49,7 +49,7 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 
 }
 
-void MovementSystem::update(Engine& engine, float delta) {
+void MovementSystem::update(float delta) {
 	using namespace Component;
 	auto& registry = engine.getRegistry();
 

@@ -9,11 +9,11 @@ const std::string rel = "./res/shaders/";
 
 using namespace LOA::Systems;
 
-void ShaderSystem::init(Engine& engine){
+void ShaderSystem::init(){
 	
 }
 
-void ShaderSystem::update(Engine& engine, float delta) {
+void ShaderSystem::update(float delta) {
 	Util::Timer timer("ShaderSystem");
 
 	auto& renderer = engine.getRenderer();
