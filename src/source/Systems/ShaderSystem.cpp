@@ -1,17 +1,9 @@
 #include "Systems/ShaderSystem.h"
 #include "Engine.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#ifndef WIN32
-#include <unistd.h>
-#endif
-
-#ifdef WIN32
-#define stat _stat
-#endif
 
 #include "Util/Timer.h"
+#include "Util/FileUtil.h"
 
 const std::string rel = "./res/shaders/";
 
@@ -35,10 +27,10 @@ void ShaderSystem::update(Engine& engine, float delta) {
 	
 	const auto& file = files.front();
 
-	struct stat result;
-	if (stat((rel + file).c_str(), &result) == 0){
-		auto new_time = result.st_mtime;
-			
+	auto last_write = Util::last_write(rel + file);
+
+	if (last_write) {
+		i64 new_time = last_write.value();
 		if (fileTimestamp.find(file) == fileTimestamp.end()) {
 			fileTimestamp[file] = new_time;
 		}
@@ -47,7 +39,6 @@ void ShaderSystem::update(Engine& engine, float delta) {
 			shaders.reload(file);
 			fileTimestamp[file] = new_time;
 		}
-
 	}
 
 	files.pop();
