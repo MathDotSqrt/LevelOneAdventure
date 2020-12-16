@@ -26,11 +26,27 @@ glm::mat4 makeViewTransform(const Component::Transformation& transform) {
 	return transformation;
 }
 
+void RenderSystem::createInstance(entt::registry& registry, entt::entity entity) {
+	using namespace Component;
+
+	Renderable& renderable = registry.get<Renderable>(entity);
+
+	//If renderable component was created without an instance id
+	//we will create a render instance here
+	if (renderable.instance_id == LOA::NullID) {
+		auto& scene = engine.getScene();
+		renderable.instance_id = scene.addInstance(renderable.mesh_id);
+	}
+}
+
+void RenderSystem::deleteInstance(entt::registry& registry, entt::entity entity) {
+
+}
+
 void RenderSystem::init() {
 	auto& registry = engine.getRegistry();
 	
-
-	//registry.on_construct<Component::PointLight>().connect();
+	registry.on_construct<Component::Renderable>().connect<&RenderSystem::createInstance>(this);
 }
 
 void RenderSystem::update(float delta) {
@@ -67,6 +83,10 @@ void RenderSystem::update(float delta) {
 		auto& dissolve = dissolve_view.get<Dissolve>(entity);
 
 		auto& instance = scene.getInstance(render.instance_id);
+
+		if (instance.materialType != Graphics::MaterialType::DISSOLVE_MATERIAL_ID) {
+			continue;
+		}
 		auto& material = scene.getDissolveMaterial(instance.materialID);
 
 		material.time = dissolve.time;

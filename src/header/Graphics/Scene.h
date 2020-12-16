@@ -35,8 +35,8 @@ namespace LOA::Graphics {
 
 	struct Instance {
 		entt::resource_handle<Mesh> mesh;
-		MaterialType materialType;
-		ID materialID;
+		MaterialType materialType = MaterialType::NUM_MATERIAL_ID;
+		ID materialID = LOA::NullID;
 
 		glm::mat4 transform = glm::identity<glm::mat4>();
 		
@@ -64,9 +64,22 @@ namespace LOA::Graphics {
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, std::string path);
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, TEX::Builder settings, std::string path);
 
-		ID addInstance(entt::id_type meshID, NormalMaterial material);
-		ID addInstance(entt::id_type meshID, BasicLitMaterial material);
-		ID addInstance(entt::id_type meshID, DissolveMaterial material);
+
+		//Adding an instance without a material would only cache the instance
+		//the instance wont get rendered
+		ID addInstance(entt::id_type meshID);
+
+		template<typename MATERIAL>
+		ID addInstance(entt::id_type meshID, MATERIAL material) {
+			ID instance = addInstance(meshID);
+			newMaterial(instance, material);
+			return instance;
+		}
+
+		//When creating a new material, add a new function
+		void newMaterial(ID instance, NormalMaterial newMaterial);
+		void newMaterial(ID instance, BasicLitMaterial newMaterial);
+		void newMaterial(ID instance, DissolveMaterial newMaterial);
 
 		ID addPointLight();
 		ID addPointLight(PointLight light);
@@ -87,6 +100,8 @@ namespace LOA::Graphics {
 	private:
 		friend class BasicRenderer;
 		PerspectiveCamera mainCamera;
+
+		void removeMaterial(ID materialID, MaterialType type);
 
 		Util::PackedFreeList<Instance> instances;
 		Util::PackedFreeList<BasicLitMaterial> basicLitMaterials;

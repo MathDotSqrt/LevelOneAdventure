@@ -32,18 +32,44 @@ entt::resource_handle<TEX> Scene::loadTEX(entt::id_type id, TEX::Builder setting
 	return texCache.reload<Graphics::TextureLoader>(id, settings, filename);
 }
 
-LOA::ID Scene::addInstance(entt::id_type meshID, NormalMaterial material) {
-	return instances.insert(Instance{ meshCache.handle(meshID), MaterialType::NORMAL_MATERIAL_ID});
+LOA::ID Scene::addInstance(entt::id_type meshID) {
+	return instances.insert(Instance{meshCache.handle(meshID), MaterialType::NUM_MATERIAL_ID});
 }
 
-LOA::ID Scene::addInstance(entt::id_type meshID, BasicLitMaterial material) {
-	const auto id = basicLitMaterials.insert(material);
-	return instances.insert(Instance{ meshCache.handle(meshID), MaterialType::BASIC_LIT_MATERIAL_ID, id });
+void Scene::newMaterial(LOA::ID id, NormalMaterial material) {
+	auto& instance = instances[id];
+	removeMaterial(instance.materialID, instance.materialType);
+	instance.materialID = LOA::NullID;
+	instance.materialType = MaterialType::NORMAL_MATERIAL_ID;
 }
 
-LOA::ID Scene::addInstance(entt::id_type meshID, DissolveMaterial material) {
-	const auto id = dissolveMaterials.insert(material);
-	return instances.insert(Instance(meshCache.handle(meshID), MaterialType::DISSOLVE_MATERIAL_ID, id));
+void Scene::newMaterial(LOA::ID id, BasicLitMaterial material) {
+	auto& instance = instances[id];
+	removeMaterial(instance.materialID, instance.materialType);
+	instance.materialID = basicLitMaterials.insert(material);
+	instance.materialType = MaterialType::BASIC_LIT_MATERIAL_ID;
+}
+
+void Scene::newMaterial(LOA::ID id, DissolveMaterial material) {
+	auto& instance = instances[id];
+	removeMaterial(instance.materialID, instance.materialType);
+	instance.materialID = dissolveMaterials.insert(material);
+	instance.materialType = MaterialType::DISSOLVE_MATERIAL_ID;
+}
+
+void Scene::removeMaterial(LOA::ID id, MaterialType type) {
+	switch (type) {
+	case MaterialType::NORMAL_MATERIAL_ID:
+		break;
+	case MaterialType::BASIC_LIT_MATERIAL_ID:
+		basicLitMaterials.remove(id);
+		break;
+	case MaterialType::DISSOLVE_MATERIAL_ID:
+		dissolveMaterials.remove(id);
+		break;
+	default:
+		break;
+	}
 }
 
 LOA::ID Scene::addPointLight() {

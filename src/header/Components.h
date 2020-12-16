@@ -9,6 +9,10 @@
 
 class btRigidBody;
 
+namespace LOA::Systems {
+	class RenderSystem;
+}
+
 namespace LOA::Component {
 	struct Transformation {
 		glm::vec3 pos = glm::vec3(0);
@@ -26,7 +30,24 @@ namespace LOA::Component {
 	};
 
 	struct Renderable {
+		friend class LOA::Systems::RenderSystem;
+		
 		LOA::ID instance_id;
+
+		Renderable(LOA::ID id) : 
+			instance_id(id),
+			mesh_id(0),
+			type(Graphics::MaterialType::NUM_MATERIAL_ID){}
+		
+		Renderable(entt::id_type mesh) :
+			instance_id(LOA::NullID),
+			mesh_id(mesh),
+			type(Graphics::MaterialType::NUM_MATERIAL_ID) {}
+
+	private:
+		entt::id_type mesh_id;
+		Graphics::MaterialType type;
+
 	};
 
 	struct Direction {

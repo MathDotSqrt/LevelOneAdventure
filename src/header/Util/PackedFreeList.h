@@ -10,6 +10,14 @@ namespace LOA {
 	struct ID {
 		u32 index;
 		u32 generation;
+
+		bool operator==(const ID& other) {
+			return index == other.index && generation == other.generation;
+		}
+
+		bool operator!=(const ID& other) {
+			return !(operator==(other));
+		}
 	};
 
 	constexpr ID NullID = ID{ (u32)-1, (u32)-1 };
@@ -79,8 +87,8 @@ namespace LOA::Util {
 
 			u32 element_index = index_array[id.index].index;
 
-			const auto back_element = packed_array.back();
-			const auto back_index = back_packed_array.begin();
+			const auto &back_element = packed_array.back();
+			const auto back_index = *back_packed_array.begin();
 
 			index_array[back_index].index = element_index;
 			

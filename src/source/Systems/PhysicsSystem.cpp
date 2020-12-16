@@ -10,10 +10,6 @@ using namespace LOA;
 using namespace LOA::Systems;
 using namespace LOA::Physics;
 
-void spawn(entt::registry& registry, entt::entity entity) {
-	
-}
-
 void PhysicsSystem::spawnRigidBody(entt::registry& registry, entt::entity entity) {
 	auto& scene = engine.getPhysicsScene();
 	auto& transform = registry.get<Component::Transformation>(entity);

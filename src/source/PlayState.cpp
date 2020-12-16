@@ -64,7 +64,7 @@ PlayState::PlayState(){
 		registry.emplace<Direction>(player, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		registry.emplace<MovementState>(player);
 		registry.emplace<Input>(player);
-		registry.emplace<Renderable>(player, cubeID);
+		registry.emplace<Renderable>(player, "cube"_hs);
 		registry.emplace<PointLight>(player, point_light, glm::vec3(.5, .3, .1), 5.0f);
 		//registry.emplace<Collision>(player, 1.0f);
 
