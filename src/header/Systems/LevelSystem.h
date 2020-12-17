@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Systems/System.h"
+#include <ryml.hpp>
 
 namespace LOA::Systems {
 	class LevelSystem : public BaseSystem{
@@ -9,5 +10,10 @@ namespace LOA::Systems {
 
 		void init();
 		void update(float delta);
+	private:
+		ryml::Tree asset_tree;
+
+		void loadAssets();
+		void loadTiles();
 	};
 }

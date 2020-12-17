@@ -67,70 +67,86 @@ bool read_vec3(c4::csubstr buffer, glm::vec3 &vec) {
 	return pos != c4::csubstr::npos;
 }
 
-void load_assets(Engine &engine) {
-	auto& scene = engine.getScene();
-	auto file_str = LOA::Util::read_file(asset);
-	if (file_str.has_value()) {
-		std::string content = file_str.value();
-		erase_char(content, '\r');
-		erase_char(content, '\t');
-
-		c4::csubstr src_view(c4::to_csubstr(content.c_str()));
-		ryml::Tree tree = ryml::parse(src_view);
-		
-		ryml::NodeRef root = tree.rootref();
-		for (ryml::NodeRef &node : root) {
-			std::string name = "";
-			std::string path = "";
-			glm::vec3 offset(0);
-			float scale = 1;
-
-			c4::from_chars(node.key(), &name);
-			c4::from_chars(node["path"].val(), &path);
-
-			read_vec3(node["offset"].val(), offset);
-			read_float(node["scale"].val(), scale);
-			
-			scene.loadMesh(entt::hashed_string(name.c_str()), path, offset, glm::vec3(scale));
-		}
-	}
-
-	last_time = Util::last_write(asset).value();
-
+bool read_string(c4::csubstr buffer, std::string& str) {
+	c4::from_chars(buffer, &str);
+	return true;
 }
 
-void load_tiles(Engine& engine) {
-	auto& scene = engine.getScene();
-	auto file_str = LOA::Util::read_file(tiles);
-	if (file_str.has_value()) {
-		std::string content = file_str.value();
-		erase_char(content, '\r');
-		erase_char(content, '\t');
+void LevelSystem::loadAssets() {
+	try {
+		auto& scene = engine.getScene();
+		auto file_str = LOA::Util::read_file(asset);
+		if (file_str.has_value()) {
+			std::string content = file_str.value();
+			erase_char(content, '\r');
+			erase_char(content, '\t');
 
-		c4::csubstr src_view(c4::to_csubstr(content.c_str()));
-		ryml::Tree tree = ryml::parse(src_view);
+			c4::csubstr src_view(c4::to_csubstr(content.c_str()));
+			this->asset_tree = ryml::parse(src_view);
 
-		ryml::NodeRef root = tree.rootref();
-		ryml::NodeRef tiles = root["tiles"];
-		for (ryml::NodeRef& node : tiles) {
-			std::string tileType;
-			int rot;
+			ryml::NodeRef root = asset_tree.rootref();
+			for (ryml::NodeRef& node : root) {
+				std::string name = "";
+				std::string path = "";
+				glm::vec3 offset(0);
+				float scale = 1;
 
-			c4::from_chars(node["tile"].val(), &tileType);
-			read_int(node["rot"].val(), rot);
+				read_string(node.key(), name);
+				read_string(node["path"].val(), path);
 
-			for (ryml::NodeRef& loc : node["locations"]) {
-				int x, z;
-				read_int(loc[0].val(), x);
-				read_int(loc[1].val(), z);
+				read_vec3(node["offset"].val(), offset);
+				read_float(node["scale"].val(), scale);
 
-				glm::ivec2 l(x, z);
-				loadRoom(engine, entt::hashed_string(tileType.c_str()), l, rot);
+				scene.loadMesh(entt::hashed_string(name.c_str()), path, offset, glm::vec3(scale));
 			}
 		}
-	}
 
-	last_time_tiles = Util::last_write(asset).value();
+		last_time = Util::last_write(asset).value();
+	}
+	catch (std::exception& e) {
+		std::cerr << e.what();
+	}
+}
+
+void LevelSystem::loadTiles() {
+	try {
+		auto& scene = engine.getScene();
+		auto file_str = LOA::Util::read_file(tiles);
+		if (file_str.has_value()) {
+			std::string content = file_str.value();
+			erase_char(content, '\r');
+			erase_char(content, '\t');
+
+			c4::csubstr src_view(c4::to_csubstr(content.c_str()));
+			ryml::Tree tree = ryml::parse(src_view);
+
+			ryml::NodeRef root = tree.rootref();
+			ryml::NodeRef tiles = root["tiles"];
+			for (ryml::NodeRef& node : tiles) {
+				std::string tileType;
+				int rot;
+
+				read_string(node["tile"].val(), tileType);
+				read_int(node["rot"].val(), rot);
+
+
+
+				for (ryml::NodeRef& loc : node["locations"]) {
+					int x, z;
+					read_int(loc[0].val(), x);
+					read_int(loc[1].val(), z);
+
+					glm::ivec2 l(x, z);
+					loadRoom(engine, entt::hashed_string(tileType.c_str()), l, rot);
+				}
+			}
+		}
+
+		last_time_tiles = Util::last_write(asset).value();
+	}
+	catch (std::exception& e) {
+		std::cerr << e.what();
+	}
 }
 
 void LevelSystem::init() {
@@ -139,8 +155,8 @@ void LevelSystem::init() {
 	auto& scene = engine.getScene();
 	scene.loadTEX("dungeon_pallet"_hs,"./res/models/dungeon_assets/dungeon-texture.png");
 	
-	load_assets(engine);
-	load_tiles(engine);
+	loadAssets();
+	loadTiles();
 
 }
 
@@ -154,14 +170,13 @@ void LevelSystem::update(float delta) {
 
 	if (i64 time = Util::last_write(asset).value(); time > last_time) {
 		destroy_tiles();
-		load_assets(engine);
-		load_tiles(engine);
+		loadAssets();
+		loadTiles();
 	}
 	
 	if (i64 time = Util::last_write(tiles).value(); time > last_time_tiles) {
 		destroy_tiles();
-
-		load_tiles(engine);
+		loadTiles();
 	}
 
 	auto& registry = engine.getRegistry();
