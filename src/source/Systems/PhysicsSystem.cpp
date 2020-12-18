@@ -12,6 +12,22 @@ using namespace LOA;
 using namespace LOA::Systems;
 using namespace LOA::Physics;
 
+btVector3 to_bt(const glm::vec3 &vec) {
+	return btVector3(vec.x, vec.y, vec.z);
+}
+
+btQuaternion to_bt(const glm::quat& quat) { 
+	return btQuaternion(quat.x, quat.y, quat.z, quat.w);
+}
+
+glm::vec3 to_glm(const btVector3& vec) {
+	return glm::vec3(vec.x(), vec.y(), vec.z());
+}
+
+glm::quat to_glm(const btQuaternion& quat) {
+	return glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
+}
+
 void PhysicsSystem::spawnRigidBody(entt::registry& registry, entt::entity entity) {
 	auto& scene = engine.getPhysicsScene();
 	
@@ -93,14 +109,14 @@ void PhysicsSystem::update(float delta) {
 		btKinematicCharacterController* kinematic_controller = controller.kinematicCollider;
 		btPairCachingGhostObject* ghost_object = kinematic_controller->getGhostObject();
 
-		//btTransform bt_transform;
-		//bt_transform.setIdentity();
-		//bt_transform.setOrigin(btVector3(transform.pos.x, transform.pos.y, transform.pos.z));
-		//bt_transform.setRotation(btQuaternion(transform.rot.x, transform.rot.y, transform.rot.z, transform.rot.w));
+		btTransform bt_transform;
+		bt_transform.setIdentity();
+		bt_transform.setOrigin(to_bt(transform.pos));
+		bt_transform.setRotation(to_bt(transform.rot));
 
-		//ghost_object->setWorldTransform(bt_transform);
+		ghost_object->setWorldTransform(bt_transform);
 
-		kinematic_controller->setLinearVelocity(btVector3(vel.x, vel.y, vel.z) * btScalar(delta));
+		kinematic_controller->setLinearVelocity(to_bt(vel * delta));
 	}
 
 	auto view = registry.view<Transformation, Velocity, RigidBody>();
@@ -109,6 +125,16 @@ void PhysicsSystem::update(float delta) {
 		auto& vel = view.get<Velocity>(entity);
 		auto& collision = view.get<RigidBody>(entity);
 
+		//
+		glm::vec3 abc = transform.rot * collision.offset;
+		glm::vec3 rigid_body_origin = glm::length(collision.offset) * (transform.rot * glm::normalize(collision.offset)) + transform.pos;
+
+		btTransform bt_transform;
+		bt_transform.setIdentity();
+		bt_transform.setOrigin(to_bt(rigid_body_origin));
+		bt_transform.setRotation(to_bt(transform.rot));
+
+		collision.body->setWorldTransform(bt_transform);
 		collision.body->setLinearVelocity(btVector3(vel.x, vel.y, vel.z));
 	}
 
@@ -125,11 +151,11 @@ void PhysicsSystem::update(float delta) {
 		auto& bt_transform = ghost_object->getWorldTransform();
 		auto& origin = bt_transform.getOrigin();
 		auto& quat = bt_transform.getRotation();
-		transform.pos = glm::vec3(origin.x(), origin.y(), origin.z());
-		transform.rot = glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
+		transform.pos = to_glm(origin);
+		transform.rot = to_glm(quat);
 
 		btVector3 btVel = kinematic_controller->getLinearVelocity() / delta;
-		vel = glm::vec3(btVel.x(), btVel.y(), btVel.z());
+		vel = to_glm(btVel);
 	}
 
 	for (auto entity : view) {
@@ -140,11 +166,16 @@ void PhysicsSystem::update(float delta) {
 		auto& bt_transform = collision.body->getWorldTransform();
 		auto& origin = bt_transform.getOrigin();
 		auto& quat = bt_transform.getRotation();
-		transform.pos = glm::vec3(origin.x(), origin.y(), origin.z());
-		transform.rot = glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
+		
 
+		transform.rot = to_glm(quat);
+		
+		transform.pos = to_glm(origin) - glm::length(collision.offset) * (transform.rot * glm::normalize(collision.offset));
+
+		//TODO: invetigate if i need to divide by delta?
+		//seems to work without dividing, but character controller needs to be divided
 		btVector3 btVel = collision.body->getLinearVelocity();
-		vel = glm::vec3(btVel.x(), btVel.y(), btVel.z());
+		vel = to_glm(btVel);
 	}
 
 

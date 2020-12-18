@@ -66,7 +66,7 @@ PlayState::PlayState(){
 		registry.emplace<Input>(player);
 		registry.emplace<Renderable>(player, cubeID);
 		registry.emplace<PointLight>(player, point_light, glm::vec3(.5, .3, .1), 5.0f);
-		//registry.emplace<CharacterController>(player);
+		registry.emplace<CharacterController>(player);
 
 	}
 

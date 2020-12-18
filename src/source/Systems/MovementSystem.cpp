@@ -41,7 +41,7 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	registry.emplace<Velocity>(fireball, glm::normalize(forward) * 20.0f);
 	registry.emplace<FireParticle>(fireball, 200.0f, 10.0f);
 	registry.emplace<Renderable>(fireball, id);
-	registry.emplace<RigidBody>(fireball, .1f);
+	registry.emplace<RigidBody>(fireball, glm::vec3(.5), glm::vec3(0, 10, 0), .1f);
 
 
 	//registry.emplace<PointLight>(fireball, id, glm::vec3(1), 10.0f);

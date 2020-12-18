@@ -14,7 +14,6 @@ PhysicsScene::PhysicsScene() {
 	dispatcher = new btCollisionDispatcher(config);
 	broadphase = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
-
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, config);
 	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 }
@@ -49,7 +48,7 @@ btRigidBody* PhysicsScene::createBox(glm::vec3 pos, glm::vec3 dim, float mass) {
 
 	btTransform groundTransform;
 	groundTransform.setIdentity();
-	groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+	//groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, shape, inertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
