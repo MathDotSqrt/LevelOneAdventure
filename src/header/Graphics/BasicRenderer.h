@@ -13,13 +13,17 @@ namespace LOA::Systems {
 	class ShaderSystem;
 }
 
+namespace LOA::Physics {
+	class PhysicsScene;
+}
+
 namespace LOA::Graphics {
 	class BasicRenderer {
 	public:
 		friend class LOA::Systems::ShaderSystem;
 
 		BasicRenderer();
-		void render(const Scene &scene);
+		void render(const Scene& scene, const Physics::PhysicsScene* physicsScene = nullptr);
 
 	private:
 		typedef std::vector<RenderStateKeyValue>::const_iterator draw_iterator;
@@ -31,11 +35,11 @@ namespace LOA::Graphics {
 		TEX noise3D;
 
 		PostProcessPipeline postProcess;
-
+		
 		int current_width = 0;
 		int current_height = 0;
 
-		void prerender(const Scene &scene);
+		void prerender(const Scene &scene, bool drawPhysicsDebug=false);
 
 		void setViewPort(const Scene &scene, ViewPort viewport);
 		void setBlendType(const Scene& scene, BlendType blend);
@@ -46,6 +50,7 @@ namespace LOA::Graphics {
 
 		draw_iterator renderParticle(const Scene& scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderFireParticle(const Scene& scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderPhysicsDebug(const Scene& scene, const Physics::PhysicsScene* physicsScene, draw_iterator start, draw_iterator end);
 
 		void renderPostprocess();
 

@@ -4,6 +4,8 @@
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
+#include "Physics/PhysicsDebugDrawer.h"
+
 using namespace LOA::Physics;
 
 
@@ -11,10 +13,16 @@ using namespace LOA::Physics;
 PhysicsScene::PhysicsScene() {
 	config = new btDefaultCollisionConfiguration();
 
+	glDrawer = new PhysicsDebugDrawer();
+
 	dispatcher = new btCollisionDispatcher(config);
 	broadphase = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, config);
+
+	world->setDebugDrawer(glDrawer);
+
+	//TODO: potential leak on ghost pair callback
 	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 }
 
@@ -23,6 +31,7 @@ PhysicsScene::~PhysicsScene() {
 		delete shape;
 	}
 
+	delete glDrawer;
 	delete world;
 	delete solver;
 	delete broadphase;
@@ -32,6 +41,11 @@ PhysicsScene::~PhysicsScene() {
 
 void PhysicsScene::update(float delta) {
 	world->stepSimulation(delta);
+}
+
+void PhysicsScene::render() {
+	world->debugDrawWorld();
+	glDrawer->bufferData();
 }
 
 void PhysicsScene::setGravity(glm::vec3 g) {
@@ -110,4 +124,8 @@ void PhysicsScene::freeCharacterController(btKinematicCharacterController* contr
 	//TODO: investigate potential leak of ghost object
 	//not sure if bullet deallocates that for me
 	delete controller;
+}
+
+PhysicsDebugDrawer* PhysicsScene::getDrawer() const { 
+	return glDrawer;
 }

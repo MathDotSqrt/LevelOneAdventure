@@ -37,6 +37,7 @@ namespace LOA::Graphics {
 
 		PARTICLE_MATERIAL_ID,
 		FIRE_PARTICLE_ID,
+		LINE_MATERIAL_ID,
 
 		NUM_MATERIAL_ID
 	};
@@ -78,5 +79,10 @@ namespace LOA::Graphics {
 		entt::id_type diffuse_grid;
 		glm::vec3 base_color;
 		glm::vec3 outer_color;
+	};
+
+	struct LineMaterial {
+		constexpr static MaterialType Type = MaterialType::LINE_MATERIAL_ID;
+		constexpr static id_type ShaderID = "LineShader"_hs;
 	};
 }

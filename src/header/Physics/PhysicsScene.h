@@ -13,6 +13,8 @@ class btCollisionShape;
 class btKinematicCharacterController;
 
 namespace LOA::Physics {
+	class PhysicsDebugDrawer;
+
 	class PhysicsScene {
 	public:
 		PhysicsScene();
@@ -22,6 +24,7 @@ namespace LOA::Physics {
 		PhysicsScene& operator=(const PhysicsScene&) = delete;
 
 		void update(float delta);
+		void render();
 		void setGravity(glm::vec3 g);
 
 		btRigidBody* createBox(glm::vec3 pos, glm::vec3 dimensions, float mass=1);
@@ -31,7 +34,12 @@ namespace LOA::Physics {
 		void freeCharacterController(btKinematicCharacterController* controller);
 	
 		btKinematicCharacterController* createCharacterController();
+
+		PhysicsDebugDrawer* getDrawer() const;
 	private:
+
+		PhysicsDebugDrawer* glDrawer;
+
 		btDefaultCollisionConfiguration* config;
 		btCollisionDispatcher* dispatcher;
 		btBroadphaseInterface* broadphase;

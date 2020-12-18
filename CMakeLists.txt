@@ -8,6 +8,7 @@ project(LevelOneAdventure)
 
 # Add new header files here
 set(HEADER_FILES ${HEADER_FILES} 
+	"src/header/Physics/PhysicsDebugDrawer.h"
 	"src/header/Physics/PhysicsScene.h"
 
 	"src/header/Graphics/Attrib.h"
@@ -15,6 +16,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/FBO.h"
 	"src/header/Graphics/Geometry.h"
 	"src/header/Graphics/GeometryBuilder.h"
+	"src/header/Graphics/GLError.h"
 	"src/header/Graphics/GLSLProgram.h"
 	"src/header/Graphics/Material.h"
 	"src/header/Graphics/Mesh.h"
@@ -59,7 +61,8 @@ set(HEADER_FILES ${HEADER_FILES}
 )
 
 # Add new source files here
-set(SOURCE_FILES ${SOURCE_FILES} 
+set(SOURCE_FILES ${SOURCE_FILES}
+	"src/source/Physics/PhysicsDebugDrawer.cpp"
 	"src/source/Physics/PhysicsScene.cpp"
 
 	"src/source/Graphics/Attrib.cpp"
@@ -67,6 +70,7 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Graphics/FBO.cpp"
 	"src/source/Graphics/Geometry.cpp"
 	"src/source/Graphics/GeometryBuilder.cpp"
+	"src/source/Graphics/GLError.cpp"
 	"src/source/Graphics/GLSLProgram.cpp"
 	"src/source/Graphics/ParticleGenerator.cpp"
 	"src/source/Graphics/ParticleRenderData.cpp"
@@ -138,7 +142,9 @@ elseif(APPLE)
 endif()
 
 find_package(Bullet REQUIRED)
-include_directories(${BULLET_INCLUDE_DIR})
+#TODO: fix hard coded path. Bullet default include dir includes way.too.much...
+#include_directories(${BULLET_INCLUDE_DIR})
+include_directories("C:/Program Files (x86)/BULLET_PHYSICS/include/bullet")
 
 # Link libs
 set(LIBS 

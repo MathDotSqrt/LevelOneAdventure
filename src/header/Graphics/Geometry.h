@@ -81,6 +81,10 @@ namespace LOA::Graphics {
 			return indices.size();
 		}
 
+		inline constexpr size_t sizeofVertex() const {
+			return sizeof(GeometryVertex);
+		}
+
 	private:
 		std::vector<GeometryVertex> verticies;
 		std::vector<u32> indices;

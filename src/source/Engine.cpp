@@ -1,5 +1,7 @@
 #include "Engine.h"
 #include "Physics/PhysicsScene.h"
+#include "Physics/PhysicsDebugDrawer.h"
+#include "Window.h"
 
 using namespace LOA;
 
@@ -11,10 +13,16 @@ void Engine::update(float delta){
 	for (auto& system : systems) {
 		system->update(delta);
 	}
+	if(Window::getInstance().isPressed('m'))
+		getPhysicsScene().getDrawer()->setDebugMode(1);
+	else if(Window::getInstance().isPressed('n'))
+		getPhysicsScene().getDrawer()->setDebugMode(0);
 }
 
 void Engine::render() {
-	renderer.render(scene);
+	Physics::PhysicsScene& physicsScene = getPhysicsScene();
+	physicsScene.render();
+	renderer.render(scene, &physicsScene);
 }
 
 entt::registry& Engine::getRegistry() {

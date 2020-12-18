@@ -6,10 +6,10 @@
 #include "Util/Noise.h"
 #include "Graphics/GeometryBuilder.h"
 #include "Util/Timer.h"
+#include "Physics/PhysicsScene.h"
+#include "Physics/PhysicsDebugDrawer.h"
 
 using namespace LOA::Graphics;
-
-
 
 BasicRenderer::BasicRenderer() :
 	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_simplex_3D_texture(64, .05)))
@@ -25,10 +25,11 @@ BasicRenderer::BasicRenderer() :
 	shaders.load(DissolveMaterial::ShaderID, "dissolve_lit/dissolve_lit.vert", "dissolve_lit/dissolve_lit.frag");
 	shaders.load(ParticleMaterial::ShaderID, "color_particle/particle.vert", "color_particle/particle.frag");
 	shaders.load(FireParticleMaterial::ShaderID, "fire_particle/fire_particle.vert", "fire_particle/fire_particle.frag");
+	shaders.load(LineMaterial::ShaderID, "basic_color/basic_color.vert", "basic_color/basic_color.frag");
 	//glEnable(GL_MULTISAMPLE);
 }
 
-void BasicRenderer::prerender(const Scene& scene) {
+void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 	Util::Timer timer("Prerender");
 	auto& window = Window::getInstance();
 
@@ -49,6 +50,12 @@ void BasicRenderer::prerender(const Scene& scene) {
 		const auto& instance = scene.particleSystemInstances[i];
 		const RenderStateKey renderKey{ BlendType::MUL, instance.materialType };
 		const RenderStateKeyValue renderCall{ renderKey, i };
+		drawList.push_back(renderCall);
+	}
+
+	if(drawPhysicsDebug){
+		const RenderStateKey renderKey{ BlendType::OPAQUE, MaterialType::LINE_MATERIAL_ID };
+		const RenderStateKeyValue renderCall{ renderKey, 0 };
 		drawList.push_back(renderCall);
 	}
 
@@ -87,9 +94,10 @@ void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
 	}
 }
 
-void BasicRenderer::render(const Scene &scene) {
-	prerender(scene);
-
+void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* physicsScene) {
+	bool debugPhysicsDraw = physicsScene != nullptr;
+	
+	prerender(scene, debugPhysicsDraw);
 
 	Util::Timer timer("Render");
 
@@ -130,6 +138,9 @@ void BasicRenderer::render(const Scene &scene) {
 			break;
 		case MaterialType::FIRE_PARTICLE_ID:
 			start = renderFireParticle(scene, start, end);
+			break;
+		case MaterialType::LINE_MATERIAL_ID:
+			start = renderPhysicsDebug(scene, physicsScene, start, end);
 			break;
 		default:
 			start++;
@@ -355,6 +366,39 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 
 	return start;
 }
+
+BasicRenderer::draw_iterator
+BasicRenderer::renderPhysicsDebug(const Scene& scene, const Physics::PhysicsScene* physicsScene, draw_iterator start, draw_iterator end) {
+	if (start == end) {
+		//nothing else to render
+		return end;
+	}
+
+	const VAO& vao = physicsScene->getDrawer()->getVAO();
+	size_t num_elements = physicsScene->getDrawer()->getNumElements();
+	
+	//nothing to draw
+	if (num_elements == 0)
+		return ++start;
+
+	//Shader failed to compile
+	auto shader = shaders.get(LineMaterial::ShaderID);
+	if (!shader) {
+		return end;
+	}
+
+	assert(physicsScene != nullptr);
+
+	
+	shader->start();
+	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+
+	vao.bind();
+	glDrawArrays(GL_LINES, 0, num_elements);
+
+	return ++start;
+}
+
 
 void BasicRenderer::renderPostprocess() {
 	
