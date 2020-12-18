@@ -25,9 +25,32 @@
 		offset: "glm::vec3(0, 0, 0)",
 		scale: .1
 	},
-
+	door_frame: {
+		path: "./res/models/dungeon_assets/dungeon/door-frame.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, 0, -1.55)",
+		scale: .1
+	},
+	door_left: {
+		path: "./res/models/dungeon_assets/dungeon/door-left.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(-.70, 2.5, -1.55)",
+		scale: .1
+	},
+	door_right: {
+		path: "./res/models/dungeon_assets/dungeon/door-right.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(3.70, 2.5, -1.5)",
+		scale: .1
+	},
 	wall_1: {
 		path: "./res/models/dungeon_assets/dungeon/wall-1.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, 0, -1.50)",
+		scale: .1
+	},
+	wall_2: {
+		path: "./res/models/dungeon_assets/dungeon/wall-2.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(1.50, 0, -1.55)",
 		scale: .1
@@ -37,5 +60,23 @@
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(1.50, 0, -1.55)",
 		scale: .1
-	}
+	},
+	wall_4: {
+		path: "./res/models/dungeon_assets/dungeon/wall-4.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, 0, -1.55)",
+		scale: .1
+	},
+	wall_5: {
+		path: "./res/models/dungeon_assets/dungeon/wall-5.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, 0, -1.55)",
+		scale: .1
+	},
+	wall_6: {
+		path: "./res/models/dungeon_assets/dungeon/wall-6.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, 0, -1.55)",
+		scale: .1
+	},
 }
