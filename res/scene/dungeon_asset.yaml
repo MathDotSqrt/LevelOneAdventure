@@ -2,7 +2,7 @@
 	floor_stone1: {
 		path: "./res/models/dungeon_assets/dungeon/floor-stone1.fbx",
 		pallet: "dungeon_pallet",
-		offset: "glm::vec3(0, -.225, 0)",
+		offset: "glm::vec3(0, -.255, 0)",
 		scale: .1,
 		aabb: {
 			min: "glm::vec3(-1, -1, -1)",

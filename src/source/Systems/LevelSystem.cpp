@@ -20,19 +20,24 @@ static std::string tiles = "./res/scene/scene_tiles.yaml";
 static i64 last_time = 0;
 static i64 last_time_tiles = 0;
 
-void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
+void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm::vec3 offset, glm::vec3 scale) {
 	using namespace entt;
 
-	const glm::vec3 size(3);
+	const glm::vec3 grid_size(3);
 
 	auto& scene = engine.getScene();
 
 	//create instance
 	LOA::ID id = scene.addInstance(model);
 	auto& instance = scene.getInstance(id);
-	glm::vec3 pos(-size.x * loc.x, 0, -size.z * loc.y);
+	
+	glm::vec3 pos(-grid_size.x * loc.x, 0, -grid_size.z * loc.y);
 	glm::quat rotation = glm::angleAxis(glm::pi<float>() * rot / 2.0f, glm::vec3(0, 1, 0));
-	instance.transform = Util::make_transform(pos, rotation);
+
+	//I want to scale first, offset, and then rotate
+	//Transformations occure in reverse order
+	constexpr glm::mat4 identity = glm::identity<glm::mat4>();
+	instance.transform = glm::scale(glm::translate(identity, pos), scale);
 
 	Graphics::DissolveMaterial material;
 	material.diffuse = "dungeon_pallet"_hs;
@@ -48,7 +53,7 @@ void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
 }
 
 void erase_char(std::string& str, char c) {
-	std::string::iterator end_pos = std::remove(str.begin(), str.end(), c);
+	auto end_pos = std::remove(str.begin(), str.end(), c);
 	str.erase(end_pos, str.end());
 }
 
@@ -97,7 +102,7 @@ void LevelSystem::loadAssets() {
 				read_vec3(node["offset"].val(), offset);
 				read_float(node["scale"].val(), scale);
 
-				scene.loadMesh(entt::hashed_string(name.c_str()), path, offset, glm::vec3(scale));
+				scene.loadMesh(entt::hashed_string(name.c_str()), path);
 			}
 		}
 
@@ -123,13 +128,21 @@ void LevelSystem::loadTiles() {
 			ryml::NodeRef root = tree.rootref();
 			ryml::NodeRef tiles = root["tiles"];
 			for (ryml::NodeRef& node : tiles) {
+				auto &tileSubstring = node["tile"].val();
 				std::string tileType;
-				int rot;
+				int rot = 0;
 
-				read_string(node["tile"].val(), tileType);
+				read_string(tileSubstring, tileType);
 				read_int(node["rot"].val(), rot);
 
+				//Get offset and scale from asset tree map
+				//This info is stored in dungeon_asset.yaml
+				glm::vec3 offset = glm::vec3(0);
+				float scale = 1;
+				read_vec3(asset_tree[tileSubstring]["offset"].val(), offset);
+				read_float(asset_tree[tileSubstring]["scale"].val(), scale);
 
+				entt::id_type mesh_id = entt::hashed_string(tileType.c_str());
 
 				for (ryml::NodeRef& loc : node["locations"]) {
 					int x, z;
@@ -137,7 +150,7 @@ void LevelSystem::loadTiles() {
 					read_int(loc[1].val(), z);
 
 					glm::ivec2 l(x, z);
-					loadRoom(engine, entt::hashed_string(tileType.c_str()), l, rot);
+					loadRoom(engine, mesh_id, l, rot, offset, glm::vec3(scale));
 				}
 			}
 		}

@@ -8,8 +8,7 @@ void VelocitySystem::update(float delta) {
 	using namespace Component;
 
 	auto& registry = engine.getRegistry();
-	auto view = registry.view<Transformation, Velocity>(entt::exclude<Collision>);
-	auto a_view = registry.view<Velocity>(entt::exclude<Camera>);
+	auto view = registry.view<Transformation, Velocity>(entt::exclude<RigidBody, CharacterController>);
 
 	//for (auto entity : a_view) {
 	//	view.get<Velocity>(entity).y -= 20 * delta * .5f;

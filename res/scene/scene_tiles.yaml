@@ -1,40 +1,11 @@
 {
 	tiles: [
 		{
-			tile: "floor_stone1",
-			locations: [
-				[0, 0], [0, 1], 
-				[1, 0], 
-				[2, 0],
-				[3, 0], [3, 1],
-				[2, 0], [2, 1]
-			],
-			rot: 0
-		},
-		{
-			tile: "floor_stone2",
-			locations: [
-				[1, 1]
-			],
-			rot: 0
-		},
-		{
 			tile: "wall_1",
 			locations: [
-				[0, 0], [2, 0], [4, 0]
+				[0, 0], [2, 0]
 			],
-			rot: 2
-		},
-		{
-			tile: "wall_3",
-			locations: [[-2, 0]],
-			rot: 2
-		},
-
-		{
-			tile: "build_box",
-			locations: [[5, 0]],
-			rot: 2
-		},
+			rot: 0
+		}
 	]
 }

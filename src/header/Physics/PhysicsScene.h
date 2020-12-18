@@ -10,6 +10,7 @@ class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
 class btRigidBody;
 class btCollisionShape;
+class btKinematicCharacterController;
 
 namespace LOA::Physics {
 	class PhysicsScene {
@@ -25,6 +26,11 @@ namespace LOA::Physics {
 
 		btRigidBody* createBox(glm::vec3 pos, glm::vec3 dimensions, float mass=1);
 		btRigidBody* createStaticPlane(glm::vec3 normal, float scalar);
+
+		void freeBox(btRigidBody* body);
+		void freeCharacterController(btKinematicCharacterController* controller);
+	
+		btKinematicCharacterController* createCharacterController();
 	private:
 		btDefaultCollisionConfiguration* config;
 		btCollisionDispatcher* dispatcher;

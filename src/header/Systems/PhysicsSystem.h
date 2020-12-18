@@ -11,5 +11,12 @@ namespace LOA::Systems {
 
 	private:
 		void spawnRigidBody(entt::registry& registry, entt::entity entity);
+		void freeRigidBody(entt::registry& registry, entt::entity entity);
+		
+		void spawnStaticBody(entt::registry& registry, entt::entity entity);
+		void freeStaticBody(entt::registry& registry, entt::entity entity);
+
+		void spawnCharacterController(entt::registry& registry, entt::entity entity);
+		void freeCharacterController(entt::registry& registry, entt::entity entity);
 	};
 }

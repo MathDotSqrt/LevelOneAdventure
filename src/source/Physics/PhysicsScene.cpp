@@ -1,6 +1,8 @@
 #include "Physics/PhysicsScene.h"
 
-#include "BulletDynamics/btBulletDynamicsCommon.h"
+#include <BulletDynamics/btBulletDynamicsCommon.h>
+#include <BulletDynamics/Character/btKinematicCharacterController.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 using namespace LOA::Physics;
 
@@ -14,7 +16,7 @@ PhysicsScene::PhysicsScene() {
 	solver = new btSequentialImpulseConstraintSolver();
 
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, config);
-	world->stepSimulation(1 / 60.0f, 10);
+	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 }
 
 PhysicsScene::~PhysicsScene() {
@@ -40,7 +42,8 @@ void PhysicsScene::setGravity(glm::vec3 g) {
 btRigidBody* PhysicsScene::createBox(glm::vec3 pos, glm::vec3 dim, float mass) {
 	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
 	btVector3 inertia(1, 1, 1);
-	shape->calculateLocalInertia(mass, inertia);
+	if(mass != 0)
+		shape->calculateLocalInertia(mass, inertia);
 
 	shapes.push_back(shape);
 
@@ -53,6 +56,11 @@ btRigidBody* PhysicsScene::createBox(glm::vec3 pos, glm::vec3 dim, float mass) {
 	body->setWorldTransform(groundTransform);
 	world->addRigidBody(body);
 	return body;
+}
+
+void PhysicsScene::freeBox(btRigidBody* body) {
+	world->removeRigidBody(body);
+	delete body;
 }
 
 btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
@@ -68,4 +76,39 @@ btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
 
 	world->addRigidBody(body);
 	return body;
+}
+
+btKinematicCharacterController* PhysicsScene::createCharacterController() {
+	//Reference: https://github.com/kripken/bullet/blob/master/Demos/CharacterDemo/CharacterDemo.cpp
+	
+	//TODO: fix leak
+	btPairCachingGhostObject* ghost_object = new btPairCachingGhostObject();
+	btConvexShape* shape = new btCapsuleShape(.5, 1);
+	shapes.push_back(shape);
+
+	btTransform transform;
+	transform.setIdentity();
+
+	ghost_object->setWorldTransform(transform);
+	ghost_object->setCollisionShape(shape);
+	ghost_object->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+	
+	//TODO: fix leak
+	btKinematicCharacterController* controller = new btKinematicCharacterController(ghost_object, shape, .1, btVector3(0, 1, 0));
+	
+	//No clue what the parameters are 
+	//Found in the demo
+	world->addCollisionObject(ghost_object, btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter | btBroadphaseProxy::DefaultFilter);
+	world->addAction(controller);
+
+	return controller;
+}
+
+void PhysicsScene::freeCharacterController(btKinematicCharacterController* controller) {
+	world->removeCollisionObject(controller->getGhostObject());
+	world->removeAction(controller);
+
+	//TODO: investigate potential leak of ghost object
+	//not sure if bullet deallocates that for me
+	delete controller;
 }

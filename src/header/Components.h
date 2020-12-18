@@ -8,6 +8,7 @@
 #include "Util/PackedFreeList.h"
 
 class btRigidBody;
+class btKinematicCharacterController;
 
 namespace LOA::Systems {
 	class RenderSystem;
@@ -81,10 +82,24 @@ namespace LOA::Component {
 
 	};
 
-	struct Collision {
+
+	//Rigid Bodies that have physics
+	struct RigidBody {
 		float mass;
 		btRigidBody* body;
 
-		Collision(float mass=1) : mass(mass), body(nullptr){}
+		RigidBody(float mass=1) : mass(mass), body(nullptr) {}
+	};
+
+	//Rigid Bodies that dont have physics: walls, floors
+	struct StaticBody {
+		glm::vec3 dim;
+		btRigidBody* body;
+		StaticBody(glm::vec3 dim) : dim(dim), body(nullptr) {}
+	};
+
+	//Rigid Bodies for characters
+	struct CharacterController {
+		btKinematicCharacterController* kinematicCollider = nullptr;
 	};
 }
