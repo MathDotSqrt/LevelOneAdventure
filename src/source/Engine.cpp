@@ -10,6 +10,7 @@ Engine::Engine() {
 }
 
 void Engine::update(float delta){
+	
 	for (auto& system : systems) {
 		system->update(delta);
 	}
@@ -21,8 +22,12 @@ void Engine::update(float delta){
 
 void Engine::render() {
 	Physics::PhysicsScene& physicsScene = getPhysicsScene();
-	physicsScene.render();
+
+	//we pass the physics scene to the renderer if we want to debug draw
 	renderer.render(scene, &physicsScene);
+
+	//We prerender for the next frame because game physics is one frame behind the renderer
+	physicsScene.prerender();
 }
 
 entt::registry& Engine::getRegistry() {

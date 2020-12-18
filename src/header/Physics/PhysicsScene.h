@@ -24,7 +24,7 @@ namespace LOA::Physics {
 		PhysicsScene& operator=(const PhysicsScene&) = delete;
 
 		void update(float delta);
-		void render();
+		void prerender();
 		void setGravity(glm::vec3 g);
 
 		btRigidBody* createBox(glm::vec3 pos, glm::vec3 dimensions, float mass=1);

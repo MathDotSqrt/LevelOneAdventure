@@ -127,7 +127,7 @@ void PhysicsSystem::update(float delta) {
 
 		//
 		glm::vec3 abc = transform.rot * collision.offset;
-		glm::vec3 rigid_body_origin = glm::length(collision.offset) * (transform.rot * glm::normalize(collision.offset)) + transform.pos;
+		glm::vec3 rigid_body_origin = (transform.rot * collision.offset) + transform.pos;
 
 		btTransform bt_transform;
 		bt_transform.setIdentity();
@@ -170,7 +170,7 @@ void PhysicsSystem::update(float delta) {
 
 		transform.rot = to_glm(quat);
 		
-		transform.pos = to_glm(origin) - glm::length(collision.offset) * (transform.rot * glm::normalize(collision.offset));
+		transform.pos = to_glm(origin) - (transform.rot * collision.offset);
 
 		//TODO: invetigate if i need to divide by delta?
 		//seems to work without dividing, but character controller needs to be divided

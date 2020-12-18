@@ -43,7 +43,7 @@ void PhysicsScene::update(float delta) {
 	world->stepSimulation(delta);
 }
 
-void PhysicsScene::render() {
+void PhysicsScene::prerender() {
 	world->debugDrawWorld();
 	glDrawer->bufferData();
 }
