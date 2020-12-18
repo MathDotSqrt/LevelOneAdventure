@@ -5,7 +5,7 @@
 namespace LOA::Systems {
 	class PhysicsSystem : public BaseSystem {
 	public:
-		PhysicsSystem(LOA::Engine& engine) : BaseSystem(engine) {}
+		PhysicsSystem(LOA::Engine& engine);
 		void init();
 		void update(float dt);
 

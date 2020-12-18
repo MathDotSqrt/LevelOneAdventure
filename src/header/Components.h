@@ -107,6 +107,14 @@ namespace LOA::Component {
 		glm::vec3 offset;
 		btRigidBody* body;
 
+		//If user creates the body manually
+		StaticBody(btRigidBody* body) : 
+			dim(glm::vec3(0)), 
+			offset(glm::vec3(0)), 
+			body(body) {}
+
+		//Automatically creates the static body, 
+		//Updates when component transform is updated
 		StaticBody(glm::vec3 dim, glm::vec3 offset = glm::vec3(0)) : 
 			dim(dim), 
 			offset(offset), 

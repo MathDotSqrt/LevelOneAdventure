@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "glm/glm.hpp"
+#include <glm/gtx/quaternion.hpp>
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -27,7 +28,8 @@ namespace LOA::Physics {
 		void prerender();
 		void setGravity(glm::vec3 g);
 
-		btRigidBody* createBox(glm::vec3 pos, glm::vec3 dimensions, float mass=1);
+
+		btRigidBody* createBox(float mass, glm::vec3 dim, glm::vec3 pos=glm::vec3(0), glm::quat rot=glm::quat(1, 0, 0, 0));
 		btRigidBody* createStaticPlane(glm::vec3 normal, float scalar);
 
 		void freeBox(btRigidBody* body);

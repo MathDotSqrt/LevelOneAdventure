@@ -1,9 +1,9 @@
 {
 	tiles: [
 		{
-			tile: "wall_1",
+			tile: "floor_stone1",
 			locations: [
-				[0, 0], [2, 0]
+				[0, 0], [0, 1]
 			],
 			rot: 0
 		}

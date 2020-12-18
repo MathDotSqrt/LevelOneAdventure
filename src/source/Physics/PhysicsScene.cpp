@@ -52,39 +52,53 @@ void PhysicsScene::setGravity(glm::vec3 g) {
 	world->setGravity(btVector3(g.x, g.y, g.z));
 }
 
-btRigidBody* PhysicsScene::createBox(glm::vec3 pos, glm::vec3 dim, float mass) {
+btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, glm::quat rot) {
 	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
-	btVector3 inertia(1, 1, 1);
+	btVector3 inertia(0,0,0);
 	if(mass != 0)
 		shape->calculateLocalInertia(mass, inertia);
 
 	shapes.push_back(shape);
 
-	btTransform groundTransform;
-	groundTransform.setIdentity();
-	//groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, shape, inertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+	groundTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 	body->setWorldTransform(groundTransform);
+	
+	if (mass == 0) {
+		body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	}
+	size_t a = world->getNumCollisionObjects();
 	world->addRigidBody(body);
+	size_t b = world->getNumCollisionObjects();
+
 	return body;
 }
 
 void PhysicsScene::freeBox(btRigidBody* body) {
+	delete body->getMotionState();
+	delete body->getCollisionShape();
+	size_t a = world->getNumCollisionObjects();
 	world->removeRigidBody(body);
+	size_t b = world->getNumCollisionObjects();
+
 	delete body;
+
 }
 
 btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
 	btCollisionShape* shape = new btStaticPlaneShape(btVector3(normal.x, normal.y, normal.z), scalar);
 	shapes.push_back(shape);
 	
-	btTransform groundTransform;
-	groundTransform.setIdentity();
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(0, nullptr, shape);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
+	btTransform groundTransform;
+	groundTransform.setIdentity();
 	body->setWorldTransform(groundTransform);
 
 	world->addRigidBody(body);

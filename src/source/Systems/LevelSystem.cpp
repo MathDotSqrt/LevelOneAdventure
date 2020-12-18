@@ -5,6 +5,8 @@
 #include "Components.h"
 #include "Window.h"
 
+#include "Physics/PhysicsScene.h"
+
 #include <ryml.hpp>
 #include <c4/charconv.hpp>
 #include <c4/format.hpp>
@@ -20,7 +22,7 @@ static std::string tiles = "./res/scene/scene_tiles.yaml";
 static i64 last_time = 0;
 static i64 last_time_tiles = 0;
 
-void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm::vec3 offset, glm::vec3 scale) {
+void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm::vec3 offset, glm::vec3 dim) {
 	using namespace entt;
 
 	const glm::vec3 grid_size(3);
@@ -37,7 +39,7 @@ void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm:
 	//I want to scale first, offset, and then rotate
 	//Transformations occure in reverse order
 	constexpr glm::mat4 identity = glm::identity<glm::mat4>();
-	instance.transform = glm::scale(glm::translate(identity, pos), scale);
+	instance.transform = glm::translate(identity, pos);
 
 	Graphics::DissolveMaterial material;
 	material.diffuse = "dungeon_pallet"_hs;
@@ -45,10 +47,14 @@ void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm:
 	material.offset = .05f;
 	material.time = 0.0f;
 
+	auto& physicsScene = engine.getPhysicsScene();
+	btRigidBody* body = physicsScene.createBox(0, dim, pos + offset);
+
 	auto& registry = engine.getRegistry();
 	auto entity = registry.create();
 	registry.emplace<Graphics::DissolveMaterial>(entity, material);
 	registry.emplace<Component::Renderable>(entity, id);
+	registry.emplace<Component::StaticBody>(entity, body);
 	registry.emplace<Component::LevelTile>(entity);
 }
 
@@ -67,8 +73,14 @@ bool read_float(c4::csubstr buffer, float &f) {
 	return pos != c4::csubstr::npos;
 }
 
-bool read_vec3(c4::csubstr buffer, glm::vec3 &vec) {
+bool read_vec3(c4::csubstr buffer, glm::vec3& vec) {
 	size_t pos = c4::unformat(buffer, "glm::vec3({}, {}, {})", vec.x, vec.y, vec.z);
+	if (pos == c4::csubstr::npos) {
+		float f = 0;
+		pos = c4::unformat(buffer, "glm::vec3({})", f);
+		vec = glm::vec3(f);
+	}
+
 	return pos != c4::csubstr::npos;
 }
 
@@ -102,7 +114,7 @@ void LevelSystem::loadAssets() {
 				read_vec3(node["offset"].val(), offset);
 				read_float(node["scale"].val(), scale);
 
-				scene.loadMesh(entt::hashed_string(name.c_str()), path);
+				scene.loadMesh(entt::hashed_string(name.c_str()), path, offset, glm::vec3(scale));
 			}
 		}
 
@@ -138,9 +150,9 @@ void LevelSystem::loadTiles() {
 				//Get offset and scale from asset tree map
 				//This info is stored in dungeon_asset.yaml
 				glm::vec3 offset = glm::vec3(0);
-				float scale = 1;
-				read_vec3(asset_tree[tileSubstring]["offset"].val(), offset);
-				read_float(asset_tree[tileSubstring]["scale"].val(), scale);
+				glm::vec3 dim = glm::vec3(1);
+				read_vec3(asset_tree[tileSubstring]["aabb"]["offset"].val(), offset);
+				read_vec3(asset_tree[tileSubstring]["aabb"]["dim"].val(), dim);
 
 				entt::id_type mesh_id = entt::hashed_string(tileType.c_str());
 
@@ -150,12 +162,12 @@ void LevelSystem::loadTiles() {
 					read_int(loc[1].val(), z);
 
 					glm::ivec2 l(x, z);
-					loadRoom(engine, mesh_id, l, rot, offset, glm::vec3(scale));
+					loadRoom(engine, mesh_id, l, rot, offset, dim);
 				}
 			}
 		}
 
-		last_time_tiles = Util::last_write(asset).value();
+		last_time_tiles = Util::last_write(tiles).value();
 	}
 	catch (std::exception& e) {
 		std::cerr << e.what();

@@ -29,7 +29,6 @@ PlayState::PlayState(){
 
 	auto& registry = engine.getRegistry();
 
-	engine.addSystem<Systems::LevelSystem>();
 	engine.addSystem<Systems::ParticleSystem>();
 
 	engine.addSystem<Systems::ShaderSystem>();
@@ -40,6 +39,9 @@ PlayState::PlayState(){
 
 	engine.addSystem<Systems::PhysicsSystem>();
 	engine.addSystem<Systems::VelocitySystem>();
+
+	engine.addSystem<Systems::LevelSystem>();
+
 
 	//Fire
 	{

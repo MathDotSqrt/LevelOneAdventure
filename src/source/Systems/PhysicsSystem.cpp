@@ -2,6 +2,8 @@
 #include "Engine.h"
 #include "Components.h"
 #include "Physics/PhysicsScene.h"
+#include "util/Timer.h"
+
 #include <BulletDynamics/btBulletDynamicsCommon.h>
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
@@ -31,10 +33,12 @@ glm::quat to_glm(const btQuaternion& quat) {
 void PhysicsSystem::spawnRigidBody(entt::registry& registry, entt::entity entity) {
 	auto& scene = engine.getPhysicsScene();
 	
-	//Todo dont rely on transformation being a component
-	auto& transform = registry.get<Component::Transformation>(entity);
 	auto& collision = registry.get<Component::RigidBody>(entity);
-	collision.body = scene.createBox(transform.pos, glm::vec3(.5), collision.mass);
+
+	if (collision.body == nullptr) {
+		collision.body = scene.createBox(collision.mass, collision.dim);
+	}
+
 }
 
 void PhysicsSystem::freeRigidBody(entt::registry& registry, entt::entity entity) {
@@ -45,9 +49,10 @@ void PhysicsSystem::freeRigidBody(entt::registry& registry, entt::entity entity)
 
 void PhysicsSystem::spawnStaticBody(entt::registry& registry, entt::entity entity) {
 	auto& scene = engine.getPhysicsScene();
-	auto& transform = registry.get<Component::Transformation>(entity);
 	auto& static_body = registry.get<Component::StaticBody>(entity);
-	static_body.body = scene.createBox(transform.pos, static_body.dim, 0);
+	if (static_body.body == nullptr) {
+		static_body.body = scene.createBox(0, static_body.dim);
+	}
 }
 
 void PhysicsSystem::freeStaticBody(entt::registry& registry, entt::entity entity) {
@@ -59,8 +64,6 @@ void PhysicsSystem::freeStaticBody(entt::registry& registry, entt::entity entity
 void PhysicsSystem::spawnCharacterController(entt::registry& registry, entt::entity entity) {
 	auto& scene = engine.getPhysicsScene();
 
-	//Todo dont rely on transformation being a component
-	auto& transform = registry.get<Component::Transformation>(entity);
 	auto& collision = registry.get<Component::CharacterController>(entity);
 	collision.kinematicCollider = scene.createCharacterController();
 }
@@ -71,16 +74,18 @@ void PhysicsSystem::freeCharacterController(entt::registry& registry, entt::enti
 	scene.freeCharacterController(controller.kinematicCollider);
 }
 
-
+PhysicsSystem::PhysicsSystem(Engine& engine) : BaseSystem(engine) {
+	
+}
 
 void PhysicsSystem::init() {
 	using namespace entt;
 
 	auto& registry = engine.getRegistry();
-	
+
 	registry.on_construct<Component::RigidBody>().connect<&PhysicsSystem::spawnRigidBody>(this);
 	registry.on_destroy<Component::RigidBody>().connect<&PhysicsSystem::freeRigidBody>(this);
-	
+
 	registry.on_construct<Component::StaticBody>().connect<&PhysicsSystem::spawnStaticBody>(this);
 	registry.on_destroy<Component::StaticBody>().connect<&PhysicsSystem::freeStaticBody>(this);
 
@@ -90,14 +95,31 @@ void PhysicsSystem::init() {
 
 	auto& scene = engine.getPhysicsScene();
 
-	scene.createStaticPlane(glm::vec3(0, 1, 0), -1);
+	scene.createStaticPlane(glm::vec3(0, 1, 0), 0);
 	scene.setGravity(glm::vec3(0, -10, 0));
 }
 
 void PhysicsSystem::update(float delta) {
+	LOA::Util::Timer timer("Physics");
+
 	using namespace Component;
 	auto& registry = engine.getRegistry();
 	
+	auto static_view = registry.view<Transformation, StaticBody>();
+	for (auto entity : static_view) {
+		auto& transform = static_view.get<Transformation>(entity);
+		auto& static_body = static_view.get<StaticBody>(entity);
+
+		glm::vec3 rigid_body_origin = (transform.rot * static_body.offset) + transform.pos;
+
+		btTransform bt_transform;
+		bt_transform.setIdentity();
+		bt_transform.setOrigin(to_bt(rigid_body_origin));
+		bt_transform.setRotation(to_bt(transform.rot));
+
+		static_body.body->setWorldTransform(bt_transform);
+	}
+
 	auto character_view = registry.view<Transformation, Velocity, CharacterController>();
 	for (auto entity : character_view) {
 		auto& transform = character_view.get<Transformation>(entity);
@@ -126,7 +148,6 @@ void PhysicsSystem::update(float delta) {
 		auto& collision = view.get<RigidBody>(entity);
 
 		//
-		glm::vec3 abc = transform.rot * collision.offset;
 		glm::vec3 rigid_body_origin = (transform.rot * collision.offset) + transform.pos;
 
 		btTransform bt_transform;

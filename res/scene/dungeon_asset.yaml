@@ -5,41 +5,61 @@
 		offset: "glm::vec3(0, -.255, 0)",
 		scale: .1,
 		aabb: {
-			min: "glm::vec3(-1, -1, -1)",
-			max: "glm::vec3(1, 1, 1)"
+			offset: "glm::vec3(0)",
+			dim: "glm::vec3(1, 0.255, 1)"
 		}
 	},
 	floor_stone2: {
 		path: "./res/models/dungeon_assets/dungeon/floor-stone2.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(0, -.225, 0)",
-		scale: .1
+		scale: .1,
+		aabb: {
+			offset: "glm::vec3(0)",
+			dim: "glm::vec3(1, 1, 1)"
+		}
 	},
 
 	pillar_1: {
 		path: "./res/models/dungeon_assets/dungeon/pillar-1.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(0, 0, 0)",
-		scale: .1
+		scale: .1,
+		aabb: {
+			offset: "glm::vec3(0)",
+			dim: "glm::vec3(1, 1, 1)"
+		}
 	},
 
 	build_box: {
 		path: "./res/models/dungeon_assets/dungeon/grid2.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(0, 0, 0)",
-		scale: .1
+		scale: .1,
+		aabb: {
+			offset: "glm::vec3(0)",
+			dim: "glm::vec3(1, 1, 1)"
+		}
 	},
 
 	wall_1: {
 		path: "./res/models/dungeon_assets/dungeon/wall-1.fbx",
 		pallet: "dungeon_pallet",
-		offset: "glm::vec3(1.5, 0, -1.55)",
-		scale: .1
+		offset: "glm::vec3(0, 0, -1.55)",
+		scale: .1,
+		aabb: {
+			offset: "glm::vec3(0)",
+			dim: "glm::vec3(1, 1, 1)"
+		}
 	},
 	wall_3: {
 		path: "./res/models/dungeon_assets/dungeon/wall-3.fbx",
 		pallet: "dungeon_pallet",
-		offset: "glm::vec3(1.5, 0, -1.55)",
-		scale: .1
+		offset: "glm::vec3(0, 0, -1.55)",
+		scale: .1,
+		aabb: {
+			offset: "glm::vec3(0)",
+			dim: "glm::vec3(1, 1, 1)"
+		}
 	}
 }
