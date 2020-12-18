@@ -5,8 +5,8 @@ out vec4 out_color;
 
 void main(){
   vec3 tex_color = texture(color_attachment, getUV()).rgb;
-
-  if(max3(tex_color) > .3){
+  //.3
+  if(max3(tex_color) > 1){
     out_color = vec4(tex_color, 1);
   }
   else{

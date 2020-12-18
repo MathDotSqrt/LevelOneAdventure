@@ -41,7 +41,7 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	registry.emplace<Velocity>(fireball, glm::normalize(forward) * 20.0f);
 	registry.emplace<FireParticle>(fireball, 200.0f, 10.0f);
 	registry.emplace<Renderable>(fireball, id);
-	registry.emplace<RigidBody>(fireball, glm::vec3(.5), glm::vec3(0, 1, 0), .1f);
+	registry.emplace<RigidBody>(fireball, glm::vec3(.5), glm::vec3(0), .1f);
 
 
 	//registry.emplace<PointLight>(fireball, id, glm::vec3(1), 10.0f);
@@ -89,7 +89,6 @@ void MovementSystem::update(float delta) {
 		auto& dir = player_view.get<Direction>(entity);
 		auto& vel = player_view.get<Velocity>(entity);
 
-
 		glm::vec3 forward = camera_transform.rot * camera_dir.up;
 		forward.y = 0;
 		forward = glm::normalize(forward);
@@ -97,8 +96,11 @@ void MovementSystem::update(float delta) {
 		glm::vec3 right = camera_transform.rot * camera_dir.right;
 		right = glm::normalize(right);
 
+		//We dont want to mess with our gravity here
+		float vel_y = vel.y;
 		vel = -10.0f * forward * movement.forward + 10.0f * right * movement.strafe;
-
+		//set old y velocity to keep our falling speed
+		vel.y = vel_y;
 
 		if (movement.fire) {
 			spawnFireball(engine, transform.pos, transform.rot * dir.forward);

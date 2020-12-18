@@ -22,7 +22,7 @@ static std::string tiles = "./res/scene/scene_tiles.yaml";
 static i64 last_time = 0;
 static i64 last_time_tiles = 0;
 
-void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm::vec3 offset, glm::vec3 dim) {
+void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
 	using namespace entt;
 
 	const glm::vec3 grid_size(3);
@@ -36,10 +36,7 @@ void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm:
 	glm::vec3 pos(-grid_size.x * loc.x, 0, -grid_size.z * loc.y);
 	glm::quat rotation = glm::angleAxis(glm::pi<float>() * rot / 2.0f, glm::vec3(0, 1, 0));
 
-	//I want to scale first, offset, and then rotate
-	//Transformations occure in reverse order
-	constexpr glm::mat4 identity = glm::identity<glm::mat4>();
-	instance.transform = glm::translate(identity, pos);
+	instance.transform = Util::make_transform(pos, rotation);
 
 	Graphics::DissolveMaterial material;
 	material.diffuse = "dungeon_pallet"_hs;
@@ -47,8 +44,15 @@ void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot, glm:
 	material.offset = .05f;
 	material.time = 0.0f;
 
+
+	//TODO: potentially dereferencing null
+	glm::vec3 mesh_min = instance.mesh->getMin();
+	glm::vec3 mesh_max = instance.mesh->getMax();
+	glm::vec3 dim = mesh_max - mesh_min;
+	glm::vec3 offset = (mesh_max + mesh_min) * .5f;
+
 	auto& physicsScene = engine.getPhysicsScene();
-	btRigidBody* body = physicsScene.createBox(0, dim, pos + offset);
+	btRigidBody* body = physicsScene.createBox(0, dim * .5f, pos + rotation*offset, rotation);
 
 	auto& registry = engine.getRegistry();
 	auto entity = registry.create();
@@ -147,22 +151,14 @@ void LevelSystem::loadTiles() {
 				read_string(tileSubstring, tileType);
 				read_int(node["rot"].val(), rot);
 
-				//Get offset and scale from asset tree map
-				//This info is stored in dungeon_asset.yaml
-				glm::vec3 offset = glm::vec3(0);
-				glm::vec3 dim = glm::vec3(1);
-				read_vec3(asset_tree[tileSubstring]["aabb"]["offset"].val(), offset);
-				read_vec3(asset_tree[tileSubstring]["aabb"]["dim"].val(), dim);
-
 				entt::id_type mesh_id = entt::hashed_string(tileType.c_str());
-
 				for (ryml::NodeRef& loc : node["locations"]) {
 					int x, z;
 					read_int(loc[0].val(), x);
 					read_int(loc[1].val(), z);
 
 					glm::ivec2 l(x, z);
-					loadRoom(engine, mesh_id, l, rot, offset, dim);
+					loadRoom(engine, mesh_id, l, rot);
 				}
 			}
 		}
@@ -193,13 +189,15 @@ void LevelSystem::update(float delta) {
 		registry.destroy(view.begin(), view.end());
 	};
 
-	if (i64 time = Util::last_write(asset).value(); time > last_time) {
+	auto last_write = Util::last_write(asset);
+	if (last_write.has_value() && last_write.value() > last_time) {
 		destroy_tiles();
 		loadAssets();
 		loadTiles();
 	}
 	
-	if (i64 time = Util::last_write(tiles).value(); time > last_time_tiles) {
+	last_write = Util::last_write(tiles);
+	if (last_write.has_value() && last_write.value() > last_time_tiles) {
 		destroy_tiles();
 		loadTiles();
 	}

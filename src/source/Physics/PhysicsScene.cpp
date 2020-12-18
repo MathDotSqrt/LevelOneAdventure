@@ -72,20 +72,15 @@ btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, g
 	if (mass == 0) {
 		body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 	}
-	size_t a = world->getNumCollisionObjects();
+
 	world->addRigidBody(body);
-	size_t b = world->getNumCollisionObjects();
 
 	return body;
 }
 
 void PhysicsScene::freeBox(btRigidBody* body) {
 	delete body->getMotionState();
-	delete body->getCollisionShape();
-	size_t a = world->getNumCollisionObjects();
 	world->removeRigidBody(body);
-	size_t b = world->getNumCollisionObjects();
-
 	delete body;
 
 }

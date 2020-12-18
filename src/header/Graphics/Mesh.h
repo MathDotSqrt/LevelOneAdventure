@@ -28,10 +28,30 @@ namespace LOA::Graphics {
 
 			vao.unbind();
 
+			//if geometry stores 3d position
+			if constexpr (Geometry<T...>::PositionType::length() == 3) {
+				min = glm::vec3(geometry.getMin());
+				max = glm::vec3(geometry.getMax());
+			}
+			else {
+				min = glm::vec3(geometry.getMin(), 0);
+				max = glm::vec3(geometry.getMax(), 0);
+			}
 		}
 
 		VAO vao;
 		VBO vbo;
 		VBO ebo;
+
+		const glm::vec3& getMin() const{
+			return min;
+		}
+
+		const glm::vec3& getMax() const {
+			return max;
+		}
+	private:
+		glm::vec3 min;
+		glm::vec3 max;
 	};
 }
