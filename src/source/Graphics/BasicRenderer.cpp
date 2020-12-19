@@ -20,6 +20,7 @@ BasicRenderer::BasicRenderer() :
 
 	glEnable(GL_CULL_FACE);
 	
+	shaders.load(TranslucentBasicMaterial::ShaderID, "basic/basic.vert", "basic/basic.frag");
 	shaders.load(NormalMaterial::ShaderID, "normal/normal.vert", "normal/normal.frag");
 	shaders.load(BasicLitMaterial::ShaderID, "basic_lit/basic_lit.vert", "basic_lit/basic_lit.frag");
 	shaders.load(DissolveMaterial::ShaderID, "dissolve_lit/dissolve_lit.vert", "dissolve_lit/dissolve_lit.frag");
@@ -40,7 +41,8 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 
 	for (u32 i = 0; i < scene.instances.size(); i++) {
 		const auto& instance = scene.instances[i];
-		const RenderStateKey renderKey{ instance.materialType };
+		
+		const RenderStateKey renderKey{ instance.blendMode, instance.materialType };
 		const RenderStateKeyValue renderCall{renderKey, i};
 		
 		drawList.push_back(renderCall);
@@ -124,6 +126,9 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 
 		MaterialType current_material = key.getMaterialType();
 		switch (current_material) {
+		case MaterialType::TRANSLUCENT_BASIC_MATERIAL_ID:
+			start = renderTranslucentBasic(scene, start, end);
+			break;
 		case MaterialType::NORMAL_MATERIAL_ID:
 			start = renderNormal(scene, start, end);
 			break;
@@ -153,6 +158,50 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 	postProcess.renderPostProcess(shaders, current_width, current_height);
 
 }
+
+BasicRenderer::draw_iterator 
+BasicRenderer::renderTranslucentBasic(const Scene& scene, draw_iterator start, draw_iterator end) {
+	if (start == end) {	//Nothing else to render
+		return end;
+	}
+
+	auto shader = shaders.get(TranslucentBasicMaterial::ShaderID);
+	if (!shader) {
+		return end;
+	}
+
+	shader->start();
+	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+
+	const RenderStateKey current_state = start->getKey();
+	while (start != end && current_state == start->getKey()) {
+		auto instance_id = start->getValue();
+		auto instance = scene.instances[instance_id];
+		auto& mesh = instance.mesh;
+
+		auto& transform = instance.transform;
+		shader->setUniformMat4("M", transform);
+
+		auto& material = scene.translucentBasicMaterials[instance.materialID];
+		shader->setUniform1f("alpha", material.alpha);
+		auto& diffuse = scene.texCache.handle(material.diffuse);
+		shader->setUniform1i("diffuse", 0);
+		diffuse->bindActiveTexture(0);
+
+		
+
+		mesh->vao.bind();
+		mesh->ebo.bind();
+		glDrawElements(GL_TRIANGLES, mesh->ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0);
+		diffuse->unbind();
+
+		start++;
+	}
+	shader->end();
+
+	return start;
+}
+
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterator end) {

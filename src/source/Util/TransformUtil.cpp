@@ -2,6 +2,10 @@
 #include <glm/gtx/transform.hpp>
 using namespace LOA::Util;
 
+glm::mat4 LOA::Util::make_transform(const Component::Transformation& transform) {
+	return make_transform(transform.pos, transform.rot, transform.scale);
+}
+
 glm::mat4 LOA::Util::make_transform(glm::vec3 pos, glm::quat rot, glm::vec3 scale) {
 	const auto identity = glm::identity<glm::mat4>();
 	glm::mat4 translation = glm::translate(identity, pos);
@@ -30,4 +34,8 @@ glm::mat4 LOA::Util::make_transform_offset(glm::vec3 offset, glm::vec3 pos, glm:
 	glm::mat4 offset_m = glm::translate(rotation, -offset);
 	glm::mat4 transformation = glm::scale(offset_m, scale);
 	return transformation;
+}
+
+glm::quat LOA::Util::quarter_rot(int r) {
+	return glm::angleAxis(glm::pi<float>() * r / 2.0f, glm::vec3(0, 1, 0));
 }

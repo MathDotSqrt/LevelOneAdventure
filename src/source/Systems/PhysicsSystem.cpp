@@ -95,7 +95,7 @@ void PhysicsSystem::init() {
 
 	auto& scene = engine.getPhysicsScene();
 
-	scene.createStaticPlane(glm::vec3(0, 1, 0), -10);
+	scene.createStaticPlane(glm::vec3(0, 1, 0), -.2);
 	scene.setGravity(glm::vec3(0, -10, 0));
 }
 

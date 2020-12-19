@@ -44,6 +44,7 @@ namespace LOA::Graphics {
 		void setViewPort(const Scene &scene, ViewPort viewport);
 		void setBlendType(const Scene& scene, BlendType blend);
 
+		draw_iterator renderTranslucentBasic(const Scene& scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderNormal(const Scene &scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderBasicLit(const Scene& scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderDissolve(const Scene& scene, draw_iterator start, draw_iterator end);

@@ -8,11 +8,11 @@ PerspectiveCamera::PerspectiveCamera()
 PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float near, float far)
 	: fov(fov), aspect(aspect), near(near), far(far) {}
 
-Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID)
-	: mesh(mesh), materialType(type), materialID(matID) {}
+Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type, BlendType blend, ID matID)
+	: mesh(mesh), materialType(type), blendMode(blend), materialID(matID) {}
 
-Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type)
-	: mesh(mesh), materialType(type), materialID(ID{0, 0}) {}
+Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type, BlendType blend)
+	: mesh(mesh), materialType(type), blendMode(blend), materialID(LOA::NullID) {}
 
 ParticleSystemInstance::ParticleSystemInstance(ParticleRenderData &&data, MaterialType type, ID matID) 
 	: data(std::move(data)), materialType(type), materialID(matID){}
@@ -33,7 +33,7 @@ entt::resource_handle<TEX> Scene::loadTEX(entt::id_type id, TEX::Builder setting
 }
 
 LOA::ID Scene::addInstance(entt::id_type meshID) {
-	return instances.insert(Instance{meshCache.handle(meshID), MaterialType::NUM_MATERIAL_ID});
+	return instances.insert(Instance{meshCache.handle(meshID), MaterialType::NUM_MATERIAL_ID, BlendType::OPAQUE});
 }
 
 void Scene::removeInstance(ID id) {
@@ -44,6 +44,9 @@ void Scene::removeInstance(ID id) {
 	MaterialType type = instance.materialType;
 
 	switch (type) {
+	case MaterialType::TRANSLUCENT_BASIC_MATERIAL_ID:
+		translucentBasicMaterials.remove(materialID);
+		break;
 	case MaterialType::BASIC_LIT_MATERIAL_ID:
 		basicLitMaterials.remove(materialID);
 		break;
@@ -55,6 +58,13 @@ void Scene::removeInstance(ID id) {
 	}
 
 	instances.remove(id);
+}
+
+void Scene::newMaterial(LOA::ID id, TranslucentBasicMaterial material) {
+	auto& instance = instances[id];
+	removeMaterial(instance.materialID, instance.materialType);
+	instance.materialID = translucentBasicMaterials.insert(material);
+	instance.materialType = MaterialType::TRANSLUCENT_BASIC_MATERIAL_ID;
 }
 
 void Scene::newMaterial(LOA::ID id, NormalMaterial material) {

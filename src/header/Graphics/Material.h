@@ -31,6 +31,7 @@ namespace LOA::Graphics {
 	};
 
 	enum class MaterialType : u8 {
+		TRANSLUCENT_BASIC_MATERIAL_ID,
 		NORMAL_MATERIAL_ID,
 		BASIC_LIT_MATERIAL_ID,
 		DISSOLVE_MATERIAL_ID,
@@ -42,15 +43,28 @@ namespace LOA::Graphics {
 		NUM_MATERIAL_ID
 	};
 
+	struct TranslucentBasicMaterial {
+		constexpr static MaterialType Type = MaterialType::TRANSLUCENT_BASIC_MATERIAL_ID;
+		constexpr static id_type ShaderID = "TranslucentShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::MUL;
+
+		entt::id_type diffuse;
+		float alpha = .5f;
+	};
+
 	struct NormalMaterial {
 		constexpr static MaterialType Type = MaterialType::NORMAL_MATERIAL_ID;
 		constexpr static id_type ShaderID = "NormalShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+
 
 	};
 
 	struct BasicLitMaterial {
 		constexpr static MaterialType Type = MaterialType::BASIC_LIT_MATERIAL_ID;
 		constexpr static id_type ShaderID = "BasicLitShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+
 
 		entt::id_type diffuse;
 	};
@@ -58,6 +72,8 @@ namespace LOA::Graphics {
 	struct DissolveMaterial {
 		constexpr static MaterialType Type = MaterialType::DISSOLVE_MATERIAL_ID;
 		constexpr static id_type ShaderID = "DissolveShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+
 
 		entt::id_type diffuse;
 		glm::vec3 dissolve_color;
@@ -68,6 +84,8 @@ namespace LOA::Graphics {
 	struct ParticleMaterial {
 		constexpr static MaterialType Type = MaterialType::PARTICLE_MATERIAL_ID;
 		constexpr static id_type ShaderID = "ParticleShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::MUL;
+
 
 		entt::id_type diffuse;
 	};

@@ -25,45 +25,6 @@ static i64 last_time_tiles = 0;
 static const glm::vec3 grid_size(3);
 
 
-void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
-	using namespace entt;
-
-
-	auto& scene = engine.getScene();
-
-	//create instance
-	LOA::ID id = scene.addInstance(model);
-	auto& instance = scene.getInstance(id);
-	
-	glm::vec3 pos(-grid_size.x * loc.x, 0, -grid_size.z * loc.y);
-	glm::quat rotation = glm::angleAxis(glm::pi<float>() * rot / 2.0f, glm::vec3(0, 1, 0));
-
-	instance.transform = Util::make_transform(pos, rotation);
-
-	Graphics::DissolveMaterial material;
-	material.diffuse = "dungeon_pallet"_hs;
-	material.dissolve_color = glm::vec3(.7f, .4f, .1f);
-	material.offset = .05f;
-	material.time = 0.0f;
-
-
-	//TODO: potentially dereferencing null
-	glm::vec3 mesh_min = instance.mesh->getMin();
-	glm::vec3 mesh_max = instance.mesh->getMax();
-	glm::vec3 dim = mesh_max - mesh_min;
-	glm::vec3 offset = (mesh_max + mesh_min) * .5f;
-
-	auto& physicsScene = engine.getPhysicsScene();
-	btRigidBody* body = physicsScene.createBox(0, dim * .5f, pos + rotation*offset, rotation);
-
-	auto& registry = engine.getRegistry();
-	auto entity = registry.create();
-	registry.emplace<Graphics::DissolveMaterial>(entity, material);
-	registry.emplace<Component::Renderable>(entity, id);
-	registry.emplace<Component::StaticBody>(entity, body);
-	registry.emplace<Component::LevelTile>(entity);
-}
-
 void erase_char(std::string& str, char c) {
 	auto end_pos = std::remove(str.begin(), str.end(), c);
 	str.erase(end_pos, str.end());
@@ -95,6 +56,111 @@ bool read_string(c4::csubstr buffer, std::string& str) {
 	return true;
 }
 
+void LevelSystem::init() {
+	using namespace entt;
+	using namespace Component;
+
+	auto& scene = engine.getScene();
+	scene.loadTEX("dungeon_pallet"_hs,"./res/models/dungeon_assets/dungeon-texture.png");
+	
+	loadAssets();
+	loadTiles();
+
+
+	auto& registry = engine.getRegistry();
+	auto create_builder = [&](glm::vec3 pos) {
+		ID id = scene.addInstance(assets_map[0], Graphics::TranslucentBasicMaterial{ "dungeon_pallet"_hs, .75f });
+		entt::entity builder = registry.create();
+		registry.emplace<Transformation>(builder, pos);
+		registry.emplace<Renderable>(builder, id);
+		registry.emplace<LevelBuilder>(builder, 0);
+	};
+	create_builder(glm::vec3(0));
+	//create_builder(glm::vec3(3, 0, 0));
+	//create_builder(glm::vec3(0, 0, 3));
+	//create_builder(glm::vec3(3, 0, 3));
+	
+
+}
+
+void LevelSystem::update(float delta) {
+	using namespace entt;
+
+	auto& registry = engine.getRegistry();
+	auto& scene = engine.getScene();
+
+	auto destroy_tiles = [&]() {
+		assets_map.clear();
+		auto view = registry.view<Component::LevelTile>();
+		registry.destroy(view.begin(), view.end());
+	};
+
+	auto replace_instance = [&](entt::entity entity, entt::id_type new_mesh_id) {
+		ID id = scene.addInstance(new_mesh_id, Graphics::TranslucentBasicMaterial{ "dungeon_pallet"_hs, .75f });
+		auto& renderable = registry.get<Component::Renderable>(entity);
+		scene.removeInstance(renderable.instance_id);
+		renderable.instance_id = id;
+	};
+
+	auto last_write = Util::last_write(asset);
+	if (last_write.has_value() && last_write.value() > last_time) {
+		destroy_tiles();
+		loadAssets();
+		loadTiles();
+	}
+	
+	last_write = Util::last_write(tiles);
+	if (last_write.has_value() && last_write.value() > last_time_tiles) {
+		destroy_tiles();
+		loadTiles();
+	}
+
+	auto& window = Window::getInstance();
+	auto builder_view = registry.view<Component::LevelBuilder, Component::Transformation>();
+
+	int scroll_delta = window.getScrollDelta();
+
+	if (scroll_delta != 0) {
+		model_index += scroll_delta;
+		model_index = ((model_index + assets_map.size()) % assets_map.size());
+	}
+
+	for (auto entity : builder_view) {
+		auto& transform = registry.get<Component::Transformation>(entity);
+
+		glm::vec3 move(0);
+		move.x -= window.isPressed(Window::Keys::RIGHT_ARROW) ? 1 : 0;
+		move.x += window.isPressed(Window::Keys::LEFT_ARROW) ? 1 : 0;
+		move.z += window.isPressed(Window::Keys::UP_ARROW) ? 1 : 0;
+		move.z -= window.isPressed(Window::Keys::DOWN_ARROW) ? 1 : 0;
+		
+		if (scroll_delta != 0) {
+			replace_instance(entity, assets_map[model_index]);
+		}
+		
+		
+		if (window.isPressed('e')) {
+			transform.rot *= Util::quarter_rot(1);
+		}
+		if (window.isPressed('q')) {
+			transform.rot *= Util::quarter_rot(-1);
+		}
+
+		if (window.isPressed('p')) {
+			createTileInstance(assets_map[model_index], transform.pos, transform.rot);
+		}
+		transform.pos += move * grid_size;
+	}
+	
+	auto view = registry.view<Graphics::DissolveMaterial>();
+	for (auto entity : view) {
+		if (Window::getInstance().isDown('z'))
+			view.get<Graphics::DissolveMaterial>(entity).time += delta / 2.0f;
+		else if(Window::getInstance().isDown('x'))
+			view.get<Graphics::DissolveMaterial>(entity).time -= delta / 2.0f;
+	}
+}
+
 void LevelSystem::loadAssets() {
 	try {
 		auto& scene = engine.getScene();
@@ -120,7 +186,9 @@ void LevelSystem::loadAssets() {
 				read_vec3(node["offset"].val(), offset);
 				read_float(node["scale"].val(), scale);
 
-				scene.loadMesh(entt::hashed_string(name.c_str()), path, offset, glm::vec3(scale));
+				entt::hashed_string id(name.c_str());
+				scene.loadMesh(id, path, offset, glm::vec3(scale));
+				assets_map.push_back(id);
 			}
 		}
 
@@ -146,7 +214,7 @@ void LevelSystem::loadTiles() {
 			ryml::NodeRef root = tree.rootref();
 			ryml::NodeRef tiles = root["tiles"];
 			for (ryml::NodeRef& node : tiles) {
-				auto &tileSubstring = node["tile"].val();
+				auto& tileSubstring = node["tile"].val();
 				std::string tileType;
 				int rot = 0;
 
@@ -159,8 +227,8 @@ void LevelSystem::loadTiles() {
 					read_int(loc[0].val(), x);
 					read_int(loc[1].val(), z);
 
-					glm::ivec2 l(x, z);
-					loadRoom(engine, mesh_id, l, rot);
+					glm::vec3 pos(-grid_size.x * x, 0, -grid_size.z * z);
+					createTileInstance(mesh_id, pos, Util::quarter_rot(rot));
 				}
 			}
 		}
@@ -172,67 +240,35 @@ void LevelSystem::loadTiles() {
 	}
 }
 
-void LevelSystem::init() {
+void LevelSystem::createTileInstance(entt::id_type mesh_id, const glm::vec3& pos, const glm::quat& rot) {
 	using namespace entt;
-	using namespace Component;
 
+	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
-	scene.loadTEX("dungeon_pallet"_hs,"./res/models/dungeon_assets/dungeon-texture.png");
-	
-	loadAssets();
-	loadTiles();
 
-	ID id = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
+	Graphics::DissolveMaterial material;
+	material.diffuse = "dungeon_pallet"_hs;
+	material.dissolve_color = glm::vec3(.7f, .4f, .1f);
+	material.offset = .05f;
+	material.time = 0.0f;
 
-	auto& registry = engine.getRegistry();
-	entt::entity builder = registry.create();
-	registry.emplace<Transformation>(builder);
-	registry.emplace<Renderable>(builder, id);
-	registry.emplace<LevelBuilder>(builder, 0);
+	//create instance
+	LOA::ID id = scene.addInstance(mesh_id);
+	auto& instance = scene.getInstance(id);
+	instance.transform = Util::make_transform(pos, rot);
 
-}
+	//TODO: potentially dereferencing null
+	glm::vec3 mesh_min = instance.mesh->getMin();
+	glm::vec3 mesh_max = instance.mesh->getMax();
+	glm::vec3 dim = mesh_max - mesh_min;
+	glm::vec3 offset = (mesh_max + mesh_min) * .5f;
 
-void LevelSystem::update(float delta) {
-	auto& registry = engine.getRegistry();
+	auto& physicsScene = engine.getPhysicsScene();
+	btRigidBody* body = physicsScene.createBox(0, dim * .5f, pos + rot * offset, rot);
 
-	auto destroy_tiles = [&registry]() {
-		auto view = registry.view<Component::LevelTile>();
-		registry.destroy(view.begin(), view.end());
-	};
-
-	auto last_write = Util::last_write(asset);
-	if (last_write.has_value() && last_write.value() > last_time) {
-		destroy_tiles();
-		loadAssets();
-		loadTiles();
-	}
-	
-	last_write = Util::last_write(tiles);
-	if (last_write.has_value() && last_write.value() > last_time_tiles) {
-		destroy_tiles();
-		loadTiles();
-	}
-
-	auto& window = Window::getInstance();
-
-	auto builder_view = registry.view<Component::LevelBuilder, Component::Transformation>();
-	for (auto entity : builder_view) {
-		auto& transform = registry.get<Component::Transformation>(entity);
-
-		glm::vec3 move(0);
-		move.x -= window.isPressed(Window::Keys::RIGHT_ARROW) ? 1 : 0;
-		move.x += window.isPressed(Window::Keys::LEFT_ARROW) ? 1 : 0;
-		move.z += window.isPressed(Window::Keys::UP_ARROW) ? 1 : 0;
-		move.z -= window.isPressed(Window::Keys::DOWN_ARROW) ? 1 : 0;
-
-		transform.pos += move * grid_size;
-	}
-
-	auto view = registry.view<Graphics::DissolveMaterial>();
-	for (auto entity : view) {
-		if (Window::getInstance().isDown('e'))
-			view.get<Graphics::DissolveMaterial>(entity).time += delta / 2.0f;
-		else if(Window::getInstance().isDown('q'))
-			view.get<Graphics::DissolveMaterial>(entity).time -= delta / 2.0f;
-	}
+	auto entity = registry.create();
+	registry.emplace<Graphics::DissolveMaterial>(entity, material);
+	registry.emplace<Component::Renderable>(entity, id);
+	registry.emplace<Component::StaticBody>(entity, body);
+	registry.emplace<Component::LevelTile>(entity);
 }

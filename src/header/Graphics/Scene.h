@@ -37,11 +37,12 @@ namespace LOA::Graphics {
 		entt::resource_handle<Mesh> mesh;
 		MaterialType materialType = MaterialType::NUM_MATERIAL_ID;
 		ID materialID = LOA::NullID;
+		BlendType blendMode = BlendType::OPAQUE;
 
 		glm::mat4 transform = glm::identity<glm::mat4>();
 		
-		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID);
-		Instance(entt::resource_handle<Mesh> mesh, MaterialType type);
+		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, BlendType blend, ID matID);
+		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, BlendType blend);
 	};
 
 	struct ParticleSystemInstance {
@@ -71,14 +72,20 @@ namespace LOA::Graphics {
 
 		template<typename MATERIAL>
 		ID addInstance(entt::id_type meshID, MATERIAL material) {
-			ID instance = addInstance(meshID);
-			newMaterial(instance, material);
-			return instance;
+			Instance new_instance{ 
+				meshCache.handle(meshID), 
+				MATERIAL::Type, 
+				MATERIAL::DefaultBlend 
+			};
+			ID id =instances.insert(new_instance);
+			newMaterial(id, material);
+			return id;
 		}
 
 		void removeInstance(ID instance);
 
 		//When creating a new material, add a new function
+		void newMaterial(ID instance, TranslucentBasicMaterial newMaterial);
 		void newMaterial(ID instance, NormalMaterial newMaterial);
 		void newMaterial(ID instance, BasicLitMaterial newMaterial);
 		void newMaterial(ID instance, DissolveMaterial newMaterial);
@@ -108,6 +115,7 @@ namespace LOA::Graphics {
 		void removeMaterial(ID materialID, MaterialType type);
 
 		Util::PackedFreeList<Instance> instances;
+		Util::PackedFreeList<TranslucentBasicMaterial> translucentBasicMaterials;
 		Util::PackedFreeList<BasicLitMaterial> basicLitMaterials;
 		Util::PackedFreeList<DissolveMaterial> dissolveMaterials;
 		Util::PackedFreeList<ParticleMaterial> particleMaterials;
