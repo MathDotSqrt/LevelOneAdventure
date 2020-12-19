@@ -16,6 +16,10 @@ namespace LOA {
 	class Window {
 	public:
 		enum class Keys {
+			RIGHT_ARROW,
+			LEFT_ARROW,
+			UP_ARROW,
+			DOWN_ARROW,
 			LEFT_SHIFT,
 			LEFT_CTRL,
 			ESC
@@ -62,6 +66,8 @@ namespace LOA {
 		bool hasFocus = true;
 		bool isMouseDisabled;
 		std::bitset<348> prev_keys;
+
+		int toGLFW(Keys key) const;
 
 		Window(int width, int height, std::string title);
 	

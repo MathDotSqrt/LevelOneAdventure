@@ -22,10 +22,12 @@ static std::string tiles = "./res/scene/scene_tiles.yaml";
 static i64 last_time = 0;
 static i64 last_time_tiles = 0;
 
+static const glm::vec3 grid_size(3);
+
+
 void loadRoom(Engine &engine, entt::id_type model, glm::ivec2 loc, int rot) {
 	using namespace entt;
 
-	const glm::vec3 grid_size(3);
 
 	auto& scene = engine.getScene();
 
@@ -172,6 +174,7 @@ void LevelSystem::loadTiles() {
 
 void LevelSystem::init() {
 	using namespace entt;
+	using namespace Component;
 
 	auto& scene = engine.getScene();
 	scene.loadTEX("dungeon_pallet"_hs,"./res/models/dungeon_assets/dungeon-texture.png");
@@ -179,12 +182,20 @@ void LevelSystem::init() {
 	loadAssets();
 	loadTiles();
 
+	ID id = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
+
+	auto& registry = engine.getRegistry();
+	entt::entity builder = registry.create();
+	registry.emplace<Transformation>(builder);
+	registry.emplace<Renderable>(builder, id);
+	registry.emplace<LevelBuilder>(builder, 0);
+
 }
 
 void LevelSystem::update(float delta) {
+	auto& registry = engine.getRegistry();
 
-	auto destroy_tiles = [&]() {
-		entt::registry& registry = engine.getRegistry();
+	auto destroy_tiles = [&registry]() {
 		auto view = registry.view<Component::LevelTile>();
 		registry.destroy(view.begin(), view.end());
 	};
@@ -202,7 +213,20 @@ void LevelSystem::update(float delta) {
 		loadTiles();
 	}
 
-	auto& registry = engine.getRegistry();
+	auto& window = Window::getInstance();
+
+	auto builder_view = registry.view<Component::LevelBuilder, Component::Transformation>();
+	for (auto entity : builder_view) {
+		auto& transform = registry.get<Component::Transformation>(entity);
+
+		glm::vec3 move(0);
+		move.x -= window.isPressed(Window::Keys::RIGHT_ARROW) ? 1 : 0;
+		move.x += window.isPressed(Window::Keys::LEFT_ARROW) ? 1 : 0;
+		move.z += window.isPressed(Window::Keys::UP_ARROW) ? 1 : 0;
+		move.z -= window.isPressed(Window::Keys::DOWN_ARROW) ? 1 : 0;
+
+		transform.pos += move * grid_size;
+	}
 
 	auto view = registry.view<Graphics::DissolveMaterial>();
 	for (auto entity : view) {

@@ -116,17 +116,7 @@ bool Window::isDown(int i) const {
 }
 
 bool Window::isDown(Keys key) const {
-
-    switch (key) {
-    case Keys::LEFT_SHIFT:
-        return GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
-    case Keys::LEFT_CTRL:
-        return GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT_CONTROL);
-    case Keys::ESC:
-        return GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE);
-    default:
-        return false;
-    }
+    return isDown(toGLFW(key));
 }
 
 bool Window::isPressed(char c) const {
@@ -134,7 +124,7 @@ bool Window::isPressed(char c) const {
 }
 
 bool Window::isPressed(Keys key) const {
-    return isDown(key) && !prev_keys[GLFW_KEY_LEFT_SHIFT];
+    return isDown(key) && !prev_keys[toGLFW(key)];
 }
 
 bool Window::isClick(Mouse mouse) const {
@@ -173,4 +163,26 @@ int Window::getHeight() const {
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     return height;
+}
+
+//TODO: do the same for mouse input
+int Window::toGLFW(Keys key) const {
+    switch (key) {
+    case Keys::LEFT_ARROW:
+        return GLFW_KEY_LEFT;
+    case Keys::RIGHT_ARROW:
+        return GLFW_KEY_RIGHT;
+    case Keys::UP_ARROW:
+        return GLFW_KEY_UP;
+    case Keys::DOWN_ARROW:
+        return GLFW_KEY_DOWN;
+    case Keys::LEFT_SHIFT:
+        return GLFW_KEY_LEFT_SHIFT;
+    case Keys::LEFT_CTRL:
+        return GLFW_KEY_LEFT_CONTROL;
+    case Keys::ESC:
+        return GLFW_KEY_ESCAPE;
+    default:
+        return 0;
+    }
 }
