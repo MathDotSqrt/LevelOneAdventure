@@ -22,8 +22,7 @@ namespace LOA::Component {
 		glm::vec3 scale = glm::vec3(1);
 
 		Transformation() = default;
-		Transformation(glm::vec3 pos) : pos(pos) {}
-		Transformation(glm::vec3 pos, glm::quat rot) : pos(pos), rot(rot) {}
+		Transformation(glm::vec3 pos, glm::quat rot=glm::quat(1, 0, 0, 0), glm::vec3 scale=glm::vec3(1)) : pos(pos), rot(rot), scale(scale) {}
 	};
 
 	//Velocity inherits vector 3 to make it automatically convertable with vec3 math

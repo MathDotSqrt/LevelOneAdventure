@@ -49,7 +49,7 @@ void InputSystem::update(float delta) {
 		if (window.isDown(Window::Keys::LEFT_SHIFT))
 			movement.fly -= 1;
 
-		movement.fire = window.isPressed('p');
+		movement.fire = window.isPressed('o');
 
 		glm::vec2 delta = pos - input.lastCursorPos;
 

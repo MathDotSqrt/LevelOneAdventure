@@ -98,6 +98,7 @@ void LevelSystem::update(float delta) {
 	auto replace_instance = [&](entt::entity entity, entt::id_type new_mesh_id) {
 		ID id = scene.addInstance(new_mesh_id, Graphics::TranslucentBasicMaterial{ "dungeon_pallet"_hs, .75f });
 		auto& renderable = registry.get<Component::Renderable>(entity);
+		scene.getInstance(id).transform = scene.getInstance(renderable.instance_id).transform;
 		scene.removeInstance(renderable.instance_id);
 		renderable.instance_id = id;
 	};
