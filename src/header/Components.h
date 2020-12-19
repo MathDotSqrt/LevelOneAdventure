@@ -86,6 +86,9 @@ namespace LOA::Component {
 		
 	};
 
+	struct LevelBuilder {
+		int id = 0;
+	};
 
 	//Rigid Bodies that have physics: stackable boxes, more stackable boxes
 	struct RigidBody {

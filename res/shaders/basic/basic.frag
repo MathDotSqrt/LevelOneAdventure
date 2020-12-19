@@ -4,8 +4,6 @@ in vec2 f_texcoord;
 
 out vec4 out_color;
 
-uniform float u_time;
-
 uniform sampler2D diffuse;
 
 void main(){
