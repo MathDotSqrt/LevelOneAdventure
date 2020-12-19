@@ -83,7 +83,7 @@ namespace LOA::Component {
 	};
 
 	struct LevelTile {
-
+		
 	};
 
 

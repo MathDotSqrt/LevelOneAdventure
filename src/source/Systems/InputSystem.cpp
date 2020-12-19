@@ -34,25 +34,22 @@ void InputSystem::update(float delta) {
 		movement.strafe = 0;
 		movement.fly = 0;
 
-		if (window.isPressed('w'))
+		if (window.isDown('w'))
 			movement.forward -= 1;
-		if (window.isPressed('s'))
+		if (window.isDown('s'))
 			movement.forward += 1;
 
-		if (window.isPressed('d'))
+		if (window.isDown('d'))
 			movement.strafe += 1;
-		if (window.isPressed('a'))
+		if (window.isDown('a'))
 			movement.strafe -= 1;
 
-		if (window.isPressed(' '))
+		if (window.isDown(' '))
 			movement.fly += 1;
-		if (window.isPressed(Window::Keys::LEFT_SHIFT))
+		if (window.isDown(Window::Keys::LEFT_SHIFT))
 			movement.fly -= 1;
 
-		if (window.isPressed('p')) {
-			movement.fire = !input.lastFire;
-		}
-		input.lastFire = window.isPressed('p');
+		movement.fire = window.isPressed('p');
 
 		glm::vec2 delta = pos - input.lastCursorPos;
 

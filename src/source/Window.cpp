@@ -98,14 +98,24 @@ Window::Window(int width, int height, std::string title) : width(width), height(
 void Window::update() {
     scrollDelta = 0;
     glfwSwapBuffers(window);
+    
+    //The first valid char is 32
+    for (int i = 32; i < 348; i++) {
+        prev_keys[i] = isDown(i);
+    }
+
     glfwPollEvents();
 }
 
-bool Window::isPressed(char c) const {
+bool Window::isDown(char c) const {
     return GLFW_PRESS == glfwGetKey(window, toupper(c));
 }
 
-bool Window::isPressed(Keys key) const {
+bool Window::isDown(int i) const {
+    return GLFW_PRESS == glfwGetKey(window, i);
+}
+
+bool Window::isDown(Keys key) const {
 
     switch (key) {
     case Keys::LEFT_SHIFT:
@@ -117,6 +127,14 @@ bool Window::isPressed(Keys key) const {
     default:
         return false;
     }
+}
+
+bool Window::isPressed(char c) const {
+    return isDown(c) && !prev_keys[toupper(c)];
+}
+
+bool Window::isPressed(Keys key) const {
+    return isDown(key) && !prev_keys[GLFW_KEY_LEFT_SHIFT];
 }
 
 bool Window::isClick(Mouse mouse) const {

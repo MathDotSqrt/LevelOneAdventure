@@ -2,7 +2,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
-
+#include <bitset>
 struct GLFWwindow;
 
 namespace LOA {
@@ -33,6 +33,9 @@ namespace LOA {
 
 		void update();
 
+		bool isDown(char c) const;
+		bool isDown(int i) const;
+		bool isDown(Keys keys) const;
 		bool isPressed(char c) const;
 		bool isPressed(Keys keys) const;
 		bool isClick(Mouse mouse) const;
@@ -58,6 +61,7 @@ namespace LOA {
 		float scrollDelta = 0;
 		bool hasFocus = true;
 		bool isMouseDisabled;
+		std::bitset<348> prev_keys;
 
 		Window(int width, int height, std::string title);
 	

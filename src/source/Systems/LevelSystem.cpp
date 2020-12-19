@@ -206,9 +206,9 @@ void LevelSystem::update(float delta) {
 
 	auto view = registry.view<Graphics::DissolveMaterial>();
 	for (auto entity : view) {
-		if (Window::getInstance().isPressed('e'))
+		if (Window::getInstance().isDown('e'))
 			view.get<Graphics::DissolveMaterial>(entity).time += delta / 2.0f;
-		else if(Window::getInstance().isPressed('q'))
+		else if(Window::getInstance().isDown('q'))
 			view.get<Graphics::DissolveMaterial>(entity).time -= delta / 2.0f;
 	}
 }

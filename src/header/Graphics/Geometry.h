@@ -52,9 +52,13 @@ namespace LOA::Graphics {
 			min = glm::min(pos, min);
 		}
 
-		//inline void pushVertex(const GeometryVertex& vertex) {
-		//	verticies.push_back(vertex);
-		//}
+		inline void pushVertex(const GeometryVertex& vertex) {
+			verticies.push_back(vertex);
+
+			PositionType pos = vertex.first;
+			max = glm::max(pos, max);
+			min = glm::min(pos, min);
+		}
 
 		inline void pushTriangle(u32 v0, u32 v1, u32 v2) {
 			indices.push_back(v0);
