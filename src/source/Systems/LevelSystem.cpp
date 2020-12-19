@@ -74,6 +74,7 @@ void LevelSystem::init() {
 		registry.emplace<Transformation>(builder, pos);
 		registry.emplace<Renderable>(builder, id);
 		registry.emplace<LevelBuilder>(builder, 0);
+		registry.emplace<Direction>(builder);
 	};
 	create_builder(glm::vec3(0));
 	//create_builder(glm::vec3(3, 0, 0));
@@ -85,6 +86,7 @@ void LevelSystem::init() {
 
 void LevelSystem::update(float delta) {
 	using namespace entt;
+	using namespace Component;
 
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
@@ -97,7 +99,7 @@ void LevelSystem::update(float delta) {
 
 	auto replace_instance = [&](entt::entity entity, entt::id_type new_mesh_id) {
 		ID id = scene.addInstance(new_mesh_id, Graphics::TranslucentBasicMaterial{ "dungeon_pallet"_hs, .75f });
-		auto& renderable = registry.get<Component::Renderable>(entity);
+		auto& renderable = registry.get<Renderable>(entity);
 		scene.getInstance(id).transform = scene.getInstance(renderable.instance_id).transform;
 		scene.removeInstance(renderable.instance_id);
 		renderable.instance_id = id;
@@ -117,23 +119,37 @@ void LevelSystem::update(float delta) {
 	}
 
 	auto& window = Window::getInstance();
+
+	auto camera_view = registry.view<Camera, Transformation>();
+	auto camera = camera_view.front();
+	glm::quat camera_rot = camera_view.get<Transformation>(camera).rot;
+	
+	glm::vec3 camera_forward = camera_rot * glm::vec3(0, 0, -1);
+	camera_forward.y = 0;
+	camera_forward = glm::normalize(camera_forward);
+
+	glm::vec3 camera_right = camera_rot * glm::vec3(1, 0, 0);
+	
 	auto builder_view = registry.view<Component::LevelBuilder, Component::Transformation>();
-
-	int scroll_delta = window.getScrollDelta();
-
+	
+	int scroll_delta = 0;
+	scroll_delta += window.isPressed('=');
+	scroll_delta -= window.isPressed('-');
 	if (scroll_delta != 0) {
 		model_index += scroll_delta;
 		model_index = ((model_index + assets_map.size()) % assets_map.size());
 	}
 
 	for (auto entity : builder_view) {
-		auto& transform = registry.get<Component::Transformation>(entity);
+		auto& transform = registry.get<Transformation>(entity);
 
 		glm::vec3 move(0);
-		move.x -= window.isPressed(Window::Keys::RIGHT_ARROW) ? 1 : 0;
-		move.x += window.isPressed(Window::Keys::LEFT_ARROW) ? 1 : 0;
-		move.z += window.isPressed(Window::Keys::UP_ARROW) ? 1 : 0;
-		move.z -= window.isPressed(Window::Keys::DOWN_ARROW) ? 1 : 0;
+		glm::vec3 forward(0);
+		glm::vec3 right(0);
+		right.x += window.isPressed(Window::Keys::RIGHT_ARROW) ? 1 : 0;
+		right.x -= window.isPressed(Window::Keys::LEFT_ARROW) ? 1 : 0;
+		forward.z += window.isPressed(Window::Keys::UP_ARROW) ? 1 : 0;
+		forward.z -= window.isPressed(Window::Keys::DOWN_ARROW) ? 1 : 0;
 		
 		if (scroll_delta != 0) {
 			replace_instance(entity, assets_map[model_index]);
@@ -150,7 +166,10 @@ void LevelSystem::update(float delta) {
 		if (window.isPressed('p')) {
 			createTileInstance(assets_map[model_index], transform.pos, transform.rot);
 		}
-		transform.pos += move * grid_size;
+		
+		glm::vec3 move_forward = glm::round(camera_forward * forward.z);
+		glm::vec3 move_right = glm::round(camera_right * right.x);
+		transform.pos += (move_forward + move_right) * grid_size;
 	}
 	
 	auto view = registry.view<Graphics::DissolveMaterial>();
