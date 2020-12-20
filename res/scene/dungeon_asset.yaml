@@ -5,8 +5,16 @@
 		offset: "glm::vec3(0, -.230, 0)",
 		scale: .1
 	},
+
 	floor_stone2: {
 		path: "./res/models/dungeon_assets/dungeon/floor-stone2.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(0, -.230, 0)",
+		scale: .1
+	},
+	
+	bridge_wood: {
+		path: "./res/models/dungeon_assets/dungeon/bridge-wood.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(0, -.230, 0)",
 		scale: .1
@@ -19,12 +27,39 @@
 		scale: .1
 	},
 
-	build_box: {
-		path: "./res/models/dungeon_assets/dungeon/grid2.fbx",
+	pillar_3: {
+		path: "./res/models/dungeon_assets/dungeon/pillar-3.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(0, 0, 0)",
 		scale: .1
 	},
+
+	build_box: {
+		path: "./res/models/dungeon_assets/dungeon/build-box1.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(0, 0, 0)",
+		scale: .1
+	},
+
+	stairs_wood1: {
+		path: "./res/models/dungeon_assets/dungeon/stairs-wood1.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(0, 0, 0)",
+		scale: .1
+	},
+	stairs_wood2: {
+		path: "./res/models/dungeon_assets/dungeon/stairs-wood2.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(0, 0, 0)",
+		scale: .1
+	},
+	stairs_wood3: {
+		path: "./res/models/dungeon_assets/dungeon/stairs-wood3.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(0, 0, 0)",
+		scale: .1
+	},
+
 	door_frame: {
 		path: "./res/models/dungeon_assets/dungeon/door-frame.fbx",
 		pallet: "dungeon_pallet",
