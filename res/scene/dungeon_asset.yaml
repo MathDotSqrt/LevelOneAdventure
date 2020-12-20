@@ -1,4 +1,5 @@
 {
+
 	floor_stone1: {
 		path: "./res/models/dungeon_assets/dungeon/floor-stone1.fbx",
 		pallet: "dungeon_pallet",
@@ -13,6 +14,27 @@
 		scale: .1
 	},
 	
+	floor_metal1: {
+		path: "./res/models/dungeon_assets/dungeon/floor-metal1.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(0, -.230, 0)",
+		scale: .1
+	},
+
+	floor_large: {
+		path: "./res/models/dungeon_assets/dungeon/floor-large.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, -.230, -.15)",
+		scale: .1
+	},
+
+	metal_grid: {
+		path: "./res/models/dungeon_assets/dungeon/metal-grid.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(-1.50, 0, 0)",
+		scale: .1
+	},
+
 	bridge_wood: {
 		path: "./res/models/dungeon_assets/dungeon/bridge-wood.fbx",
 		pallet: "dungeon_pallet",
@@ -41,6 +63,13 @@
 		scale: .1
 	},
 
+	stairs_stone1: {
+		path: "./res/models/dungeon_assets/dungeon/stone-stair1.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(0, 0, 0)",
+		scale: .1
+	},
+
 	stairs_wood1: {
 		path: "./res/models/dungeon_assets/dungeon/stairs-wood1.fbx",
 		pallet: "dungeon_pallet",
@@ -56,7 +85,7 @@
 	stairs_wood3: {
 		path: "./res/models/dungeon_assets/dungeon/stairs-wood3.fbx",
 		pallet: "dungeon_pallet",
-		offset: "glm::vec3(0, 0, 0)",
+		offset: "glm::vec3(0, -.230, 0)",
 		scale: .1
 	},
 
@@ -110,6 +139,12 @@
 	},
 	wall_6: {
 		path: "./res/models/dungeon_assets/dungeon/wall-6.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, 0, -1.55)",
+		scale: .1
+	},
+	harrow: {
+		path: "./res/models/dungeon_assets/dungeon/harrow.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(1.50, 0, -1.55)",
 		scale: .1

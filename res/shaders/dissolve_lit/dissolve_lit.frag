@@ -15,9 +15,17 @@ struct PointLight {
 	float intensity;
 };
 
+struct DirLight {
+	vec3 dir;
+	vec3 color;
+	float intensity;
+};
+
 //uniform vec3 u_camera_pos = vec3(0);
 uniform int u_num_point_lights = 0;
 uniform PointLight u_point_lights[MAX_POINT_LIGHTS];
+
+uniform DirLight u_dir_light = DirLight(vec3(1, -1, -.1), vec3(1, 1, 1), .1);
 
 uniform float u_dissolve = .1;
 uniform float u_offset = .1;
@@ -37,13 +45,22 @@ vec3 point_color(PointLight light){
 	float d = dot(light_dir, normalize(f_world_normal));
 	d = max(d * light.intensity, 0);
 
-	float attenuation = 1 / pow(dist, 2);
+	float attenuation = 4 / pow(dist, 2);
 	vec3 light_color = to_linear(light.color) * d * attenuation;
 	return light_color;
 }
 
+vec3 dir_color(DirLight dir_light){
+	vec3 light_dir = -dir_light.dir;
+	float d = dot(light_dir, normalize(f_world_normal));
+	d = max(d * dir_light.intensity, 0);
+
+	vec3 light_color = to_linear(dir_light.color) * d;
+	return light_color;
+}
+
 vec3 ambient_color(){
-	return to_linear(vec3(1)) * .4;
+	return to_linear(vec3(1)) * .2;
 }
 
 vec3 calc_light(){
@@ -52,7 +69,7 @@ vec3 calc_light(){
 	for(int i = 0; i < u_num_point_lights; i++){
 		diffuse_light_color += point_color(u_point_lights[i]);
 	}
-
+	diffuse_light_color += dir_color(u_dir_light);
 	diffuse_light_color += ambient_color();
 	return diffuse_light_color;
 }

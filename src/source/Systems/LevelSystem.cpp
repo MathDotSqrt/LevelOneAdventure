@@ -22,7 +22,7 @@ static std::string tiles = "./res/scene/scene.yaml";
 static i64 last_time = 0;
 static i64 last_time_tiles = 0;
 
-static const glm::vec3 grid_size(3);
+static const glm::vec3 grid_size(3, 1.5, 3);
 
 
 void erase_char(std::string& str, char c) {
@@ -116,6 +116,7 @@ void LevelSystem::update(float delta) {
 
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
+	auto& window = Window::getInstance();
 
 	auto destroy_tiles = [&]() {
 		
@@ -139,12 +140,11 @@ void LevelSystem::update(float delta) {
 	}
 	
 	last_write = Util::last_write(tiles);
-	if (last_write.has_value() && last_write.value() > last_time_tiles) {
+	if ((last_write.has_value() && last_write.value() > last_time_tiles) || window.isPressed('r')) {
 		destroy_tiles();
 		loadTiles();
 	}
 
-	auto& window = Window::getInstance();
 
 	auto camera_view = registry.view<Camera, Transformation>();
 	auto camera = camera_view.front();
@@ -170,13 +170,15 @@ void LevelSystem::update(float delta) {
 		auto& transform = registry.get<Transformation>(entity);
 		auto& builder = registry.get<LevelBuilder>(entity);
 
-		glm::vec3 move(0);
-		glm::vec3 forward(0);
-		glm::vec3 right(0);
-		right.x += window.isPressed(Window::Keys::RIGHT_ARROW) ? 1 : 0;
-		right.x -= window.isPressed(Window::Keys::LEFT_ARROW) ? 1 : 0;
-		forward.z += window.isPressed(Window::Keys::UP_ARROW) ? 1 : 0;
-		forward.z -= window.isPressed(Window::Keys::DOWN_ARROW) ? 1 : 0;
+		float right = 0;
+		float forward = 0;
+		float up = 0;
+		right += window.isPressed(Window::Keys::RIGHT_ARROW) ? 1 : 0;
+		right -= window.isPressed(Window::Keys::LEFT_ARROW) ? 1 : 0;
+		forward += window.isPressed(Window::Keys::UP_ARROW) ? 1 : 0;
+		forward -= window.isPressed(Window::Keys::DOWN_ARROW) ? 1 : 0;
+		up += window.isPressed(']') ? 1 : 0;
+		up -= window.isPressed('[') ? 1 : 0;
 		
 		if (scroll_delta != 0) {
 			replace_instance(entity, assets_map[model_index]);
@@ -199,9 +201,11 @@ void LevelSystem::update(float delta) {
 			createTileInstance(terrible_code, loc, builder.rot);
 		}
 		
-		glm::vec3 move_forward = glm::round(camera_forward * forward.z);
-		glm::vec3 move_right = glm::round(camera_right * right.x);
-		transform.pos += (move_forward + move_right) * grid_size;
+		glm::vec3 move_forward = glm::round(camera_forward * forward);
+		glm::vec3 move_right = glm::round(camera_right * right);
+		glm::vec3 move_up = glm::vec3(0, up, 0);
+		glm::vec3 move = move_forward + move_right + move_up;
+		transform.pos += move * grid_size;
 	}
 	
 	if (window.isPressed('y')) {
