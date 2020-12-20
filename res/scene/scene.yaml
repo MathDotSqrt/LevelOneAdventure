@@ -1,0 +1,70 @@
+tiles:
+  - tile: bridge_wood
+    location: 'glm::vec3( -5, 0, 0)'
+    rot: 6
+  - tile: bridge_wood
+    location: 'glm::vec3( -4, 0, 0)'
+    rot: 6
+  - tile: bridge_wood
+    location: 'glm::vec3( -3, 0, 0)'
+    rot: 6
+  - tile: door_frame
+    location: 'glm::vec3( -2, 0, 3)'
+    rot: 4
+  - tile: door_frame
+    location: 'glm::vec3( 0, 0, 3)'
+    rot: 4
+  - tile: door_frame
+    location: 'glm::vec3( 1, 0, 1)'
+    rot: 3
+  - tile: door_frame
+    location: 'glm::vec3( 1, 0, -1)'
+    rot: 3
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 0)'
+    rot: 0

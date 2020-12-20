@@ -18,7 +18,7 @@ using namespace LOA;
 using namespace LOA::Systems;
 
 static std::string asset = "./res/scene/dungeon_asset.yaml";
-static std::string tiles = "./res/scene/scene_tiles.yaml";
+static std::string tiles = "./res/scene/scene.yaml";
 static i64 last_time = 0;
 static i64 last_time_tiles = 0;
 
@@ -56,6 +56,17 @@ bool read_vec3(c4::csubstr buffer, glm::vec3& vec) {
 	return pos != c4::csubstr::npos;
 }
 
+bool read_vec3(c4::csubstr buffer, glm::ivec3& vec) {
+	size_t pos = c4::unformat(buffer, "glm::vec3({}, {}, {})", vec.x, vec.y, vec.z);
+	if (pos == c4::csubstr::npos) {
+		float f = 0;
+		pos = c4::unformat(buffer, "glm::vec3({})", f);
+		vec = glm::vec3(f);
+	}
+
+	return pos != c4::csubstr::npos;
+}
+
 bool read_string(c4::csubstr buffer, std::string& str) {
 	c4::from_chars(buffer, &str);
 	return true;
@@ -68,7 +79,7 @@ bool read_string(c4::substr buffer, std::string& str) {
 
 std::string to_chars(glm::ivec3 v)
 {
-	return std::string("glm::vec3(") + std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z) + ")";
+	return std::string("glm::vec3( ") + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " + std::to_string(v.z) + ")";
 }
 
 void LevelSystem::init() {
@@ -107,8 +118,7 @@ void LevelSystem::update(float delta) {
 	auto& scene = engine.getScene();
 
 	auto destroy_tiles = [&]() {
-		assets_map.clear();
-		assets_names.clear();
+		
 		auto view = registry.view<Component::LevelTile>();
 		registry.destroy(view.begin(), view.end());
 	};
@@ -235,11 +245,17 @@ void LevelSystem::saveScene() {
 		tile.append_child() << ryml::key("rot") << level_tile.rot;
 	}
 
-	ryml::emit(r);
+	FILE* pfile = fopen("./res/scene/scene.yaml", "w");
+	assert(pfile);
+	ryml::emit(r, pfile);
+	fclose(pfile);
 }
 
 void LevelSystem::loadAssets() {
 	try {
+		assets_map.clear();
+		assets_names.clear();
+
 		auto& scene = engine.getScene();
 		auto file_str = LOA::Util::read_file(asset);
 		if (file_str.has_value()) {
@@ -289,6 +305,11 @@ void LevelSystem::loadTiles() {
 			c4::csubstr src_view(c4::to_csubstr(content.c_str()));
 			ryml::Tree tree = ryml::parse(src_view);
 			ryml::NodeRef root = tree.rootref();
+			root |= ryml::MAP;
+			if (!root.has_child("tiles")) {
+				throw std::exception("Empty yaml");
+			}
+
 			ryml::NodeRef tiles = root["tiles"];
 			for (ryml::NodeRef& node : tiles) {
 				auto& tileSubstring = node["tile"].val();
@@ -299,21 +320,20 @@ void LevelSystem::loadTiles() {
 				read_int(node["rot"].val(), rot);
 
 				entt::hashed_string mesh_id = entt::hashed_string(tileType.c_str());
-				for (ryml::NodeRef& loc : node["locations"]) {
-					int x, z;
-					read_int(loc[0].val(), x);
-					read_int(loc[1].val(), z);
 
-					createTileInstance(mesh_id, glm::ivec3(x, 0, z), rot);
-				}
+				glm::ivec3 loc;
+				read_vec3(node["location"].val(), loc);
+				createTileInstance(mesh_id, loc, rot);
 			}
 		}
 
-		last_time_tiles = Util::last_write(tiles).value();
 	}
 	catch (std::exception& e) {
 		std::cerr << e.what();
 	}
+
+	last_time_tiles = Util::last_write(tiles).value();
+
 }
 
 void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ivec3& loc, int rot) {
@@ -329,7 +349,7 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 	material.time = 0.0f;
 
 	//create instance
-	glm::vec3 pos = glm::vec3(-loc) * grid_size;
+	glm::vec3 pos = glm::vec3(loc) * grid_size;
 	LOA::ID id = scene.addInstance(mesh_id);
 	auto& instance = scene.getInstance(id);
 	glm::quat rotation = Util::quarter_rot(rot);
