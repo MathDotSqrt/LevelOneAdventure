@@ -25,7 +25,7 @@ struct DirLight {
 uniform int u_num_point_lights = 0;
 uniform PointLight u_point_lights[MAX_POINT_LIGHTS];
 
-uniform DirLight u_dir_light = DirLight(vec3(1, -1, -.1), vec3(1, 1, 1), .1);
+uniform DirLight u_dir_light = DirLight(vec3(1, -1, -.1), vec3(1, .9, .6), .1);
 
 uniform float u_dissolve = .1;
 uniform float u_offset = .1;
@@ -45,7 +45,7 @@ vec3 point_color(PointLight light){
 	float d = dot(light_dir, normalize(f_world_normal));
 	d = max(d * light.intensity, 0);
 
-	float attenuation = 4 / pow(dist, 2);
+	float attenuation = 1 / pow(dist, 1);
 	vec3 light_color = to_linear(light.color) * d * attenuation;
 	return light_color;
 }
