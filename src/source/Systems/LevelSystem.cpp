@@ -35,6 +35,11 @@ bool read_int(c4::csubstr buffer, int& f) {
 	return pos != c4::csubstr::npos;
 }
 
+bool read_int(c4::csubstr buffer, entt::id_type& id) {
+	size_t pos = c4::unformat(buffer, "{}", id);
+	return pos != c4::csubstr::npos;
+}
+
 bool read_float(c4::csubstr buffer, float &f) {
 	size_t pos = c4::unformat(buffer, "{}", f);
 	return pos != c4::csubstr::npos;
@@ -54,6 +59,16 @@ bool read_vec3(c4::csubstr buffer, glm::vec3& vec) {
 bool read_string(c4::csubstr buffer, std::string& str) {
 	c4::from_chars(buffer, &str);
 	return true;
+}
+
+bool read_string(c4::substr buffer, std::string& str) {
+	c4::from_chars(buffer, &str);
+	return true;
+}
+
+std::string to_chars(glm::ivec3 v)
+{
+	return std::string("glm::vec3(") + std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z) + ")";
 }
 
 void LevelSystem::init() {
@@ -93,6 +108,7 @@ void LevelSystem::update(float delta) {
 
 	auto destroy_tiles = [&]() {
 		assets_map.clear();
+		assets_names.clear();
 		auto view = registry.view<Component::LevelTile>();
 		registry.destroy(view.begin(), view.end());
 	};
@@ -130,7 +146,7 @@ void LevelSystem::update(float delta) {
 
 	glm::vec3 camera_right = camera_rot * glm::vec3(1, 0, 0);
 	
-	auto builder_view = registry.view<Component::LevelBuilder, Component::Transformation>();
+	auto builder_view = registry.view<LevelBuilder, Transformation>();
 	
 	int scroll_delta = 0;
 	scroll_delta += window.isPressed('=');
@@ -142,6 +158,7 @@ void LevelSystem::update(float delta) {
 
 	for (auto entity : builder_view) {
 		auto& transform = registry.get<Transformation>(entity);
+		auto& builder = registry.get<LevelBuilder>(entity);
 
 		glm::vec3 move(0);
 		glm::vec3 forward(0);
@@ -157,14 +174,19 @@ void LevelSystem::update(float delta) {
 		
 		
 		if (window.isPressed('e')) {
-			transform.rot *= Util::quarter_rot(1);
+			builder.rot += 1;
 		}
 		if (window.isPressed('q')) {
-			transform.rot *= Util::quarter_rot(-1);
+			builder.rot -= 1;
 		}
 
+		transform.rot = Util::quarter_rot(builder.rot);
+
 		if (window.isPressed('p')) {
-			createTileInstance(assets_map[model_index], transform.pos, transform.rot);
+			//TODO: rewrite level system to not have random string copies everwhere
+			entt::hashed_string terrible_code = entt::hashed_string(assets_names[model_index].c_str());
+			glm::ivec3 loc = glm::floor(transform.pos / grid_size);	//more terribleness
+			createTileInstance(terrible_code, loc, builder.rot);
 		}
 		
 		glm::vec3 move_forward = glm::round(camera_forward * forward.z);
@@ -172,13 +194,48 @@ void LevelSystem::update(float delta) {
 		transform.pos += (move_forward + move_right) * grid_size;
 	}
 	
+	if (window.isPressed('y')) {
+		saveScene();
+	}
+	
 	auto view = registry.view<Graphics::DissolveMaterial>();
 	for (auto entity : view) {
-		if (Window::getInstance().isDown('z'))
+		if (Window::getInstance().isDown('x'))
 			view.get<Graphics::DissolveMaterial>(entity).time += delta / 2.0f;
-		else if(Window::getInstance().isDown('x'))
+		else if(Window::getInstance().isDown('z'))
 			view.get<Graphics::DissolveMaterial>(entity).time -= delta / 2.0f;
 	}
+
+}
+
+void LevelSystem::saveScene() {
+	using namespace Component;
+
+	auto& registry = engine.getRegistry();
+	auto view = registry.view<LevelTile>();
+
+	ryml::Tree tree;
+	ryml::NodeRef r = tree.rootref();
+
+	r |= ryml::MAP;
+
+	ryml::NodeRef tiles = r["tiles"];
+	tiles |= ryml::SEQ;
+
+	for (auto entity : view) {
+		auto& level_tile = view.get<LevelTile>(entity);
+		
+		ryml::NodeRef tile = tiles.append_child();
+		tile |= ryml::MAP;
+
+		std::string loc = to_chars(level_tile.loc);
+
+		tile.append_child() << ryml::key("tile") << level_tile.model_name;
+		tile.append_child() << ryml::key("location") << loc;
+		tile.append_child() << ryml::key("rot") << level_tile.rot;
+	}
+
+	ryml::emit(r);
 }
 
 void LevelSystem::loadAssets() {
@@ -209,6 +266,7 @@ void LevelSystem::loadAssets() {
 				entt::hashed_string id(name.c_str());
 				scene.loadMesh(id, path, offset, glm::vec3(scale));
 				assets_map.push_back(id);
+				assets_names.push_back(name);
 			}
 		}
 
@@ -230,7 +288,6 @@ void LevelSystem::loadTiles() {
 
 			c4::csubstr src_view(c4::to_csubstr(content.c_str()));
 			ryml::Tree tree = ryml::parse(src_view);
-
 			ryml::NodeRef root = tree.rootref();
 			ryml::NodeRef tiles = root["tiles"];
 			for (ryml::NodeRef& node : tiles) {
@@ -241,14 +298,13 @@ void LevelSystem::loadTiles() {
 				read_string(tileSubstring, tileType);
 				read_int(node["rot"].val(), rot);
 
-				entt::id_type mesh_id = entt::hashed_string(tileType.c_str());
+				entt::hashed_string mesh_id = entt::hashed_string(tileType.c_str());
 				for (ryml::NodeRef& loc : node["locations"]) {
 					int x, z;
 					read_int(loc[0].val(), x);
 					read_int(loc[1].val(), z);
 
-					glm::vec3 pos(-grid_size.x * x, 0, -grid_size.z * z);
-					createTileInstance(mesh_id, pos, Util::quarter_rot(rot));
+					createTileInstance(mesh_id, glm::ivec3(x, 0, z), rot);
 				}
 			}
 		}
@@ -260,7 +316,7 @@ void LevelSystem::loadTiles() {
 	}
 }
 
-void LevelSystem::createTileInstance(entt::id_type mesh_id, const glm::vec3& pos, const glm::quat& rot) {
+void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ivec3& loc, int rot) {
 	using namespace entt;
 
 	auto& registry = engine.getRegistry();
@@ -273,9 +329,11 @@ void LevelSystem::createTileInstance(entt::id_type mesh_id, const glm::vec3& pos
 	material.time = 0.0f;
 
 	//create instance
+	glm::vec3 pos = glm::vec3(-loc) * grid_size;
 	LOA::ID id = scene.addInstance(mesh_id);
 	auto& instance = scene.getInstance(id);
-	instance.transform = Util::make_transform(pos, rot);
+	glm::quat rotation = Util::quarter_rot(rot);
+	instance.transform = Util::make_transform(pos, rotation);
 
 	//TODO: potentially dereferencing null
 	glm::vec3 mesh_min = instance.mesh->getMin();
@@ -284,11 +342,11 @@ void LevelSystem::createTileInstance(entt::id_type mesh_id, const glm::vec3& pos
 	glm::vec3 offset = (mesh_max + mesh_min) * .5f;
 
 	auto& physicsScene = engine.getPhysicsScene();
-	btRigidBody* body = physicsScene.createBox(0, dim * .5f, pos + rot * offset, rot);
+	btRigidBody* body = physicsScene.createBox(0, dim * .5f, pos + rotation * offset, rotation);
 
 	auto entity = registry.create();
 	registry.emplace<Graphics::DissolveMaterial>(entity, material);
 	registry.emplace<Component::Renderable>(entity, id);
 	registry.emplace<Component::StaticBody>(entity, body);
-	registry.emplace<Component::LevelTile>(entity);
+	registry.emplace<Component::LevelTile>(entity, std::string(mesh_id.data()), loc, rot);
 }

@@ -82,11 +82,15 @@ namespace LOA::Component {
 	};
 
 	struct LevelTile {
-		
+		//TODO: dont store an effing string in a component
+		std::string model_name;
+		glm::ivec3 loc;
+		int rot = 0;
 	};
 
 	struct LevelBuilder {
 		int id = 0;
+		int rot = 0;
 	};
 
 	//Rigid Bodies that have physics: stackable boxes, more stackable boxes
