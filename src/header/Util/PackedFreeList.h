@@ -26,11 +26,14 @@ namespace LOA {
 namespace LOA::Util {
 	class PackedFreeListInterface {
 	public:
+		PackedFreeListInterface() {}
+		virtual ~PackedFreeListInterface() {}
+
 		virtual void remove(ID id) = 0;
 	};
 
 	template<typename T>
-	class PackedFreeList : public PackedFreeListInterface {
+	class PackedFreeList : public PackedFreeListInterface{
 	public:
 
 		T& operator[](ID id) {
@@ -87,17 +90,19 @@ namespace LOA::Util {
 			}
 		}
 
-		void remove(ID id) override {
+		void remove(ID id) {
 			assert(has(id));
 
 			u32 element_index = index_array[id.index].index;
 
-			const auto &back_element = packed_array.back();
+			//const auto &back_element = packed_array.back();
 			const auto back_index = back_packed_array.back();
 
 			index_array[back_index].index = element_index;
 			
-			packed_array[element_index] = std::move(back_element);
+			//Im 9000% sure this is a compiler bug, somehow it thinks im invoking the copy constructor
+			//packed_array[element_index] = std::move(back_element);
+			packed_array[element_index] = std::move(packed_array.back());
 			back_packed_array[element_index] = back_index;
 
 			packed_array.pop_back();

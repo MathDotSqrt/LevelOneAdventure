@@ -119,18 +119,17 @@ namespace LOA::Graphics {
 		ID insertMaterial(MATERIAL material) {
 			auto& freeList = materialRegistry.ctx_or_set<Util::PackedFreeList<MATERIAL>>();
 			
-			freeListReferenceMap[MATERIAL::Type] = freeList;
+			freeListReferenceMap[MATERIAL::Type] = &freeList;
 			blendMap[MATERIAL::Type] = MATERIAL::DefaultBlend;
-
 			return freeList.insert(material);
 		}
 
 		void removeMaterial(MaterialType type, ID id) {
-			freeListReferenceMap[type].remove(id);
+			freeListReferenceMap[type]->remove(id);
 		}
 
 		entt::registry materialRegistry;
-		std::unordered_map<MaterialType, Util::PackedFreeListInterface&> freeListReferenceMap;
+		std::unordered_map<MaterialType, Util::PackedFreeListInterface*> freeListReferenceMap;
 		std::unordered_map<MaterialType, BlendType> blendMap;
 
 		Util::PackedFreeList<Instance> instances;
