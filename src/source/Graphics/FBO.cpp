@@ -24,9 +24,12 @@ FBO::FBO(int width, int height) :
 
 FBO::FBO(FBO&& other) : 
 	fboID(other.fboID),
+	width(other.width),
+	height(other.height),
 	color(std::move(other.color)),
 	depth(std::move(other.depth)){
 	
+	//invalidate other
 	other.fboID = 0;
 }
 

@@ -25,7 +25,7 @@ struct DirLight {
 uniform int u_num_point_lights = 0;
 uniform PointLight u_point_lights[MAX_POINT_LIGHTS];
 
-uniform DirLight u_dir_light = DirLight(vec3(1, -1, -.1), vec3(1, .9, .6), .1);
+uniform DirLight u_dir_light = DirLight(vec3(1, -1, -.1), vec3(1, .9, .6), .2);
 
 uniform float u_dissolve = .1;
 uniform float u_offset = .1;

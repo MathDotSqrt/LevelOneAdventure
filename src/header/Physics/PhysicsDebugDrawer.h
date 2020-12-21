@@ -10,7 +10,7 @@
 namespace LOA::Physics {
 	class PhysicsDebugDrawer : public btIDebugDraw {
 	public:
-		const static size_t MAX_ELEMENTS = 4096;
+		const static size_t MAX_ELEMENTS = 4096 << 1;
 
 		PhysicsDebugDrawer();
 
