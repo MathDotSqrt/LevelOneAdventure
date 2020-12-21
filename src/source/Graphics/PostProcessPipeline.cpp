@@ -60,32 +60,32 @@ void PostProcessPipeline::renderPostProcess(ShaderSet &shaders, int width, int h
 
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
-	{
-		blurX.bind(width, height);
-		auto& shader = shaders.get("FilterPP"_hs);
-		shader->start();
-		renderStage(width, height, mainViewPort, *shader);
-		shader->end();
-		blurX.unbind();
-	}
+	//{
+	//	blurX.bind(width, height);
+	//	auto& shader = shaders.get("FilterPP"_hs);
+	//	shader->start();
+	//	renderStage(width, height, mainViewPort, *shader);
+	//	shader->end();
+	//	blurX.unbind();
+	//}
 
-	{
-		blurY.bind(width, height);
-		auto& shader = shaders.get("BlurX"_hs);
-		shader->start();
-		renderStage(width, height, blurX, *shader);
-		shader->end();
-		blurY.unbind();
-	}
+	//{
+	//	blurY.bind(width, height);
+	//	auto& shader = shaders.get("BlurX"_hs);
+	//	shader->start();
+	//	renderStage(width, height, blurX, *shader);
+	//	shader->end();
+	//	blurY.unbind();
+	//}
 
-	{
-		final.bind(width, height);
-		auto& shader = shaders.get("BlurY"_hs);
-		shader->start();
-		renderStage(width, height, blurY, *shader);
-		shader->end();
-		final.unbind();
-	}
+	//{
+	//	final.bind(width, height);
+	//	auto& shader = shaders.get("BlurY"_hs);
+	//	shader->start();
+	//	renderStage(width, height, blurY, *shader);
+	//	shader->end();
+	//	final.unbind();
+	//}
 
 	{
 		auto& shader = shaders.get("FinalPP"_hs);

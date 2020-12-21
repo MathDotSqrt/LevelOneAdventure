@@ -56,6 +56,12 @@ void FBO::addColorAttachment(TEX::Builder texSettings) {
 
 	bind();
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, color[index].getTexID(), 0);
+
+	std::vector<GLenum> attachments;
+	for (int i = 0; i < color.size(); i++) {
+		attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
+	}
+	glDrawBuffers(attachments.size(), attachments.data());
 	unbind();
 }
 

@@ -24,8 +24,13 @@ namespace LOA {
 }
 
 namespace LOA::Util {
+	class PackedFreeListInterface {
+	public:
+		virtual void remove(ID id) = 0;
+	};
+
 	template<typename T>
-	class PackedFreeList {
+	class PackedFreeList : public PackedFreeListInterface {
 	public:
 
 		T& operator[](ID id) {
@@ -82,7 +87,7 @@ namespace LOA::Util {
 			}
 		}
 
-		void remove(ID id) {
+		void remove(ID id) override {
 			assert(has(id));
 
 			u32 element_index = index_array[id.index].index;
