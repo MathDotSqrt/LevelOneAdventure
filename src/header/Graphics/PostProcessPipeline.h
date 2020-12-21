@@ -15,6 +15,7 @@ namespace LOA::Graphics {
 		void renderPostProcess(ShaderSet &shaders, int current_width, int current_height);
 		void renderStage(int width, int height, const FBO& fbo, GLSLProgram &shader);
 	private:
+		FBO gBuffer;
 		FBO mainViewPort;
 		FBO blurX;
 		FBO blurY;

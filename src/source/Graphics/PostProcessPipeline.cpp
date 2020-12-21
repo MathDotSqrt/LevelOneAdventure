@@ -8,6 +8,7 @@
 using namespace LOA::Graphics;
 
 PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int height) :
+	gBuffer(width, height),
 	mainViewPort(width, height),
 	blurX(width / 4, height / 4),
 	blurY(width / 4, height / 4),
@@ -22,19 +23,25 @@ PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int heig
 	shaders.load("BlurY"_hs, "postprocess/pp.vert", "postprocess/pp_blurY.frag");
 	shaders.load("FinalPP"_hs, "postprocess/pp.vert", "postprocess/pp.frag");
 
-	TEX::Builder colorSettings = TEX::Builder().rgb16f().clampToEdge().linear();
+	TEX::Builder floatSettings = TEX::Builder().rgb16f().clampToEdge().linear();
+	TEX::Builder hdrColorSettings = TEX::Builder().rgb16f().clampToEdge().linear();
 	TEX::Builder depthSettings = TEX::Builder().depth24().clampToEdge().linear();
+	
+	gBuffer.addColorAttachment(floatSettings); //Position
+	gBuffer.addColorAttachment(floatSettings); //Normal
+	gBuffer.addColorAttachment(floatSettings); //Color+Specular
+	gBuffer.addDepthAttachment(depthSettings); //Depth
 
-	mainViewPort.addColorAttachment(colorSettings);
+	mainViewPort.addColorAttachment(hdrColorSettings);
 	mainViewPort.addDepthAttachment(depthSettings);
 
-	blurX.addColorAttachment(colorSettings);
+	blurX.addColorAttachment(hdrColorSettings);
 	blurX.addDepthAttachment(depthSettings);
 
-	blurY.addColorAttachment(colorSettings);
+	blurY.addColorAttachment(hdrColorSettings);
 	blurY.addColorAttachment(depthSettings);
 
-	final.addColorAttachment(colorSettings);
+	final.addColorAttachment(hdrColorSettings);
 	final.addColorAttachment(depthSettings);
 }
 
