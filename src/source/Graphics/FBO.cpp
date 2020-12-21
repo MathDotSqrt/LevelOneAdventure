@@ -9,17 +9,10 @@ using namespace LOA::Graphics;
 
 FBO::FBO(int width, int height) : 
 	width(width), 
-	height(height), 
-	color(TEX::Builder().rgb16f().clampToEdge().linear().buildTexture(width, height)),
-	depth(TEX::Builder().depth24().clampToEdge().linear().buildTexture(width, height)){
+	height(height) {
 
 	glGenFramebuffers(1, &fboID);
 	assert(fboID);
-
-	bind();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color.getTexID(), 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth.getTexID(), 0);
-	unbind();
 }
 
 FBO::FBO(FBO&& other) : 
@@ -57,6 +50,25 @@ void FBO::dispose() {
 	}
 }
 
+void FBO::addColorAttachment(TEX::Builder texSettings) {
+	color.push_back(texSettings.buildTexture(width, height));
+	size_t index = color.size() - 1;
+
+	bind();
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, color[index].getTexID(), 0);
+	unbind();
+}
+
+void FBO::addDepthAttachment(TEX::Builder texSettings) {
+	assert(depth.size() == 0);
+
+	depth.push_back(texSettings.buildTexture(width, height));
+	
+	bind();
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth[0].getTexID(), 0);
+	unbind();
+}
+
 void FBO::bind() const {
 	bind(this->width, this->height);
 }
@@ -74,6 +86,14 @@ void FBO::unbind() const {
 	auto& window = Window::getInstance();
 	glViewport(0, 0, window.getWidth(), window.getHeight());
 }
+
+void FBO::bindAllColorAttachments() const {
+	for (int i = 0; i < color.size(); i++) {
+		color[i].bindActiveTexture(i);
+	}
+}
+
+
 
 glm::vec2 FBO::getActualSize(glm::vec2 window_size) const {
 	const float width = window_size.x;
@@ -103,10 +123,12 @@ int FBO::getHeight() const {
 	return height;
 }
 
-const TEX& FBO::getColorAttachment() const {
-	return color;
+const TEX& FBO::getColorAttachment(int i) const {
+	assert(i >= 0 && i < color.size());
+	return color[i];
 }
 
 const TEX& FBO::getDepthAttachement() const {
-	return depth;
+	assert(depth.size() == 1);
+	return depth[0];
 }

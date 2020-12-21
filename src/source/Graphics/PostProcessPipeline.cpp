@@ -21,6 +21,21 @@ PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int heig
 	shaders.load("BlurX"_hs, "postprocess/pp.vert", "postprocess/pp_blurX.frag");
 	shaders.load("BlurY"_hs, "postprocess/pp.vert", "postprocess/pp_blurY.frag");
 	shaders.load("FinalPP"_hs, "postprocess/pp.vert", "postprocess/pp.frag");
+
+	TEX::Builder colorSettings = TEX::Builder().rgb16f().clampToEdge().linear();
+	TEX::Builder depthSettings = TEX::Builder().depth24().clampToEdge().linear();
+
+	mainViewPort.addColorAttachment(colorSettings);
+	mainViewPort.addDepthAttachment(depthSettings);
+
+	blurX.addColorAttachment(colorSettings);
+	blurX.addDepthAttachment(depthSettings);
+
+	blurY.addColorAttachment(colorSettings);
+	blurY.addColorAttachment(depthSettings);
+
+	final.addColorAttachment(colorSettings);
+	final.addColorAttachment(depthSettings);
 }
 
 void PostProcessPipeline::bindMainViewPort(int width, int height) const {
@@ -72,9 +87,8 @@ void PostProcessPipeline::renderPostProcess(ShaderSet &shaders, int width, int h
 		shader->setUniform2f("blur_attachment_size.fbo_size", final.getWidth(), final.getHeight());
 		shader->setUniform2f("blur_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
 		shader->setUniform1i("blur_attachment", 1);
-		final.getColorAttachment().bindActiveTexture(1);
+		final.bindAllColorAttachments();
 		renderStage(width, height, mainViewPort, *shader);
-		final.getColorAttachment().unbind();
 		shader->end();
 	}
 }
@@ -85,11 +99,10 @@ void PostProcessPipeline::renderStage(int width, int height, const FBO &fbo, GLS
 	shader.setUniform2f("color_attachment_size.fbo_size", fbo.getWidth(), fbo.getHeight());
 	shader.setUniform2f("color_attachment_size.window_size", fbo.getActualSize(glm::vec2(width, height)));
 	shader.setUniform1i("color_attachment", 0);
-	fbo.getColorAttachment().bindActiveTexture(0);
+	fbo.bindAllColorAttachments();
 
 	quad.vao.bind();
 	quad.ebo.bind();
 
 	glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
-	fbo.getColorAttachment().unbind();
 }

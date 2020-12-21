@@ -6,6 +6,8 @@
 
 namespace LOA::Graphics {
 
+
+	//Force alignment to be 4 bytes for the VBO buffer
 	struct alignas(4) RenderData {
 		glm::vec4 pos_size;
 		glm::u8vec4 color;

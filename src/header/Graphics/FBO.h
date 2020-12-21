@@ -3,7 +3,7 @@
 #include "common.h"
 #include "Graphics/TEX.h"
 #include <glm/glm.hpp>
-
+#include <vector>
 namespace LOA::Graphics {
 	class FBO {
 	public:
@@ -15,16 +15,21 @@ namespace LOA::Graphics {
 		FBO& operator=(const FBO& other) = delete;
 		FBO& operator=(FBO&& other);
 
+		void addColorAttachment(TEX::Builder texSettings);
+		void addDepthAttachment(TEX::Builder texSettings);
+
 		void bind() const;
 		void bind(int width, int height) const;
 		void unbind() const;
+
+		void bindAllColorAttachments() const;
 
 		glm::vec2 getActualSize(glm::vec2 window_size) const;
 
 		int getWidth() const;
 		int getHeight() const;
 
-		const TEX& getColorAttachment() const;
+		const TEX& getColorAttachment(int i=0) const;
 		const TEX& getDepthAttachement() const;
 
 	private:
@@ -33,7 +38,7 @@ namespace LOA::Graphics {
 		GLuint fboID = 0;
 		int width, height;
 
-		TEX color;
-		TEX depth;
+		std::vector<TEX> color;
+		std::vector<TEX> depth;
 	};
 }
