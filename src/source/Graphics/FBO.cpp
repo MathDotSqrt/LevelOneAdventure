@@ -75,6 +75,16 @@ void FBO::addDepthAttachment(TEX::Builder texSettings) {
 	unbind();
 }
 
+void FBO::blitDepthbuffer(const FBO& other) {
+	blitDepthbuffer(other, width, height);
+}
+
+void FBO::blitDepthbuffer(const FBO& other, int blit_width, int blit_height) {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, other.getID());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getID());
+	glBlitFramebuffer(0, 0, blit_width, blit_height, 0, 0, blit_width, blit_height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+}
+
 void FBO::bind() const {
 	bind(this->width, this->height);
 }
@@ -127,6 +137,10 @@ int FBO::getWidth() const {
 
 int FBO::getHeight() const {
 	return height;
+}
+
+GLuint FBO::getID() const {
+	return fboID;
 }
 
 const TEX& FBO::getColorAttachment(int i) const {

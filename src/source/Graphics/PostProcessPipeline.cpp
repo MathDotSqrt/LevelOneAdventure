@@ -9,9 +9,9 @@ using namespace LOA::Graphics;
 
 PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int height) :
 	gBuffer(width, height),
-	mainViewPort(width, height),
-	blurX(width / 4, height / 4),
-	blurY(width / 4, height / 4),
+	//mainViewPort(width, height),
+	//blurX(width / 4, height / 4),
+	//blurY(width / 4, height / 4),
 	final(width, height),
 	quad(gen_quad2D(2.0f)){
 	
@@ -35,17 +35,17 @@ PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int heig
 	gBuffer.addColorAttachment(floatSettings); //Color+Specular
 	gBuffer.addDepthAttachment(depthSettings); //Depth
 
-	mainViewPort.addColorAttachment(hdrColorSettings);
-	mainViewPort.addDepthAttachment(depthSettings);
+	//mainViewPort.addColorAttachment(hdrColorSettings);
+	//mainViewPort.addDepthAttachment(depthSettings);
 
-	blurX.addColorAttachment(hdrColorSettings);
-	blurX.addDepthAttachment(depthSettings);
+	//blurX.addColorAttachment(hdrColorSettings);
+	//blurX.addDepthAttachment(depthSettings);
 
-	blurY.addColorAttachment(hdrColorSettings);
-	blurY.addColorAttachment(depthSettings);
+	//blurY.addColorAttachment(hdrColorSettings);
+	//blurY.addColorAttachment(depthSettings);
 
 	final.addColorAttachment(hdrColorSettings);
-	final.addColorAttachment(depthSettings);
+	final.addDepthAttachment(depthSettings);
 }
 
 void PostProcessPipeline::bindGBuffer(int width, int height) const { 
@@ -53,17 +53,52 @@ void PostProcessPipeline::bindGBuffer(int width, int height) const {
 }
 
 void PostProcessPipeline::bindMainViewPort(int width, int height) const {
-	mainViewPort.bind(width, height);
+	final.bind(width, height);
 }
 
 void PostProcessPipeline::unbind() const {
-	mainViewPort.unbind();
+	final.unbind();
+}
+
+void PostProcessPipeline::clearFrameBuffers() {
+	gBuffer.bind();
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	final.bind();
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	final.unbind();
+}
+
+void PostProcessPipeline::renderDeferred(ShaderSet& shaders, int width, int height) {
+	using namespace entt;
+
+	{
+		final.bind(width, height);
+		glDisable(GL_DEPTH_TEST);
+
+		auto& shader = shaders.get("DeferredDebugPP"_hs);
+		shader->start();
+		shader->setUniform1i("color_attachment0", 0);
+		shader->setUniform1i("color_attachment1", 1);
+		shader->setUniform1i("color_attachment2", 2);
+		renderStage(width, height, gBuffer, *shader);
+		shader->end();
+		
+		glEnable(GL_DEPTH_TEST);
+		final.blitDepthbuffer(gBuffer, width, height);
+		final.unbind();
+	}
 }
 
 void PostProcessPipeline::renderPostProcess(ShaderSet &shaders, int width, int height) {
 	using namespace entt;
 	
-	mainViewPort.unbind();
+	final.unbind();
 
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -107,19 +142,18 @@ void PostProcessPipeline::renderPostProcess(ShaderSet &shaders, int width, int h
 	//}
 
 	{
-		auto& shader = shaders.get("DeferredDebugPP"_hs);	
+		auto& shader = shaders.get("FinalPP"_hs);
 		shader->start();
-		shader->setUniform1i("color_attachment0", 0);
-		shader->setUniform1i("color_attachment1", 1);
-		shader->setUniform1i("color_attachment2", 2);
-		renderStage(width, height, gBuffer, *shader);
+		//shader->setUniform2f("blur_attachment_size.fbo_size", final.getWidth(), final.getHeight());
+		//shader->setUniform2f("blur_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
+		//shader->setUniform1i("blur_attachment", 1);
+		//final.bindAllColorAttachments();
+		renderStage(width, height, final, *shader);
 		shader->end();
 	}
 }
 
 void PostProcessPipeline::renderStage(int width, int height, const FBO &fbo, GLSLProgram &shader) {
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	shader.setUniform2f("color_attachment_size.fbo_size", fbo.getWidth(), fbo.getHeight());
 	shader.setUniform2f("color_attachment_size.window_size", fbo.getActualSize(glm::vec2(width, height)));
 	shader.setUniform1i("color_attachment", 0);

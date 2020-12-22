@@ -19,7 +19,7 @@ void main(){
 
   vec3 tex_color = to_linear(texture(diffuse, f_texcoord).rgb);
 
-  g_world_pos = vec3(f_world_pos);
+  g_world_pos = f_world_pos;
   g_normal = normalize(f_normal);
   g_albedo = vec4(tex_color, 1);
 }

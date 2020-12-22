@@ -18,6 +18,9 @@ namespace LOA::Graphics {
 		void addColorAttachment(TEX::Builder texSettings);
 		void addDepthAttachment(TEX::Builder texSettings);
 
+		void blitDepthbuffer(const FBO& other);
+		void blitDepthbuffer(const FBO& other, int blit_width, int blit_height);
+
 		void bind() const;
 		void bind(int width, int height) const;
 		void unbind() const;
@@ -28,6 +31,8 @@ namespace LOA::Graphics {
 
 		int getWidth() const;
 		int getHeight() const;
+
+		GLuint getID() const;
 
 		const TEX& getColorAttachment(int i=0) const;
 		const TEX& getDepthAttachement() const;

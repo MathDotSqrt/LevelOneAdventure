@@ -9,6 +9,6 @@ uniform sampler2D color_attachment2;
 
 
 void main(){
-  vec3 tex_color = texture(color_attachment2, getUV()).rgb;
+  vec3 tex_color = texture(color_attachment2, getUV(color_attachment_size)).rgb;
   out_color = vec4(tex_color, 1);
 }

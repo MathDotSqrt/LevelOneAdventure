@@ -38,6 +38,8 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 	current_width = window.getWidth();
 	current_height = window.getHeight();
 
+	postProcess.clearFrameBuffers();
+
 	drawList.clear();
 
 	for (u32 i = 0; i < scene.instances.size(); i++) {
@@ -80,13 +82,11 @@ void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer) {
 		postProcess.bindGBuffer(current_width, current_height);
 		break;
 	case ViewPortLayer::FORWARD:
+		postProcess.renderDeferred(shaders, current_width, current_height);
+
 		postProcess.bindMainViewPort(current_width, current_height);
 		break;
 	}
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
@@ -178,7 +178,6 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 		clearOpenGLState();
 	}
 
-	postProcess.unbind();
 	postProcess.renderPostProcess(shaders, current_width, current_height);
 
 }
