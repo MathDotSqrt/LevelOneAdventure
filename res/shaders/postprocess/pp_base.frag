@@ -8,7 +8,6 @@ struct fbo_attachment_size{
   vec2 window_size;
 };
 
-uniform sampler2D color_attachment;
 uniform fbo_attachment_size color_attachment_size;
 // uniform vec2 fbo_size;
 // uniform vec2 window_size;

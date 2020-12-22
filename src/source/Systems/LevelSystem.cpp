@@ -346,15 +346,18 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
 
-	Graphics::DissolveMaterial material;
+	//Graphics::DissolveMaterial material;
+	//material.diffuse = "dungeon_pallet"_hs;
+	//material.dissolve_color = glm::vec3(.7f, .4f, .1f);
+	//material.offset = .05f;
+	//material.time = 0.0f;
+
+	Graphics::BasicDeferred material;
 	material.diffuse = "dungeon_pallet"_hs;
-	material.dissolve_color = glm::vec3(.7f, .4f, .1f);
-	material.offset = .05f;
-	material.time = 0.0f;
 
 	//create instance
 	glm::vec3 pos = glm::vec3(loc) * grid_size;
-	LOA::ID id = scene.addInstance(mesh_id);
+	LOA::ID id = scene.addInstance(mesh_id, material);
 	auto& instance = scene.getInstance(id);
 	glm::quat rotation = Util::quarter_rot(rot);
 	instance.transform = Util::make_transform(pos, rotation);
@@ -369,7 +372,7 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 	btRigidBody* body = physicsScene.createBox(0, dim * .5f, pos + rotation * offset, rotation);
 
 	auto entity = registry.create();
-	registry.emplace<Graphics::DissolveMaterial>(entity, material);
+	//registry.emplace<Graphics::DissolveMaterial>(entity, material);
 	registry.emplace<Component::Renderable>(entity, id);
 	registry.emplace<Component::StaticBody>(entity, body);
 	registry.emplace<Component::LevelTile>(entity, std::string(mesh_id.data()), loc, rot);

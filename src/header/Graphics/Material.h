@@ -10,28 +10,29 @@ namespace LOA::Graphics {
 	using namespace entt;
 
 	enum class ViewPort : u8 {
-		SHADOW = 0,
-		FINAL,
+		SHADOW = 0,			//For the sub camera to create the shadow texture
+		FINAL,				//For everything else
 		NUM_VIEW_PORTS
 	};
 
 	enum class ViewPortLayer : u8 {
-		DEFAULT = 0,
-		DEFERRED,
-		FORWARD,
-		SKYBOX,
+		DEFAULT = 0,		//Not really sure
+		DEFERRED,			//For lit objects
+		FORWARD,			//For non lit or transparent objects
+		SKYBOX,				//For the skybox
 		NUM_VIEW_PORT_LAYERS
 	};
 
 	enum class BlendType : u8 {
-		OPAQUE = 0,
+		OPAQUE = 0,			//Non transparent objects
 		ADD,
 		SUB,
-		MUL,
+		MUL,				//For transparent objects like particles
 		NUM_BLEND_TYPES
 	};
 
 	enum class MaterialType : u8 {
+		BASIC_DEFERRED_ID,
 		TRANSLUCENT_BASIC_MATERIAL_ID,
 		NORMAL_MATERIAL_ID,
 		BASIC_LIT_MATERIAL_ID,
@@ -42,6 +43,15 @@ namespace LOA::Graphics {
 		LINE_MATERIAL_ID,
 
 		NUM_MATERIAL_ID
+	};
+
+	struct BasicDeferred {
+		constexpr static MaterialType Type = MaterialType::BASIC_DEFERRED_ID;
+		constexpr static entt::id_type ShaderID = "BasicDeferredShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::DEFERRED;
+
+		entt::id_type diffuse;
 	};
 
 	struct TranslucentBasicMaterial {

@@ -17,7 +17,18 @@ RenderStateKey::RenderStateKey(
 
 	setMaterialType(id);
 	setBlendType(type);
-	setViewPortLayer(ViewPortLayer::DEFAULT);
+	setViewPortLayer(ViewPortLayer::FORWARD);
+	setViewPort(ViewPort::FINAL);
+}
+
+RenderStateKey::RenderStateKey(
+	ViewPortLayer layer,
+	BlendType type,
+	MaterialType id) : key(0) {
+
+	setMaterialType(id);
+	setBlendType(type);
+	setViewPortLayer(layer);
 	setViewPort(ViewPort::FINAL);
 }
 

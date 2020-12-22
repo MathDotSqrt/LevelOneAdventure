@@ -2,6 +2,8 @@
 
 uniform fbo_attachment_size blur_attachment_size;
 uniform sampler2D blur_attachment;
+uniform sampler2D color_attachment;
+
 out vec4 out_color;
 
 vec3 tonemapFilmic(vec3 x) {

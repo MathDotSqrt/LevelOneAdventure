@@ -31,6 +31,11 @@ namespace LOA::Graphics {
 			MaterialType material);
 
 		RenderStateKey(
+			ViewPortLayer layer,
+			BlendType type,
+			MaterialType material);
+
+		RenderStateKey(
 			ViewPort port, 
 			ViewPortLayer layer, 
 			BlendType blend, 

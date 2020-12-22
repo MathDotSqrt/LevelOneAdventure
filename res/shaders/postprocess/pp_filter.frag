@@ -1,6 +1,8 @@
 #include "postprocess/pp_base.frag"
 #include "math.glsl"
 
+uniform sampler2D color_attachment;
+
 out vec4 out_color;
 
 void main(){

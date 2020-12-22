@@ -5,6 +5,7 @@
 
 //uniform float weight[7] = float[](0.098779, 0.09683, 0.091209, 0.082557, 0.071805, 0.060013, 0.048196);
 uniform float weight[10] = float[](0.084509,0.082841,0.078033,0.07063,0.061432,0.051343,0.041234,0.031821,0.023597,0.016815);
+uniform sampler2D color_attachment;
 
 out vec4 out_color;
 

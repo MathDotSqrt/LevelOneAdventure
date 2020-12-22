@@ -9,6 +9,7 @@ namespace LOA::Graphics {
 	public:
 		PostProcessPipeline(ShaderSet &shaders, int max_width, int max_height);
 
+		void bindGBuffer(int current_width, int current_height) const;
 		void bindMainViewPort(int current_width, int current_height) const;
 		void unbind() const;
 

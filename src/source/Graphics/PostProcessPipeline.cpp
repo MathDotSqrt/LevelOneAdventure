@@ -22,6 +22,9 @@ PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int heig
 	shaders.load("BlurX"_hs, "postprocess/pp.vert", "postprocess/pp_blurX.frag");
 	shaders.load("BlurY"_hs, "postprocess/pp.vert", "postprocess/pp_blurY.frag");
 	shaders.load("FinalPP"_hs, "postprocess/pp.vert", "postprocess/pp.frag");
+	
+	
+	shaders.load("DeferredDebugPP"_hs, "postprocess/pp.vert", "postprocess/pp_debug_deferred.frag");
 
 	TEX::Builder floatSettings = TEX::Builder().rgb16f().clampToEdge().linear();
 	TEX::Builder hdrColorSettings = TEX::Builder().rgb16f().clampToEdge().linear();
@@ -43,6 +46,10 @@ PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int heig
 
 	final.addColorAttachment(hdrColorSettings);
 	final.addColorAttachment(depthSettings);
+}
+
+void PostProcessPipeline::bindGBuffer(int width, int height) const { 
+	gBuffer.bind(width, height);
 }
 
 void PostProcessPipeline::bindMainViewPort(int width, int height) const {
@@ -87,15 +94,25 @@ void PostProcessPipeline::renderPostProcess(ShaderSet &shaders, int width, int h
 	//	final.unbind();
 	//}
 
+	//{
+	//	auto& shader = shaders.get("FinalPP"_hs);
+	//	shader->start();
+	//	
+	//	shader->setUniform2f("blur_attachment_size.fbo_size", final.getWidth(), final.getHeight());
+	//	shader->setUniform2f("blur_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
+	//	shader->setUniform1i("blur_attachment", 1);
+	//	final.bindAllColorAttachments();
+	//	renderStage(width, height, gBuffer, *shader);
+	//	shader->end();
+	//}
+
 	{
-		auto& shader = shaders.get("FinalPP"_hs);
+		auto& shader = shaders.get("DeferredDebugPP"_hs);	
 		shader->start();
-		
-		shader->setUniform2f("blur_attachment_size.fbo_size", final.getWidth(), final.getHeight());
-		shader->setUniform2f("blur_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
-		shader->setUniform1i("blur_attachment", 1);
-		final.bindAllColorAttachments();
-		renderStage(width, height, mainViewPort, *shader);
+		shader->setUniform1i("color_attachment0", 0);
+		shader->setUniform1i("color_attachment1", 1);
+		shader->setUniform1i("color_attachment2", 2);
+		renderStage(width, height, gBuffer, *shader);
 		shader->end();
 	}
 }

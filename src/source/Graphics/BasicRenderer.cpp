@@ -20,6 +20,7 @@ BasicRenderer::BasicRenderer() :
 
 	glEnable(GL_CULL_FACE);
 	
+	shaders.load(BasicDeferred::ShaderID, "basic_deferred/basic_deferred.vert", "basic_deferred/basic_deferred.frag");
 	shaders.load(TranslucentBasicMaterial::ShaderID, "basic/basic.vert", "basic/basic.frag");
 	shaders.load(NormalMaterial::ShaderID, "normal/normal.vert", "normal/normal.frag");
 	shaders.load(BasicLitMaterial::ShaderID, "basic_lit/basic_lit.vert", "basic_lit/basic_lit.frag");
@@ -43,7 +44,9 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 		const auto& instance = scene.instances[i];
 		
 		BlendType blendType = scene.getMaterialBlendType(instance.materialType);
-		const RenderStateKey renderKey{ blendType, instance.materialType };
+		ViewPortLayer layer = scene.getMaterialViewPortLayer(instance.materialType);
+
+		const RenderStateKey renderKey{ layer, blendType, instance.materialType };
 		const RenderStateKeyValue renderCall{renderKey, i};
 		
 		drawList.push_back(renderCall);
@@ -66,14 +69,24 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 }
 
 void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
-	postProcess.bindMainViewPort(current_width, current_height);
+	const PerspectiveCamera camera = scene.mainCamera;
+	projection = glm::perspective(camera.fov, current_width / (float)current_height, camera.near, camera.far);
+}
+
+void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer) {
+
+	switch (layer) {
+	case ViewPortLayer::DEFERRED:
+		postProcess.bindGBuffer(current_width, current_height);
+		break;
+	case ViewPortLayer::FORWARD:
+		postProcess.bindMainViewPort(current_width, current_height);
+		break;
+	}
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	const PerspectiveCamera camera = scene.mainCamera;
-	projection = glm::perspective(camera.fov, current_width / (float)current_height, camera.near, camera.far);
 }
 
 void BasicRenderer::setBlendType(const Scene& scene, BlendType blend) {
@@ -107,8 +120,9 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 	draw_iterator start = drawList.begin();
 	draw_iterator end = drawList.end();
 
-	ViewPort prev_viewport = ViewPort::NUM_VIEW_PORTS;	//dummy
-	BlendType prev_blend = BlendType::NUM_BLEND_TYPES;	//dummy
+	ViewPort prev_viewport = ViewPort::NUM_VIEW_PORTS;				//dummy
+	ViewPortLayer prev_layer = ViewPortLayer::NUM_VIEW_PORT_LAYERS;	//dummy	
+	BlendType prev_blend = BlendType::NUM_BLEND_TYPES;				//dummy
 
 	while (start != end) {
 		RenderStateKey key = start->getKey();
@@ -119,6 +133,12 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 			prev_viewport = current_viewport;
 		}
 
+		ViewPortLayer current_layer = key.getViewPortLayer();
+		if (prev_layer != current_layer) {
+			setViewPortLayer(scene, current_layer);
+			prev_layer = current_layer;
+		}
+
 		BlendType current_blend = key.getBlendType();
 		if (prev_blend != current_blend) {
 			setBlendType(scene, current_blend);
@@ -127,6 +147,9 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 
 		MaterialType current_material = key.getMaterialType();
 		switch (current_material) {
+		case MaterialType::BASIC_DEFERRED_ID:
+			start = renderDeferred(scene, start, end);
+			break;
 		case MaterialType::TRANSLUCENT_BASIC_MATERIAL_ID:
 			start = renderTranslucentBasic(scene, start, end);
 			break;
@@ -158,6 +181,51 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 	postProcess.unbind();
 	postProcess.renderPostProcess(shaders, current_width, current_height);
 
+}
+
+BasicRenderer::draw_iterator
+BasicRenderer::renderDeferred(const Scene& scene, draw_iterator start, draw_iterator end) {
+	if (start == end) {	//Nothing else to render
+		return end;
+	}
+
+	auto& materialList = scene.getMaterialFreeList<BasicDeferred>();
+
+	auto shader = shaders.get(BasicDeferred::ShaderID);
+	if (!shader) {
+		return end;
+	}
+
+	shader->start();
+	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+
+	const RenderStateKey current_state = start->getKey();
+	while (start != end && current_state == start->getKey()) {
+		auto instance_id = start->getValue();
+		Instance instance = scene.instances[instance_id];
+		Mesh& mesh = instance.mesh;
+
+		glm::mat4& transform = instance.transform;
+		shader->setUniformMat4("M", transform);
+
+		auto& material = materialList[instance.materialID];
+		auto& diffuse = scene.texCache.handle(material.diffuse);
+		shader->setUniform1i("diffuse", 0);
+		diffuse->bindActiveTexture(0);
+
+		glm::mat3 inverse = glm::inverse(glm::mat3(transform));
+		shader->setUniformMat3("inverse_transpose", inverse, true);
+
+
+		mesh.vao.bind();
+		mesh.ebo.bind();
+		glDrawElements(GL_TRIANGLES, mesh.ebo.getNumBytes() / sizeof(u32), GL_UNSIGNED_INT, 0);
+
+		start++;
+	}
+	shader->end();
+
+	return start;
 }
 
 BasicRenderer::draw_iterator 

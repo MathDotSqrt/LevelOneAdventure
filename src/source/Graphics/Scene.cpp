@@ -84,6 +84,10 @@ BlendType Scene::getMaterialBlendType(MaterialType type) const {
 	return blendMap.at(type);
 }
 
+ViewPortLayer Scene::getMaterialViewPortLayer(MaterialType type) const {
+	return viewPortLayerMap.at(type);
+}
+
 Instance& Scene::getInstance(ID id) {
 	return instances[id];
 }

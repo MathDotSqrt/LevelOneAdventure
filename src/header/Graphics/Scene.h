@@ -154,6 +154,7 @@ namespace LOA::Graphics {
 		void removeMaterial(MaterialType type, ID id);
 
 		BlendType getMaterialBlendType(MaterialType type) const;
+		ViewPortLayer getMaterialViewPortLayer(MaterialType type) const;
 
 		entt::registry materialRegistry;
 		std::unordered_map<MaterialType, Util::PackedFreeListInterface*> freeListReferenceMap;
