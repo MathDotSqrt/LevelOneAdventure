@@ -42,7 +42,8 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 	for (u32 i = 0; i < scene.instances.size(); i++) {
 		const auto& instance = scene.instances[i];
 		
-		const RenderStateKey renderKey{ instance.blendMode, instance.materialType };
+		BlendType blendType = scene.getMaterialBlendType(instance.materialType);
+		const RenderStateKey renderKey{ blendType, instance.materialType };
 		const RenderStateKeyValue renderCall{renderKey, i};
 		
 		drawList.push_back(renderCall);
@@ -165,6 +166,8 @@ BasicRenderer::renderTranslucentBasic(const Scene& scene, draw_iterator start, d
 		return end;
 	}
 
+	auto& materialList = scene.getMaterialFreeList<TranslucentBasicMaterial>();
+
 	auto shader = shaders.get(TranslucentBasicMaterial::ShaderID);
 	if (!shader) {
 		return end;
@@ -182,7 +185,7 @@ BasicRenderer::renderTranslucentBasic(const Scene& scene, draw_iterator start, d
 		auto& transform = instance.transform;
 		shader->setUniformMat4("M", transform);
 
-		auto& material = scene.translucentBasicMaterials[instance.materialID];
+		auto& material = materialList[instance.materialID];
 		shader->setUniform1f("alpha", material.alpha);
 		auto& diffuse = scene.texCache.handle(material.diffuse);
 		shader->setUniform1i("diffuse", 0);
@@ -246,6 +249,7 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 		return end;
 	}
 
+	auto& materialList = scene.getMaterialFreeList<BasicLitMaterial>();
 	auto shader = shaders.get(BasicLitMaterial::ShaderID);
 	if (!shader) {
 		return end;
@@ -261,7 +265,7 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 		auto instance_id = start->getValue();
 		auto instance = scene.instances[instance_id];
 		auto& mesh = instance.mesh;
-		auto& material = scene.basicLitMaterials[instance.materialID];
+		auto& material = materialList[instance.materialID];
 		auto& diffuse = scene.texCache.handle(material.diffuse);
 
 
@@ -293,6 +297,7 @@ BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iter
 		return end;
 	}
 
+	auto materialList = scene.getMaterialFreeList<DissolveMaterial>();
 	auto shader = shaders.get(DissolveMaterial::ShaderID);
 	if (!shader) {
 		return end;
@@ -308,7 +313,7 @@ BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iter
 		auto instance_id = start->getValue();
 		auto instance = scene.instances[instance_id];
 		auto& mesh = instance.mesh;
-		auto& material = scene.dissolveMaterials[instance.materialID];
+		auto& material = materialList[instance.materialID];
 		auto& diffuse = scene.texCache.handle(material.diffuse);
 
 
@@ -383,6 +388,7 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 		return end;
 	}
 
+	auto& materialList = scene.getMaterialFreeList<FireParticleMaterial>();
 	auto shader = shaders.get(FireParticleMaterial::ShaderID);
 	if (!shader) {
 		return end;
@@ -396,7 +402,7 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 	while (start != end && current_state == start->getKey()) {
 		auto instance_id = start->getValue();
 		auto& particle_system_instances = scene.particleSystemInstances[instance_id];
-		auto& fire_material = scene.fireParticleMaterials[particle_system_instances.materialID];
+		auto& fire_material = materialList[particle_system_instances.materialID];
 		auto& texture = scene.texCache.handle(fire_material.diffuse_grid);
 		auto& render_data = particle_system_instances.data;
 		auto& transform = particle_system_instances.transform;

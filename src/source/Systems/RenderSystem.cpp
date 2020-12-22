@@ -111,10 +111,10 @@ void RenderSystem::update(float delta) {
 			auto& instance = scene.getInstance(render.instance_id);
 
 			if (instance.materialType != Graphics::MaterialType::DISSOLVE_MATERIAL_ID) {
-				scene.newMaterial(render.instance_id, dissolve);
+				scene.changeMaterial(render.instance_id, dissolve);
 			}
 
-			auto& material = scene.getDissolveMaterial(instance.materialID);
+			auto& material = scene.getMaterial<Graphics::DissolveMaterial>(instance.materialID);
 
 			material.time = dissolve.time;
 			material.offset = dissolve.offset;

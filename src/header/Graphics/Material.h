@@ -17,7 +17,8 @@ namespace LOA::Graphics {
 
 	enum class ViewPortLayer : u8 {
 		DEFAULT = 0,
-		WORLD,
+		DEFERRED,
+		FORWARD,
 		SKYBOX,
 		NUM_VIEW_PORT_LAYERS
 	};
@@ -47,6 +48,7 @@ namespace LOA::Graphics {
 		constexpr static MaterialType Type = MaterialType::TRANSLUCENT_BASIC_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "TranslucentShader"_hs;
 		constexpr static BlendType DefaultBlend = BlendType::MUL;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
 
 		entt::id_type diffuse;
 		float alpha = .5f;
@@ -56,6 +58,7 @@ namespace LOA::Graphics {
 		constexpr static MaterialType Type = MaterialType::NORMAL_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "NormalShader"_hs;
 		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
 
 
 	};
@@ -64,6 +67,7 @@ namespace LOA::Graphics {
 		constexpr static MaterialType Type = MaterialType::BASIC_LIT_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "BasicLitShader"_hs;
 		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
 
 
 		entt::id_type diffuse;
@@ -73,6 +77,7 @@ namespace LOA::Graphics {
 		constexpr static MaterialType Type = MaterialType::DISSOLVE_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "DissolveShader"_hs;
 		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
 
 
 		entt::id_type diffuse;
@@ -85,6 +90,7 @@ namespace LOA::Graphics {
 		constexpr static MaterialType Type = MaterialType::PARTICLE_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "ParticleShader"_hs;
 		constexpr static BlendType DefaultBlend = BlendType::MUL;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
 
 
 		entt::id_type diffuse;
@@ -93,6 +99,9 @@ namespace LOA::Graphics {
 	struct FireParticleMaterial {
 		constexpr static MaterialType Type = MaterialType::FIRE_PARTICLE_ID;
 		constexpr static entt::id_type ShaderID = "FireParticleShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::MUL;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
+
 
 		entt::id_type diffuse_grid;
 		glm::vec3 base_color;
@@ -102,5 +111,8 @@ namespace LOA::Graphics {
 	struct LineMaterial {
 		constexpr static MaterialType Type = MaterialType::LINE_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "LineShader"_hs;
+		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
+
 	};
 }

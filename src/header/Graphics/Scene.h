@@ -38,12 +38,11 @@ namespace LOA::Graphics {
 		entt::resource_handle<Mesh> mesh;
 		MaterialType materialType = MaterialType::NUM_MATERIAL_ID;
 		ID materialID = LOA::NullID;
-		BlendType blendMode = BlendType::OPAQUE;
 
 		glm::mat4 transform = glm::identity<glm::mat4>();
 		
-		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, BlendType blend, ID matID);
-		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, BlendType blend);
+		Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID);
+		Instance(entt::resource_handle<Mesh> mesh, MaterialType type);
 	};
 
 	struct ParticleSystemInstance {
@@ -75,21 +74,36 @@ namespace LOA::Graphics {
 		ID addInstance(entt::id_type meshID, MATERIAL material) {
 			Instance new_instance{ 
 				meshCache.handle(meshID), 
-				MATERIAL::Type, 
-				MATERIAL::DefaultBlend 
+				MATERIAL::Type
 			};
-			ID id =instances.insert(new_instance);
-			newMaterial(id, material);
+			ID id = instances.insert(new_instance);
+			
+			Instance& instance = instances[id];
+			ID materialID = insertMaterial<MATERIAL>(material);
+			instance.materialID = materialID;
+			
 			return id;
 		}
 
 		void removeInstance(ID instance);
 
-		//When creating a new material, add a new function
-		void newMaterial(ID instance, TranslucentBasicMaterial newMaterial);
-		void newMaterial(ID instance, NormalMaterial newMaterial);
-		void newMaterial(ID instance, BasicLitMaterial newMaterial);
-		void newMaterial(ID instance, DissolveMaterial newMaterial);
+		template<typename MATERIAL>
+		ID changeMaterial(ID instanceID, MATERIAL material){
+			auto& instance = instances[instanceID];
+			removeMaterial(instance.materialType, instance.materialID);
+
+			instance.materialType = MATERIAL::Type;
+			instance.materialID = insertMaterial(material);
+
+			return instance.materialID;
+		}
+
+		template<typename MATERIAL>
+		MATERIAL& getMaterial(ID id) {
+			auto& freeList = getMaterialFreeList<MATERIAL>();
+			return freeList[id];
+		}
+
 
 		ID addPointLight();
 		ID addPointLight(PointLight light);
@@ -103,9 +117,7 @@ namespace LOA::Graphics {
 		Instance& getInstance(ID id);
 		PointLight& getPointLight(ID id);
 		ParticleSystemInstance& getParticleSystemInstance(ID id);
-
-		DissolveMaterial& getDissolveMaterial(ID id);
-
+		
 		void setMainCamera(PerspectiveCamera camera);
 		PerspectiveCamera& getMainCamera();
 
@@ -113,34 +125,43 @@ namespace LOA::Graphics {
 		friend class BasicRenderer;
 		PerspectiveCamera mainCamera;
 
-		void removeMaterial(ID materialID, MaterialType type);
+		template<typename MATERIAL>
+		Util::PackedFreeList<MATERIAL>& getMaterialFreeList() {
+			return materialRegistry.ctx<Util::PackedFreeList<MATERIAL>>();
+		}
+
+		template<typename MATERIAL>
+		const Util::PackedFreeList<MATERIAL>& getMaterialFreeList() const {
+			return materialRegistry.ctx<Util::PackedFreeList<MATERIAL>>();
+		}
 
 		template<typename MATERIAL>
 		ID insertMaterial(MATERIAL material) {
 			auto& freeList = materialRegistry.ctx_or_set<Util::PackedFreeList<MATERIAL>>();
 			
 			freeListReferenceMap[MATERIAL::Type] = &freeList;
-			blendMap[MATERIAL::Type] = MATERIAL::DefaultBlend;
+			
+			auto iter = blendMap.find(MATERIAL::Type);
+			if (iter == blendMap.end()) {
+				blendMap[MATERIAL::Type] = MATERIAL::DefaultBlend;
+				viewPortLayerMap[MATERIAL::Type] = MATERIAL::DefaultLayer;
+
+			}
 			return freeList.insert(material);
 		}
 
-		void removeMaterial(MaterialType type, ID id) {
-			freeListReferenceMap[type]->remove(id);
-		}
+
+		void removeMaterial(MaterialType type, ID id);
+
+		BlendType getMaterialBlendType(MaterialType type) const;
 
 		entt::registry materialRegistry;
 		std::unordered_map<MaterialType, Util::PackedFreeListInterface*> freeListReferenceMap;
 		std::unordered_map<MaterialType, BlendType> blendMap;
+		std::unordered_map<MaterialType, ViewPortLayer> viewPortLayerMap;
 
 		Util::PackedFreeList<Instance> instances;
-		Util::PackedFreeList<TranslucentBasicMaterial> translucentBasicMaterials;
-		Util::PackedFreeList<BasicLitMaterial> basicLitMaterials;
-		Util::PackedFreeList<DissolveMaterial> dissolveMaterials;
-		Util::PackedFreeList<ParticleMaterial> particleMaterials;
-		Util::PackedFreeList<FireParticleMaterial> fireParticleMaterials;
-		
 		Util::PackedFreeList<ParticleSystemInstance> particleSystemInstances;
-		
 		Util::PackedFreeList<PointLight> pointLights;
 	};
 }
