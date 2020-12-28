@@ -1,4 +1,5 @@
 #include "Graphics/PostProcessPipeline.h"
+#include "Graphics/Scene.h"
 #include "Graphics/GeometryBuilder.h"
 #include "GL/glew.h"
 #include "entt/core/hashed_string.hpp"
@@ -80,11 +81,14 @@ void PostProcessPipeline::clearFrameBuffers() {
 	final.unbind();
 }
 
-void PostProcessPipeline::renderDeferred(ShaderSet& shaders, int width, int height) {
+void PostProcessPipeline::renderDeferred(const Scene& scene, ShaderSet& shaders, int width, int height) {
 	using namespace entt;
 
 	quad.vao.bind();
 	quad.ebo.bind();
+
+	AmbientLight ambient = scene.getAmbientLight();
+	DirLight dirLight = scene.getDirLight();
 
 	{
 		final.bind(width, height);
@@ -93,6 +97,13 @@ void PostProcessPipeline::renderDeferred(ShaderSet& shaders, int width, int heig
 		auto& shader = shaders.get("DeferredAmbient"_hs);
 		shader->start();
 		
+		shader->setUniform3f("u_dir_light.color", dirLight.color);
+		shader->setUniform3f("u_dir_light.dir", dirLight.dir);
+		shader->setUniform1f("u_dir_light.intensity", dirLight.intensity);
+
+		shader->setUniform3f("u_ambient_light.color", ambient.color);
+		shader->setUniform1f("u_ambient_light.intensity", ambient.intensity);
+
 		shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
 		shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(width, height)));
 		

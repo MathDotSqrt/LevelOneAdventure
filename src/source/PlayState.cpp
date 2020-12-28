@@ -44,6 +44,11 @@ PlayState::PlayState(){
 
 	engine.addSystem<Systems::LevelSystem>();
 
+	//Scene set up
+	{
+		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(1), .4f});
+		scene.setDirLight(Graphics::DirLight{glm::vec3(1, .9, .6), glm::vec3(1, -1, -.1), .2f});
+	}
 
 	//Fire
 	{

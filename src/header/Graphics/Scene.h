@@ -35,6 +35,17 @@ namespace LOA::Graphics {
 		float radius = 2.0f;
 	};
 
+	struct DirLight {
+		glm::vec3 color;
+		glm::vec3 dir;
+		float intensity;
+	};
+
+	struct AmbientLight {
+		glm::vec3 color;
+		float intensity;
+	};
+
 	struct Instance {
 		entt::resource_handle<Mesh> mesh;
 		MaterialType materialType = MaterialType::NUM_MATERIAL_ID;
@@ -62,10 +73,11 @@ namespace LOA::Graphics {
 		MeshCache meshCache;
 		TEXCache texCache;
 
+		Scene();
+
 		entt::resource_handle<Mesh> loadMesh(entt::id_type meshID, std::string path, glm::vec3 offset = glm::vec3(0), glm::vec3 scale=glm::vec3(1));
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, std::string path);
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, TEX::Builder settings, std::string path);
-
 
 		//Adding an instance without a material would only cache the instance
 		//the instance wont get rendered
@@ -105,15 +117,12 @@ namespace LOA::Graphics {
 			return freeList[id];
 		}
 
-
 		ID addPointLight();
 		ID addPointLight(PointLight light);
 		void removePointLight(ID id);
 
-
 		ID createParticleInstance(size_t max_particles, ParticleMaterial material);
 		ID createParticleInstance(size_t max_particles, FireParticleMaterial material);
-
 
 		Instance& getInstance(ID id);
 		PointLight& getPointLight(ID id);
@@ -122,9 +131,14 @@ namespace LOA::Graphics {
 		void setMainCamera(PerspectiveCamera camera);
 		PerspectiveCamera& getMainCamera();
 
+		void setAmbientLight(AmbientLight light);
+		AmbientLight getAmbientLight() const;
+
+		void setDirLight(DirLight light);
+		DirLight getDirLight() const;
+
 	private:
 		friend class BasicRenderer;
-		PerspectiveCamera mainCamera;
 
 		template<typename MATERIAL>
 		Util::PackedFreeList<MATERIAL>& getMaterialFreeList() {
@@ -151,7 +165,6 @@ namespace LOA::Graphics {
 			return freeList.insert(material);
 		}
 
-
 		void removeMaterial(MaterialType type, ID id);
 
 		BlendType getMaterialBlendType(MaterialType type) const;
@@ -165,5 +178,11 @@ namespace LOA::Graphics {
 		Util::PackedFreeList<Instance> instances;
 		Util::PackedFreeList<ParticleSystemInstance> particleSystemInstances;
 		Util::PackedFreeList<PointLight> pointLights;
+
+		PerspectiveCamera mainCamera;
+		DirLight dirLight;
+		AmbientLight ambient;
+
+
 	};
 }

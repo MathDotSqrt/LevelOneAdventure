@@ -98,7 +98,7 @@ void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer, Vi
 
 	switch (prev) {
 	case ViewPortLayer::DEFERRED:
-		postProcess.renderDeferred(shaders, current_width, current_height);
+		postProcess.renderDeferred(scene, shaders, current_width, current_height);
 		break;
 	case ViewPortLayer::DEFERRED_LIGHT:	
 		//postProcess render pointLights;

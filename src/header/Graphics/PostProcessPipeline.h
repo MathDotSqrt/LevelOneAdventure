@@ -1,10 +1,13 @@
 #pragma once 
+#include "Graphics/Scene.h"
 
 #include "Graphics/FBO.h"
 #include "Graphics/Mesh.h"
 #include "Graphics/ShaderSet.h"
 
 namespace LOA::Graphics {
+	class Scene;
+
 	class PostProcessPipeline {
 	public:
 		PostProcessPipeline(ShaderSet &shaders, int max_width, int max_height);
@@ -15,7 +18,7 @@ namespace LOA::Graphics {
 
 		void clearFrameBuffers();
 
-		void renderDeferred(ShaderSet& shaders, int current_width, int current_height);
+		void renderDeferred(const Scene& scene, ShaderSet& shaders, int current_width, int current_height);
 		void renderPostProcess(ShaderSet &shaders, int current_width, int current_height);
 		void renderStage(int width, int height, const FBO& fbo, GLSLProgram &shader);
 	private:

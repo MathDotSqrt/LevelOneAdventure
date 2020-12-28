@@ -20,6 +20,11 @@ ParticleSystemInstance::ParticleSystemInstance(ParticleRenderData &&data, Materi
 ParticleSystemInstance::ParticleSystemInstance(size_t max, MaterialType type, ID matID)
 	: data(max), materialType(type), materialID(matID) {}
 
+Scene::Scene() {
+	setAmbientLight(AmbientLight{glm::vec3(0), 0});
+	setDirLight(DirLight{ glm::vec3(0), glm::vec3(0, -1, 0), 0 });
+}
+
 entt::resource_handle<Mesh> Scene::loadMesh(entt::id_type id, std::string filename, glm::vec3 offset, glm::vec3 scale) {
 	return meshCache.reload<Graphics::MeshLoader>(id, filename, offset, scale);
 }
@@ -106,4 +111,20 @@ void Scene::setMainCamera(PerspectiveCamera camera) {
 
 PerspectiveCamera& Scene::getMainCamera() {
 	return mainCamera;
+}
+
+void Scene::setAmbientLight(AmbientLight light) {
+	ambient = light;
+}
+
+AmbientLight Scene::getAmbientLight() const {
+	return ambient;
+}
+
+void Scene::setDirLight(DirLight light) {
+	dirLight = light;
+}
+
+DirLight Scene::getDirLight() const {
+	return dirLight;
 }
