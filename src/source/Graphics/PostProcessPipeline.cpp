@@ -192,3 +192,7 @@ void PostProcessPipeline::renderStage(int width, int height, const FBO &fbo, GLS
 
 	glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
 }
+
+const FBO& PostProcessPipeline::getGBuffer() const {
+	return gBuffer;
+}

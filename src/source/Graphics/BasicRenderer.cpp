@@ -54,6 +54,10 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 		const RenderStateKey renderKey{ layer, blendType, instance.materialType };
 		const RenderStateKeyValue renderCall{renderKey, i};
 		
+		if (instance.materialType == MaterialType::NORMAL_MATERIAL_ID) {
+			size_t test = drawList.size();
+		}
+
 		drawList.push_back(renderCall);
 	}
 
@@ -62,9 +66,9 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 		const auto& pointLight = scene.pointLights[i];
 
 		//Settings for light volumes
-		const RenderStateKey renderKey{ ViewPortLayer::DEFERRED_LIGHT, BlendType::OPAQUE, MaterialType::LIGHT_VOLUME_MATERIAL_ID };
+		const RenderStateKey renderKey{ ViewPortLayer::DEFERRED_LIGHT, BlendType::ADD, MaterialType::LIGHT_VOLUME_MATERIAL_ID };
 		const RenderStateKeyValue renderCall{ renderKey, i };
-		//drawList.push_back(renderCall);
+		drawList.push_back(renderCall);
 	}
 
 	//Add particle system draw calls (one call per system)
@@ -262,21 +266,27 @@ BasicRenderer::renderDeferred(const Scene& scene, draw_iterator start, draw_iter
 BasicRenderer::draw_iterator
 BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_iterator end) {
 	using namespace entt;
-
 	auto& pointLights = scene.pointLights;
 
-	auto sphere = scene.meshCache.handle("cube"_hs);
+	auto sphere = scene.meshCache.handle("sphere"_hs);
 	assert(sphere);
 	sphere->vao.bind();
 	sphere->ebo.bind();
+	
 	size_t num_indicies = sphere->ebo.getNumBytes() / sizeof(u32);
 
 	auto shader = shaders.get("LightVolumeShader"_hs);
 	if (!shader) {
 		return end;
 	}
-
+	shader->start();
 	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+
+	const FBO& gBuffer = postProcess.getGBuffer();
+	shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
+	shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(current_width, current_height)));
+	shader->setUniform1i("normal_attachment", 0);
+	gBuffer.getColorAttachment(1).bindActiveTexture(0);
 
 	const RenderStateKey current_state = start->getKey();
 	while (start != end && current_state == start->getKey()) {
@@ -285,12 +295,15 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 		
 		shader->setUniform3f("u_pos", light.position);
 		shader->setUniform1f("u_radius", light.radius);
-
+		
 		glDrawElements(GL_TRIANGLES, num_indicies, GL_UNSIGNED_INT, 0);
 		start++;
 	}
+	shader->end();
 
-	return ++start;
+	
+
+	return start;
 }
 
 BasicRenderer::draw_iterator 
@@ -564,8 +577,11 @@ void BasicRenderer::clearOpenGLState() {
 }
 
 void BasicRenderer::loadPointLights(const Scene& scene, GLSLProgram &shader) {
-	shader.setUniform1i("u_num_point_lights", scene.pointLights.size());
-	for (int i = 0; i < scene.pointLights.size(); i++) {
+
+	size_t num_lights = glm::min(scene.pointLights.size(), (size_t)MAX_POINT_LIGHTS);
+
+	shader.setUniform1i("u_num_point_lights", num_lights);
+	for (int i = 0; i < num_lights; i++) {
 		const auto& point = scene.pointLights[i];
 		const auto index = std::to_string(i);
 		shader.setUniform3f("u_point_lights[" + index + "].pos", point.position);

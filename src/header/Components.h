@@ -74,6 +74,7 @@ namespace LOA::Component {
 		LOA::ID instance_id;
 		glm::vec3 color;
 		float intensity;
+		float radius = 2.0f;
 	};
 
 	struct FireParticle {

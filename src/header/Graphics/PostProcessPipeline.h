@@ -21,6 +21,8 @@ namespace LOA::Graphics {
 		void renderDeferred(const Scene& scene, ShaderSet& shaders, int current_width, int current_height);
 		void renderPostProcess(ShaderSet &shaders, int current_width, int current_height);
 		void renderStage(int width, int height, const FBO& fbo, GLSLProgram &shader);
+
+		const FBO& getGBuffer() const;
 	private:
 		//1) render all deferred geometry into gbuffer with ambient+ssao
 		//2) bind final buffer blit depth from gbuffer

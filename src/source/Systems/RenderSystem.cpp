@@ -85,6 +85,7 @@ void RenderSystem::update(float delta) {
 			instance.position = trans.pos;
 			instance.color = point.color;
 			instance.intensity = point.intensity;
+			instance.radius = point.radius;
 		}
 	}
 

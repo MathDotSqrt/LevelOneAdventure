@@ -10,6 +10,8 @@
 
 #define LIFE_TIME_LOCATION 6
 
+//Max forward rendered point lights
+//Aka, maxs point lights for transparent objects
 #define MAX_POINT_LIGHTS 8
 
 #endif

@@ -59,10 +59,7 @@ LOA::ID Scene::addPointLight() {
 }
 
 LOA::ID Scene::addPointLight(PointLight light) {
-	if (pointLights.size() < MAX_POINT_LIGHTS)
-		return pointLights.insert(light);
-	else 
-		return NullID;
+	return pointLights.insert(light);
 }
 
 void Scene::removePointLight(ID id) {
