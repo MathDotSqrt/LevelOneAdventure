@@ -60,50 +60,68 @@ Geometry<Position2DAttrib> LOA::Graphics::gen_circle(int divisions, float radius
 
 }
 
-Geometry<PositionAttrib, NormalAttrib> LOA::Graphics::gen_sphere(float radius, int long_divisions, int lat_divisions) {
-	Geometry<PositionAttrib, NormalAttrib> geometry;
-	geometry.resizeVerticies((size_t)long_divisions * lat_divisions);		//reserve space so it allocates once
-	geometry.resizeIndices((size_t)long_divisions * lat_divisions * 6);		//reserve space so it allocates once
 
-	const float PI = 3.141592653f;
-	float theta_delta = 2 * PI / long_divisions;
-	float phi_delta = 2 * PI / lat_divisions;
+//AHHHH SHIT FUCK IT, just load from blender file
 
-	for (int j = 0; j < lat_divisions; j++) {
-		for (int i = 0; i < long_divisions; i++) {
-			float theta = i * theta_delta;
-			float phi = j * phi_delta;
-
-			float x = radius * glm::sin(theta) * glm::cos(phi);
-			float y = radius * glm::sin(theta) * glm::sin(phi);
-			float z = radius * glm::cos(theta);
-
-			glm::vec3 pos(x, y, z);
-			glm::vec3 normal = glm::normalize(pos);
-			geometry.pushVertex(pos, normal);
-		}
-	}
-	
-	//Converts 2D index to 1D index. Allows wrapping
-	auto to_index = [long_divisions, lat_divisions](int x, int y) {
-		x = (x + long_divisions) % long_divisions;
-		y = (y + lat_divisions) % lat_divisions;
-		return x + y * lat_divisions;
-	};
-	for (int y = 0; y < lat_divisions; y++) {
-		for (int x = 0; x < long_divisions; x++) {
-			int i0 = to_index(x, y);
-			int i1 = to_index(x + 1, y);
-			int i2 = to_index(x, y + 1);
-			int i3 = to_index(x + 1, y + 1);
-
-			geometry.pushTriangle(i0, i1, i2);
-			geometry.pushTriangle(i1, i3, i2);
-		}
-	}
-
-	return geometry;
-}
+//Geometry<PositionAttrib, NormalAttrib> LOA::Graphics::gen_sphere(float radius, int long_divisions, int lat_divisions) {
+//	Geometry<PositionAttrib, NormalAttrib> geometry;
+//
+//	const float PI = 3.141592653f;
+//	float theta_delta = 2 * PI / (long_divisions + 1);
+//	float phi_delta = 2 * PI / (lat_divisions + 1);
+//
+//	auto get_spherical_pos = [theta_delta, phi_delta, radius](int i, int j) {
+//		const float PI = 3.141592653f;
+//
+//		float theta = i * theta_delta;
+//		float phi = j * phi_delta + PI;
+//
+//		float x = radius * glm::sin(theta) * glm::cos(phi);
+//		float y = radius * glm::sin(theta) * glm::sin(phi);
+//		float z = radius * glm::cos(theta);
+//
+//		glm::vec3 pos(x, y, z);
+//		return pos;
+//	};
+//
+//	//This is really inefficient to generate and wastes memory
+//	//Todo: optimize mesh
+//	for (int j = 0; j < lat_divisions / 2; j++) {
+//		for (int i = 0; i < long_divisions; i++) {
+//			size_t size = geometry.getVertexCount();
+//
+//			{
+//				glm::vec3 pos = get_spherical_pos(i, j);
+//				glm::vec3 normal = glm::normalize(pos);
+//				geometry.pushVertex(pos, normal); 
+//			}
+//
+//			{
+//				glm::vec3 pos = get_spherical_pos(i + 1, j);
+//				glm::vec3 normal = glm::normalize(pos);
+//				geometry.pushVertex(pos, normal);
+//			}
+//
+//			{
+//				glm::vec3 pos = get_spherical_pos(i, j + 1);
+//				glm::vec3 normal = glm::normalize(pos);
+//				geometry.pushVertex(pos, normal);
+//			}
+//
+//			{
+//				glm::vec3 pos = get_spherical_pos(i + 1, j + 1);
+//				glm::vec3 normal = glm::normalize(pos);
+//				geometry.pushVertex(pos, normal);
+//			}
+//
+//			geometry.pushTriangle(size, size + 1, size + 2);
+//			geometry.pushTriangle(size + 1, size + 3, size + 2);
+//
+//		}
+//	}
+//
+//	return geometry;
+//}
 
 //this is really bad code. pls dont look at it
 Geometry<PositionAttrib, TexcoordAttrib, NormalAttrib> LOA::Graphics::gen_cube(float width) {

@@ -290,7 +290,7 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 	if (!shader) {
 		return end;
 	}
-
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	shader->start();
 	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
 
@@ -313,7 +313,8 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 		start++;
 	}
 	shader->end();
-	
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	return start;
 }
 

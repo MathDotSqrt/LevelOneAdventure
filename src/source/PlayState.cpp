@@ -25,7 +25,8 @@ PlayState::PlayState(){
 	auto& scene = engine.getScene();
 
 	scene.meshCache.load<Graphics::MeshLoader>("circle"_hs, Graphics::gen_circle(50, 1));
-	scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_sphere(1, 100, 100));
+	scene.meshCache.load<Graphics::MeshLoader>("sphere"_hs, "./res/models/basic/uv_sphere.fbx");
+	scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
 
 
 	auto& registry = engine.getRegistry();
