@@ -23,6 +23,7 @@ namespace LOA::Graphics {
 		void start();
 		void end();
 
+		//TODO: make the argument (const char *) so it doesnt allocate for every uniform
 		void setUniform1i(const std::string& uniform, int i);
 		void setUniform1f(const std::string& uniform, float f);
 		void setUniform2f(const std::string& uniform, float x, float y);

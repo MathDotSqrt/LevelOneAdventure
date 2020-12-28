@@ -32,6 +32,7 @@ namespace LOA::Graphics {
 		glm::vec3 position;
 		glm::vec3 color;
 		float intensity;
+		float radius = 2.0f;
 	};
 
 	struct Instance {

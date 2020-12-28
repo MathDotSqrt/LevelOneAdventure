@@ -352,7 +352,7 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 	//material.offset = .05f;
 	//material.time = 0.0f;
 
-	Graphics::BasicDeferred material;
+	Graphics::BasicDeferredMaterial material;
 	material.diffuse = "dungeon_pallet"_hs;
 
 	//create instance

@@ -7,6 +7,11 @@
 
 using namespace LOA::Graphics;
 
+constexpr static int G_POSITION_ATTACHMENT_INDEX = 0;
+constexpr static int G_NORMAL_ATTACHMENT_INDEX = 1;
+constexpr static int G_COLOR_ATTACHMENT_INDEX = 2;
+constexpr static int G_DEPTH_ATTACHMENT_INDEX = 3;
+
 PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int height) :
 	gBuffer(width, height),
 	//mainViewPort(width, height),
@@ -25,6 +30,7 @@ PostProcessPipeline::PostProcessPipeline(ShaderSet &shaders, int width, int heig
 	
 	
 	shaders.load("DeferredDebugPP"_hs, "postprocess/pp.vert", "postprocess/pp_debug_deferred.frag");
+	shaders.load("DeferredAmbient"_hs, "postprocess/pp.vert", "postprocess/pp_deferred_ambient.frag");
 
 	TEX::Builder floatSettings = TEX::Builder().rgb16f().clampToEdge().linear();
 	TEX::Builder hdrColorSettings = TEX::Builder().rgb16f().clampToEdge().linear();
@@ -77,18 +83,29 @@ void PostProcessPipeline::clearFrameBuffers() {
 void PostProcessPipeline::renderDeferred(ShaderSet& shaders, int width, int height) {
 	using namespace entt;
 
+	quad.vao.bind();
+	quad.ebo.bind();
+
 	{
 		final.bind(width, height);
 		glDisable(GL_DEPTH_TEST);
 
-		auto& shader = shaders.get("DeferredDebugPP"_hs);
+		auto& shader = shaders.get("DeferredAmbient"_hs);
 		shader->start();
-		shader->setUniform1i("color_attachment0", 0);
-		shader->setUniform1i("color_attachment1", 1);
-		shader->setUniform1i("color_attachment2", 2);
-		renderStage(width, height, gBuffer, *shader);
-		shader->end();
 		
+		shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
+		shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(width, height)));
+		
+		shader->setUniform1i("normal_attachment", 0);
+		shader->setUniform1i("color_attachment", 1);
+		gBuffer.getColorAttachment(G_NORMAL_ATTACHMENT_INDEX).bindActiveTexture(0);
+		gBuffer.getColorAttachment(G_COLOR_ATTACHMENT_INDEX).bindActiveTexture(1);
+
+		glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+
+		shader->end();
+
+
 		glEnable(GL_DEPTH_TEST);
 		final.blitDepthbuffer(gBuffer, width, height);
 		final.unbind();

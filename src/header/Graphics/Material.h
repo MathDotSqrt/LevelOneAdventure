@@ -32,7 +32,9 @@ namespace LOA::Graphics {
 	};
 
 	enum class MaterialType : u8 {
-		BASIC_DEFERRED_ID,
+		BASIC_DEFERRED_MATERIAL_ID,
+		LIGHT_VOLUME_MATERIAL_ID,
+
 		TRANSLUCENT_BASIC_MATERIAL_ID,
 		NORMAL_MATERIAL_ID,
 		BASIC_LIT_MATERIAL_ID,
@@ -45,8 +47,8 @@ namespace LOA::Graphics {
 		NUM_MATERIAL_ID
 	};
 
-	struct BasicDeferred {
-		constexpr static MaterialType Type = MaterialType::BASIC_DEFERRED_ID;
+	struct BasicDeferredMaterial {
+		constexpr static MaterialType Type = MaterialType::BASIC_DEFERRED_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "BasicDeferredShader"_hs;
 		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
 		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::DEFERRED;

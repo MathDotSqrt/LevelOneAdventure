@@ -19,10 +19,11 @@ namespace LOA::Graphics {
 		void renderPostProcess(ShaderSet &shaders, int current_width, int current_height);
 		void renderStage(int width, int height, const FBO& fbo, GLSLProgram &shader);
 	private:
-		//1) render all geometry into gbuffer
-		//2) compute deferred lighting 
-		//3) store deferred lighting into final deferred buffer
-		//4) render all forward geometry into final deferred buffer
+		//1) render all deferred geometry into gbuffer with ambient+ssao
+		//2) bind final buffer blit depth from gbuffer
+		//3) render ambiant/ssao/directional lighting to final from gbuffer
+		//4) render light volumes and sample from gbuffer, addativly blend into final
+		//5) ... more post processing
 		FBO gBuffer;
 		FBO final;
 

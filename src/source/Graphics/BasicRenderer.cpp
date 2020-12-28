@@ -20,7 +20,9 @@ BasicRenderer::BasicRenderer() :
 
 	glEnable(GL_CULL_FACE);
 	
-	shaders.load(BasicDeferred::ShaderID, "basic_deferred/basic_deferred.vert", "basic_deferred/basic_deferred.frag");
+
+	shaders.load(BasicDeferredMaterial::ShaderID, "basic_deferred/basic_deferred.vert", "basic_deferred/basic_deferred.frag");
+	shaders.load("LightVolumeShader"_hs, "light_volume/light_volume.vert", "light_volume/light_volume.frag");
 	shaders.load(TranslucentBasicMaterial::ShaderID, "basic/basic.vert", "basic/basic.frag");
 	shaders.load(NormalMaterial::ShaderID, "normal/normal.vert", "normal/normal.frag");
 	shaders.load(BasicLitMaterial::ShaderID, "basic_lit/basic_lit.vert", "basic_lit/basic_lit.frag");
@@ -42,6 +44,7 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 
 	drawList.clear();
 
+	//Add scene object draw calls
 	for (u32 i = 0; i < scene.instances.size(); i++) {
 		const auto& instance = scene.instances[i];
 		
@@ -54,6 +57,17 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 		drawList.push_back(renderCall);
 	}
 
+	//Add point light draw calls
+	for (u32 i = 0; i < scene.pointLights.size(); i++) {
+		const auto& pointLight = scene.pointLights[i];
+
+		//Settings for light volumes
+		const RenderStateKey renderKey{ ViewPortLayer::DEFERRED_LIGHT, BlendType::OPAQUE, MaterialType::LIGHT_VOLUME_MATERIAL_ID };
+		const RenderStateKeyValue renderCall{ renderKey, i };
+		//drawList.push_back(renderCall);
+	}
+
+	//Add particle system draw calls (one call per system)
 	for (u32 i = 0; i < scene.particleSystemInstances.size(); i++) {
 		const auto& instance = scene.particleSystemInstances[i];
 		const RenderStateKey renderKey{ BlendType::MUL, instance.materialType };
@@ -61,6 +75,7 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 		drawList.push_back(renderCall);
 	}
 
+	//Add debug physics mesh draw call (only one if enabled)
 	if(drawPhysicsDebug){
 		const RenderStateKey renderKey{ BlendType::OPAQUE, MaterialType::LINE_MATERIAL_ID };
 		const RenderStateKeyValue renderCall{ renderKey, 0 };
@@ -78,11 +93,19 @@ void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
 void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer, ViewPortLayer prev) {
 	assert(layer != prev);
 
+	//TODO: investigate the need of the deferred light pass because only main viewport needs to be binded
+	//transparent objects get rendered later anyways
+
 	switch (prev) {
 	case ViewPortLayer::DEFERRED:
 		postProcess.renderDeferred(shaders, current_width, current_height);
 		break;
+	case ViewPortLayer::DEFERRED_LIGHT:	
+		//postProcess render pointLights;
+		break;
 	case ViewPortLayer::FORWARD:
+		break;
+	default:
 		break;
 	}
 
@@ -90,8 +113,11 @@ void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer, Vi
 	case ViewPortLayer::DEFERRED:
 		postProcess.bindGBuffer(current_width, current_height);
 		break;
+	case ViewPortLayer::DEFERRED_LIGHT:
 	case ViewPortLayer::FORWARD:
 		postProcess.bindMainViewPort(current_width, current_height);
+		break;
+	default:
 		break;
 	}
 }
@@ -154,8 +180,11 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 
 		MaterialType current_material = key.getMaterialType();
 		switch (current_material) {
-		case MaterialType::BASIC_DEFERRED_ID:
+		case MaterialType::BASIC_DEFERRED_MATERIAL_ID:
 			start = renderDeferred(scene, start, end);
+			break;
+		case MaterialType::LIGHT_VOLUME_MATERIAL_ID:
+			start = renderLightVolumes(scene, start, end);
 			break;
 		case MaterialType::TRANSLUCENT_BASIC_MATERIAL_ID:
 			start = renderTranslucentBasic(scene, start, end);
@@ -191,13 +220,9 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderDeferred(const Scene& scene, draw_iterator start, draw_iterator end) {
-	if (start == end) {	//Nothing else to render
-		return end;
-	}
+	auto& materialList = scene.getMaterialFreeList<BasicDeferredMaterial>();
 
-	auto& materialList = scene.getMaterialFreeList<BasicDeferred>();
-
-	auto shader = shaders.get(BasicDeferred::ShaderID);
+	auto shader = shaders.get(BasicDeferredMaterial::ShaderID);
 	if (!shader) {
 		return end;
 	}
@@ -234,12 +259,42 @@ BasicRenderer::renderDeferred(const Scene& scene, draw_iterator start, draw_iter
 	return start;
 }
 
-BasicRenderer::draw_iterator 
-BasicRenderer::renderTranslucentBasic(const Scene& scene, draw_iterator start, draw_iterator end) {
-	if (start == end) {	//Nothing else to render
+BasicRenderer::draw_iterator
+BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_iterator end) {
+	using namespace entt;
+
+	auto& pointLights = scene.pointLights;
+
+	auto sphere = scene.meshCache.handle("cube"_hs);
+	assert(sphere);
+	sphere->vao.bind();
+	sphere->ebo.bind();
+	size_t num_indicies = sphere->ebo.getNumBytes() / sizeof(u32);
+
+	auto shader = shaders.get("LightVolumeShader"_hs);
+	if (!shader) {
 		return end;
 	}
 
+	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+
+	const RenderStateKey current_state = start->getKey();
+	while (start != end && current_state == start->getKey()) {
+		auto light_id = start->getValue();
+		const auto &light = pointLights[light_id];
+		
+		shader->setUniform3f("u_pos", light.position);
+		shader->setUniform1f("u_radius", light.radius);
+
+		glDrawElements(GL_TRIANGLES, num_indicies, GL_UNSIGNED_INT, 0);
+		start++;
+	}
+
+	return ++start;
+}
+
+BasicRenderer::draw_iterator 
+BasicRenderer::renderTranslucentBasic(const Scene& scene, draw_iterator start, draw_iterator end) {
 	auto& materialList = scene.getMaterialFreeList<TranslucentBasicMaterial>();
 
 	auto shader = shaders.get(TranslucentBasicMaterial::ShaderID);
@@ -279,18 +334,13 @@ BasicRenderer::renderTranslucentBasic(const Scene& scene, draw_iterator start, d
 	return start;
 }
 
-
 BasicRenderer::draw_iterator
 BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterator end) {
-	if (start == end) {	//Nothing else to render
-		return end;
-	}
 
 	auto shader = shaders.get(NormalMaterial::ShaderID);
 	if (!shader) {
 		return end;
 	}
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	shader->start();
 	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
 
@@ -313,17 +363,12 @@ BasicRenderer::renderNormal(const Scene& scene, draw_iterator start, draw_iterat
 		start++;
 	}
 	shader->end();
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	return start;
 }
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iterator end) {
-	if (start == end) {	//Nothing else to render
-		return end;
-	}
-
 	auto& materialList = scene.getMaterialFreeList<BasicLitMaterial>();
 	auto shader = shaders.get(BasicLitMaterial::ShaderID);
 	if (!shader) {
@@ -367,11 +412,6 @@ BasicRenderer::renderBasicLit(const Scene& scene, draw_iterator start, draw_iter
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iterator end) {
-	if (start == end) {
-		//nothing else to render
-		return end;
-	}
-
 	auto materialList = scene.getMaterialFreeList<DissolveMaterial>();
 	auto shader = shaders.get(DissolveMaterial::ShaderID);
 	if (!shader) {
@@ -421,11 +461,6 @@ BasicRenderer::renderDissolve(const Scene& scene, draw_iterator start, draw_iter
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderParticle(const Scene &scene, draw_iterator start, draw_iterator end) {
-	if (start == end) {
-		//nothing else to render
-		return end;
-	}
-
 	auto shader = shaders.get(ParticleMaterial::ShaderID);
 	if (!shader) {
 		return end;
@@ -457,12 +492,6 @@ BasicRenderer::renderParticle(const Scene &scene, draw_iterator start, draw_iter
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_iterator end) {
-	
-	if (start == end) {
-		//nothing else to render
-		return end;
-	}
-
 	auto& materialList = scene.getMaterialFreeList<FireParticleMaterial>();
 	auto shader = shaders.get(FireParticleMaterial::ShaderID);
 	if (!shader) {
@@ -499,11 +528,6 @@ BasicRenderer::renderFireParticle(const Scene &scene, draw_iterator start, draw_
 
 BasicRenderer::draw_iterator
 BasicRenderer::renderPhysicsDebug(const Scene& scene, const Physics::PhysicsScene* physicsScene, draw_iterator start, draw_iterator end) {
-	if (start == end) {
-		//nothing else to render
-		return end;
-	}
-
 	const VAO& vao = physicsScene->getDrawer()->getVAO();
 	size_t num_elements = physicsScene->getDrawer()->getNumElements();
 	
