@@ -75,15 +75,22 @@ void BasicRenderer::setViewPort(const Scene& scene, ViewPort port) {
 	projection = glm::perspective(camera.fov, current_width / (float)current_height, camera.near, camera.far);
 }
 
-void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer) {
+void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer, ViewPortLayer prev) {
+	assert(layer != prev);
+
+	switch (prev) {
+	case ViewPortLayer::DEFERRED:
+		postProcess.renderDeferred(shaders, current_width, current_height);
+		break;
+	case ViewPortLayer::FORWARD:
+		break;
+	}
 
 	switch (layer) {
 	case ViewPortLayer::DEFERRED:
 		postProcess.bindGBuffer(current_width, current_height);
 		break;
 	case ViewPortLayer::FORWARD:
-		postProcess.renderDeferred(shaders, current_width, current_height);
-
 		postProcess.bindMainViewPort(current_width, current_height);
 		break;
 	}
@@ -135,7 +142,7 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 
 		ViewPortLayer current_layer = key.getViewPortLayer();
 		if (prev_layer != current_layer) {
-			setViewPortLayer(scene, current_layer);
+			setViewPortLayer(scene, current_layer, prev_layer);
 			prev_layer = current_layer;
 		}
 

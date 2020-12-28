@@ -16,8 +16,8 @@ namespace LOA::Graphics {
 	};
 
 	enum class ViewPortLayer : u8 {
-		DEFAULT = 0,		//Not really sure
-		DEFERRED,			//For lit objects
+		DEFERRED = 0,		//For lit objects
+		DEFERRED_LIGHT,		//For the light volumes
 		FORWARD,			//For non lit or transparent objects
 		SKYBOX,				//For the skybox
 		NUM_VIEW_PORT_LAYERS

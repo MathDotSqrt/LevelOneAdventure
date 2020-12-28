@@ -42,7 +42,7 @@ namespace LOA::Graphics {
 		void prerender(const Scene &scene, bool drawPhysicsDebug=false);
 
 		void setViewPort(const Scene& scene, ViewPort viewport);
-		void setViewPortLayer(const Scene &scene, ViewPortLayer layer);
+		void setViewPortLayer(const Scene &scene, ViewPortLayer layer, ViewPortLayer prev);
 		void setBlendType(const Scene& scene, BlendType blend);
 
 		draw_iterator renderDeferred(const Scene& scene, draw_iterator start, draw_iterator end);

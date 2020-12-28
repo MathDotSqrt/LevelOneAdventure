@@ -7,7 +7,7 @@ RenderStateKey::RenderStateKey(
 
 	setMaterialType(id);
 	setBlendType(BlendType::OPAQUE);
-	setViewPortLayer(ViewPortLayer::DEFAULT);
+	setViewPortLayer(ViewPortLayer::FORWARD);
 	setViewPort(ViewPort::FINAL);
 }
 
