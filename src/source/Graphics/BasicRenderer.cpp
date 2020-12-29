@@ -285,16 +285,24 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	const FBO& gBuffer = postProcess.getGBuffer();
 	shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
 	shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(current_width, current_height)));
-	shader->setUniform1i("normal_attachment", 0);
-	gBuffer.getColorAttachment(1).bindActiveTexture(0);
+	shader->setUniform2f("inv_viewport_size", 1.0f / current_width, 1.0f / current_height);
+
+	shader->setUniform1i("position_attachment", 0);
+	shader->setUniform1i("normal_attachment", 1);
+	shader->setUniform1i("color_attachment", 2);
+	gBuffer.getColorAttachment(0).bindActiveTexture(0);
+	gBuffer.getColorAttachment(1).bindActiveTexture(1);
+	gBuffer.getColorAttachment(2).bindActiveTexture(2);
 
 	const RenderStateKey current_state = start->getKey();
 	while (start != end && current_state == start->getKey()) {
 		auto light_id = start->getValue();
 		const auto &light = pointLights[light_id];
 		
-		shader->setUniform3f("u_pos", light.position);
-		shader->setUniform1f("u_radius", light.radius);
+		shader->setUniform3f("u_light.pos", light.position);
+		shader->setUniform3f("u_light.color", light.color);
+		shader->setUniform1f("u_light.intensity", light.intensity);
+		shader->setUniform1f("u_light.radius", light.radius);
 		
 		glDrawElements(GL_TRIANGLES, num_indicies, GL_UNSIGNED_INT, 0);
 		start++;

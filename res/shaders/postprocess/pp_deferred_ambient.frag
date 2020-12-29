@@ -1,16 +1,6 @@
 #include "postprocess/pp_base.frag"
 #include "math.glsl"
-
-struct DirLight {
-	vec3 color;
-  vec3 dir;
-	float intensity;
-};
-
-struct AmbientLight {
-  vec3 color;
-  float intensity;
-};
+#include "light.glsl"
 
 out vec4 out_color;
 
