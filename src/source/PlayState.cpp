@@ -89,7 +89,7 @@ PlayState::PlayState(){
 		registry.emplace<Camera>(camera, glm::radians(80.0f), 1.0f, .01f, 1000.0f, player);
 		registry.emplace<Direction>(camera, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		//registry.emplace<MovementState>(camera);
-		registry.emplace<PointLight>(camera, camera_light, glm::vec3(.7, .6, .5), 1.0f, 40.0f);
+		registry.emplace<PointLight>(camera, camera_light, glm::vec3(.7, .6, .5), 1.0f, 10.0f);
 		registry.emplace<Input>(camera);
 	}
 	

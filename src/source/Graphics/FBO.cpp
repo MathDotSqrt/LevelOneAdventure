@@ -75,6 +75,12 @@ void FBO::addDepthAttachment(TEX::Builder texSettings) {
 	unbind();
 }
 
+void FBO::addDepthAttachmentReference(const TEX& other) {
+	bind();
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, other.getTexID(), 0);
+	unbind();
+}
+
 void FBO::blitDepthbuffer(const FBO& other) {
 	blitDepthbuffer(other, width, height);
 }

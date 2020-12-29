@@ -12,7 +12,6 @@ uniform sampler2D color_attachment;
 uniform vec2 inv_viewport_size;
 
 uniform PointLight u_view_light;
-uniform mat4 inv_V;
 
 out vec4 out_color;
 

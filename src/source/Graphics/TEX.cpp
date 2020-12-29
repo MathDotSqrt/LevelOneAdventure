@@ -95,6 +95,12 @@ TEX::Builder& TEX::Builder::r() {
 	return *this;
 }
 
+TEX::Builder& TEX::Builder::r16f() {
+	components = GL_RED;
+	storage = GL_R16F;
+	return *this;
+}
+
 TEX::Builder& TEX::Builder::rgb() {
 	components = GL_RGB;
 	storage = GL_RGB;
@@ -241,6 +247,10 @@ TEX TEX::Builder::buildTexture(std::string filename) {
 }
 
 TEX TEX::Builder::buildTexture(int width, int height) {
+	return buildTexture(width, height, nullptr);
+}
+
+TEX TEX::Builder::buildTexture(int width, int height, void* data) {
 	textureTarget = samples == 1 ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE;
 
 	int mipmapLevelCount = 0;
@@ -249,7 +259,7 @@ TEX TEX::Builder::buildTexture(int width, int height) {
 	glBindTexture(textureTarget, texID);
 
 	if (samples == 1) {
-		glTexImage2D(textureTarget, mipmapLevelCount, storage, width, height, 0, components, dataType, nullptr);
+		glTexImage2D(textureTarget, mipmapLevelCount, storage, width, height, 0, components, dataType, data);
 	}
 	else {
 		glTexImage2DMultisample(textureTarget, samples, storage, width, height, GL_TRUE);

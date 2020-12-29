@@ -14,7 +14,7 @@ using namespace LOA::Graphics;
 BasicRenderer::BasicRenderer() :
 	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_simplex_3D_texture(64, .05)))
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f))),
-	postProcess(shaders, 3440, 1440) {
+	postProcess(*this, 3440, 1440) {
 
 	using namespace entt;
 
@@ -102,7 +102,7 @@ void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer, Vi
 
 	switch (prev) {
 	case ViewPortLayer::DEFERRED:
-		postProcess.renderDeferred(scene, shaders, current_width, current_height);
+		postProcess.renderDeferred(scene, *this);
 		break;
 	case ViewPortLayer::DEFERRED_LIGHT:	
 		//postProcess render pointLights;
@@ -218,7 +218,7 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 		clearOpenGLState();
 	}
 
-	postProcess.renderPostProcess(shaders, current_width, current_height);
+	postProcess.renderPostProcess(*this);
 
 }
 
@@ -279,7 +279,6 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	sphere->ebo.bind();
 	size_t num_indicies = sphere->ebo.getNumBytes() / sizeof(u32);
 
-	glm::mat4 V = scene.mainCamera.transform;
 
 	auto shader = shaders.get("LightVolumeShader"_hs);
 	if (!shader) {
@@ -287,7 +286,6 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	}
 	shader->start();
 	shader->setUniformMat4("P", projection);
-	shader->setUniformMat4("inv_V", glm::inverse(V));
 
 	//GBuffer is where all of the data is to compute lighting
 	const FBO& gBuffer = postProcess.getGBuffer();
@@ -307,6 +305,7 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 		auto light_id = start->getValue();
 		const auto &light = scene.pointLights[light_id];
 		
+		glm::mat4 V = scene.mainCamera.transform;
 		glm::vec4 view_pos = V * glm::vec4(light.position, 1);
 		shader->setUniform3f("u_view_light.pos", glm::vec3(view_pos));
 		shader->setUniform3f("u_view_light.color", light.color);
@@ -620,3 +619,18 @@ BasicRenderer::makeTransform(const glm::vec3& pos, const glm::quat& rot, const g
 }
 
 
+int BasicRenderer::getCurrentWidth() const {
+	return current_width;
+}
+
+int BasicRenderer::getCurrentHeight() const {
+	return current_height;
+}
+
+const glm::mat4& BasicRenderer::getProjection() const {
+	return projection;
+}
+
+ShaderSet& BasicRenderer::getShaderSet() {
+	return shaders;
+}

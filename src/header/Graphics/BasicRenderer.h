@@ -25,6 +25,12 @@ namespace LOA::Graphics {
 		BasicRenderer();
 		void render(const Scene& scene, const Physics::PhysicsScene* physicsScene = nullptr);
 
+		int getCurrentWidth() const;
+		int getCurrentHeight() const;
+		const glm::mat4& getProjection() const;
+
+		ShaderSet& getShaderSet();
+
 	private:
 		typedef std::vector<RenderStateKeyValue>::const_iterator draw_iterator;
 

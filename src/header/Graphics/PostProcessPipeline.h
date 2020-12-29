@@ -4,13 +4,15 @@
 #include "Graphics/FBO.h"
 #include "Graphics/Mesh.h"
 #include "Graphics/ShaderSet.h"
+#include <vector>
 
 namespace LOA::Graphics {
 	class Scene;
+	class BasicRenderer;
 
 	class PostProcessPipeline {
 	public:
-		PostProcessPipeline(ShaderSet &shaders, int max_width, int max_height);
+		PostProcessPipeline(BasicRenderer& renderer, int max_width, int max_height);
 
 		void bindGBuffer(int current_width, int current_height) const;
 		void bindMainViewPort(int current_width, int current_height) const;
@@ -18,8 +20,8 @@ namespace LOA::Graphics {
 
 		void clearFrameBuffers();
 
-		void renderDeferred(const Scene& scene, ShaderSet& shaders, int current_width, int current_height);
-		void renderPostProcess(ShaderSet &shaders, int current_width, int current_height);
+		void renderDeferred(const Scene& scene, BasicRenderer& renderer);
+		void renderPostProcess(BasicRenderer& renderer);
 		void renderStage(int width, int height, const FBO& fbo, GLSLProgram &shader);
 
 		const FBO& getGBuffer() const;
@@ -29,8 +31,12 @@ namespace LOA::Graphics {
 		//3) render ambiant/ssao/directional lighting to final from gbuffer
 		//4) render light volumes and sample from gbuffer, addativly blend into final
 		//5) ... more post processing
-		FBO gBuffer;
-		FBO final;
+		FBO gBuffer;	//Bytes per pixel: 12 + 12 + 4 + 3 
+		FBO ssao;		//Bytes per pixel: 2
+		FBO final;		//Bytes per pixel: 12
+
+		TEX ssaoNoise;
+		std::vector<glm::vec3> ssaoKernel;
 
 		Mesh quad;
 

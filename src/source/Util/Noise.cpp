@@ -1,7 +1,10 @@
 #include "Util/Noise.h"
 #include <glm/gtc/noise.hpp>
 #include <glm/glm.hpp>
+#include <random>
+#include <assert.h>
 
+//TODO: maybe make this constexpr
 std::vector<float> LOA::Util::gen_simplex_3D_texture(u64 width, float scale) {
 	std::vector<float> buffer;
 
@@ -20,6 +23,7 @@ std::vector<float> LOA::Util::gen_simplex_3D_texture(u64 width, float scale) {
 	return buffer;
 }
 
+//TODO: maybe make this constexpr
 std::vector<float> LOA::Util::gen_perlin_3D_texture(u64 width, float scale) {
 	std::vector<float> buffer;
 
@@ -36,4 +40,55 @@ std::vector<float> LOA::Util::gen_perlin_3D_texture(u64 width, float scale) {
 	}
 
 	return buffer;
+}
+
+//TODO: maybe make this constexpr
+std::vector<glm::vec3> LOA::Util::gen_ssao_kernel(size_t num_kernels) {
+	//I fucking hate c++
+	static std::mt19937 rng{ std::random_device()() };
+	assert(num_kernels > 0);
+	
+	std::uniform_real_distribution<float> U_x(-1, 1);
+	std::uniform_real_distribution<float> U_y(-1, 1);
+	std::uniform_real_distribution<float> U_z(0, 1);
+
+	std::vector<glm::vec3> samples;
+	for (size_t i = 0; i < num_kernels; i++) {
+		glm::vec3 sample{
+			U_x(rng),
+			U_y(rng),
+			U_z(rng)
+		};
+		sample = glm::normalize(sample);
+
+		float scale = (float)i / num_kernels;
+		scale = glm::mix(.1f, 1.f, scale * scale);
+		sample *= scale;
+
+		samples.push_back(sample);
+	}
+
+	return samples;
+}
+
+std::vector<glm::vec3> LOA::Util::gen_ssao_rotation(size_t width) {
+	static std::mt19937 rng{ std::random_device()() };
+	assert(width > 0);
+
+	std::uniform_real_distribution<float> U_x(-1, 1);
+	std::uniform_real_distribution<float> U_y(-1, 1);
+
+	std::vector<glm::vec3> rotations;
+		
+	for (size_t i = 0; i < width * width; i++) {
+		glm::vec3 noise{
+			U_x(rng),
+			U_y(rng),
+			0
+		};
+
+		rotations.push_back(noise);
+	}
+
+	return rotations;
 }

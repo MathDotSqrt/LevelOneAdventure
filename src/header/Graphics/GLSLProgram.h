@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include <glm/glm.hpp>
-
+#include <vector>
 #include "common.h"
 
 namespace LOA::Graphics {
@@ -31,6 +31,7 @@ namespace LOA::Graphics {
 		void setUniform3f(const std::string& uniform, float x, float y, float z);
 		void setUniform3f(const std::string& uniform, float v[3]);
 		void setUniform3f(const std::string& uniform, const glm::vec3& vec3);
+		void setUniform3fv(const std::string& uniform, const std::vector<glm::vec3>& v);
 
 		void setUniformMat3(const std::string& uniform, const glm::mat3& mat3, bool transpose = false);
 		void setUniformMat4(const std::string& uniform, const glm::mat4& mat4, bool transpose = false);

@@ -50,6 +50,7 @@ namespace LOA::Graphics {
 
 			Builder& a();
 			Builder& r();
+			Builder& r16f();
 			Builder& rgb();
 			Builder& rgba();
 			Builder& rgb16f();
@@ -70,6 +71,13 @@ namespace LOA::Graphics {
 
 			TEX buildTexture(std::string filename);
 			TEX buildTexture(int width, int height);
+			TEX buildTexture(int width, int height, void* data);
+
+			template<typename T>
+			TEX buildTexture(int width, int height, const std::vector<T>& v) {
+				return buildTexture(width, height, (void*)v.data());
+			}
+
 			TEX buildTexture3D(const std::vector<float> &buffer);
 		};
 

@@ -12,7 +12,7 @@ uniform mat4 M;
 uniform mat3 inverse_transpose;
 
 out vec3 f_view_pos;
-out vec3 f_normal;
+out vec3 f_view_normal;
 out vec2 f_texcoord;
 
 void main(){
@@ -20,6 +20,6 @@ void main(){
 	gl_Position = P * view_pos;
 
 	f_view_pos = view_pos.xyz;
-	f_normal = mat3(V) * inverse_transpose * v_normal;
-	f_texcoord = v_texcoord; 
+	f_view_normal = mat3(V) * inverse_transpose * v_normal;
+	f_texcoord = v_texcoord;
 }

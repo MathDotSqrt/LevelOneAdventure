@@ -95,6 +95,13 @@ void GLSLProgram::setUniform3f(const std::string& uniform, const glm::vec3& vec3
 	setUniform3f(uniform, vec3.x, vec3.y, vec3.z);
 }
 
+void GLSLProgram::setUniform3fv(const std::string& uniform, const std::vector<glm::vec3>& v) {
+	const auto loc = getUniformLocation(uniform);
+	if (loc != -1) {
+		glUniform3fv(loc, v.size(), (GLfloat*)v.data());
+	}
+}
+
 void GLSLProgram::setUniform3f(const std::string& uniform, float vec3[3]) {
 	setUniform3f(uniform, vec3[0], vec3[1], vec3[2]);
 }

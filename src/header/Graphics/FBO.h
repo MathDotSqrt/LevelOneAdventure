@@ -17,6 +17,7 @@ namespace LOA::Graphics {
 
 		void addColorAttachment(TEX::Builder texSettings);
 		void addDepthAttachment(TEX::Builder texSettings);
+		void addDepthAttachmentReference(const TEX& other);
 
 		void blitDepthbuffer(const FBO& other);
 		void blitDepthbuffer(const FBO& other, int blit_width, int blit_height);
