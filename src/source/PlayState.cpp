@@ -24,9 +24,9 @@ PlayState::PlayState(){
 
 	auto& scene = engine.getScene();
 
-	scene.meshCache.load<Graphics::MeshLoader>("circle"_hs, Graphics::gen_circle(50, 1));
 	scene.meshCache.load<Graphics::MeshLoader>("sphere"_hs, "./res/models/basic/uv_sphere.fbx");
 	scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
+	scene.loadTEX("uv_debug_grid"_hs, Graphics::TEX::Builder().mipmapLinear(), "./res/textures/uv_grid.jpg");
 
 
 	auto& registry = engine.getRegistry();
@@ -46,8 +46,8 @@ PlayState::PlayState(){
 
 	//Scene set up
 	{
-		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(1), .4f});
-		scene.setDirLight(Graphics::DirLight{glm::vec3(1, .9, .6), glm::vec3(1, -1, -.1), .2f});
+		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(.7, .6, .5), .1f});
+		scene.setDirLight(Graphics::DirLight{glm::vec3(1, .9, .6), glm::vec3(1, -1, -.1), .1f});
 	}
 
 	//Fire
@@ -65,16 +65,16 @@ PlayState::PlayState(){
 	{
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
-		ID cubeID = scene.addInstance("cube"_hs, Graphics::NormalMaterial{});
+		ID cubeID = scene.addInstance("cube"_hs, Graphics::BasicDeferredMaterial{"uv_debug_grid"_hs});
 
 		player = registry.create();
-		registry.emplace<Transformation>(player, glm::vec3(0, 0, 0));
+		registry.emplace<Transformation>(player, glm::vec3(0, 0, 10));
 		registry.emplace<Velocity>(player, glm::vec3(0, 0, 0));
 		registry.emplace<Direction>(player, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		registry.emplace<MovementState>(player);
 		registry.emplace<Input>(player);
 		registry.emplace<Renderable>(player, cubeID);
-		registry.emplace<PointLight>(player, point_light, glm::vec3(.5, .3, .1), 5.0f, 5.0f);
+		registry.emplace<PointLight>(player, point_light, glm::vec3(.7, .6, .5), 1.0f, 10.0f);
 		registry.emplace<CharacterController>(player);
 
 	}
@@ -89,7 +89,7 @@ PlayState::PlayState(){
 		registry.emplace<Camera>(camera, glm::radians(80.0f), 1.0f, .01f, 1000.0f, player);
 		registry.emplace<Direction>(camera, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		//registry.emplace<MovementState>(camera);
-		//registry.emplace<PointLight>(camera, camera_light, glm::vec3(1, .3, .2) * .4f, 1.0f);
+		registry.emplace<PointLight>(camera, camera_light, glm::vec3(.7, .6, .5), 1.0f, 40.0f);
 		registry.emplace<Input>(camera);
 	}
 	

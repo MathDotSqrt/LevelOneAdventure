@@ -1,4 +1,5 @@
 #include "postprocess/pp_base.frag"
+#include "color_space.glsl"
 
 uniform fbo_attachment_size blur_attachment_size;
 uniform sampler2D blur_attachment;
