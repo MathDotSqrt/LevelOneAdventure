@@ -84,6 +84,8 @@ void PostProcessPipeline::clearFrameBuffers() {
 void PostProcessPipeline::renderDeferred(const Scene& scene, ShaderSet& shaders, int width, int height) {
 	using namespace entt;
 
+	glm::mat3 V = glm::mat3(scene.getMainCamera().transform);
+
 	quad.vao.bind();
 	quad.ebo.bind();
 
@@ -97,9 +99,9 @@ void PostProcessPipeline::renderDeferred(const Scene& scene, ShaderSet& shaders,
 		auto& shader = shaders.get("DeferredAmbient"_hs);
 		shader->start();
 		
-		shader->setUniform3f("u_dir_light.color", dirLight.color);
-		shader->setUniform3f("u_dir_light.dir", dirLight.dir);
-		shader->setUniform1f("u_dir_light.intensity", dirLight.intensity);
+		shader->setUniform3f("u_view_dir_light.color", dirLight.color);
+		shader->setUniform3f("u_view_dir_light.dir", V * dirLight.dir);
+		shader->setUniform1f("u_view_dir_light.intensity", dirLight.intensity);
 
 		shader->setUniform3f("u_ambient_light.color", ambient.color);
 		shader->setUniform1f("u_ambient_light.intensity", ambient.intensity);

@@ -232,7 +232,8 @@ BasicRenderer::renderDeferred(const Scene& scene, draw_iterator start, draw_iter
 	}
 
 	shader->start();
-	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+	shader->setUniformMat4("P", projection);
+	shader->setUniformMat4("V", scene.mainCamera.transform);
 
 	const RenderStateKey current_state = start->getKey();
 	while (start != end && current_state == start->getKey()) {
@@ -278,12 +279,15 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	sphere->ebo.bind();
 	size_t num_indicies = sphere->ebo.getNumBytes() / sizeof(u32);
 
+	glm::mat4 V = scene.mainCamera.transform;
+
 	auto shader = shaders.get("LightVolumeShader"_hs);
 	if (!shader) {
 		return end;
 	}
 	shader->start();
-	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
+	shader->setUniformMat4("P", projection);
+	shader->setUniformMat4("inv_V", glm::inverse(V));
 
 	//GBuffer is where all of the data is to compute lighting
 	const FBO& gBuffer = postProcess.getGBuffer();
@@ -303,10 +307,11 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 		auto light_id = start->getValue();
 		const auto &light = scene.pointLights[light_id];
 		
-		shader->setUniform3f("u_light.pos", light.position);
-		shader->setUniform3f("u_light.color", light.color);
-		shader->setUniform1f("u_light.intensity", light.intensity);
-		shader->setUniform1f("u_light.radius", light.radius);
+		glm::vec4 view_pos = V * glm::vec4(light.position, 1);
+		shader->setUniform3f("u_view_light.pos", glm::vec3(view_pos));
+		shader->setUniform3f("u_view_light.color", light.color);
+		shader->setUniform1f("u_view_light.intensity", light.intensity);
+		shader->setUniform1f("u_view_light.radius", light.radius);
 		
 		glDrawElements(GL_TRIANGLES, num_indicies, GL_UNSIGNED_INT, 0);
 		start++;

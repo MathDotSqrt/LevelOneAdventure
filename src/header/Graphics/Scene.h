@@ -139,6 +139,8 @@ namespace LOA::Graphics {
 		void setDirLight(DirLight light);
 		DirLight getDirLight() const;
 
+		const PerspectiveCamera& getMainCamera() const;
+
 	private:
 		friend class BasicRenderer;
 

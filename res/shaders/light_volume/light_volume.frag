@@ -11,7 +11,8 @@ uniform sampler2D color_attachment;
 
 uniform vec2 inv_viewport_size;
 
-uniform PointLight u_light;
+uniform PointLight u_view_light;
+uniform mat4 inv_V;
 
 out vec4 out_color;
 
@@ -21,15 +22,15 @@ void main(){
 
 	vec2 uv = getUV(color_attachment_size, frag_pos);
 
-	vec3 world_pos = texture(position_attachment, uv).rgb;
-	vec3 world_normal = texture(normal_attachment, uv).rgb;
+	vec3 view_pos = texture(position_attachment, uv).rgb;
+	vec3 view_normal = texture(normal_attachment, uv).rgb;
 	vec4 color_specular = texture(color_attachment, uv);
 
 	vec3 color = color_specular.rgb;
 	float specular = color_specular.a;
 
 	vec3 final_color = vec3(0);
-	final_color += compute_point_light(world_pos, world_normal, u_light) * color;
+	final_color += compute_point_light(view_pos, view_normal, u_view_light) * color;
 
 	out_color = vec4(final_color, 1);
 }

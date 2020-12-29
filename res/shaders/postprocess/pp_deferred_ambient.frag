@@ -9,7 +9,7 @@ out vec4 out_color;
 uniform sampler2D normal_attachment;
 uniform sampler2D color_attachment;
 
-uniform DirLight u_dir_light;
+uniform DirLight u_view_dir_light;
 uniform AmbientLight u_ambient_light;
 
 void main(){
@@ -19,6 +19,7 @@ void main(){
   vec3 light_color = vec3(0);
 
   light_color += compute_ambient(u_ambient_light) * color;
-  light_color += compute_dir(normal, u_dir_light) * color;
-  out_color = vec4(light_color, 1);
+  light_color += compute_dir(normal, u_view_dir_light) * color;
+	out_color = vec4(light_color, 1);
+  //out_color = vec4(1, 0, 0, 1);
 }

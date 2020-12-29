@@ -129,3 +129,7 @@ void Scene::setDirLight(DirLight light) {
 DirLight Scene::getDirLight() const {
 	return dirLight;
 }
+
+const PerspectiveCamera& Scene::getMainCamera() const {
+	return mainCamera;
+}
