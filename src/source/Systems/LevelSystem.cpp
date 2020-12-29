@@ -285,6 +285,19 @@ void LevelSystem::loadAssets() {
 
 				entt::hashed_string id(name.c_str());
 				scene.loadMesh(id, path, offset, glm::vec3(scale));
+
+				if (node.has_child("light")) {
+					ryml::NodeRef lightNode = node["light"];
+					Graphics::PointLight light{};
+
+					read_vec3(lightNode["offset"].val(), light.position);
+					read_vec3(lightNode["color"].val(), light.color);
+					read_float(lightNode["intensity"].val(), light.intensity);
+					read_float(lightNode["radius"].val(), light.radius);
+
+					light_map[id] = light;
+				}
+				
 				assets_map.push_back(id);
 				assets_names.push_back(name);
 			}
@@ -373,7 +386,17 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 
 	auto entity = registry.create();
 	//registry.emplace<Graphics::DissolveMaterial>(entity, material);
+	registry.emplace<Component::LevelTile>(entity, std::string(mesh_id.data()), loc, rot);
 	registry.emplace<Component::Renderable>(entity, id);
 	registry.emplace<Component::StaticBody>(entity, body);
-	registry.emplace<Component::LevelTile>(entity, std::string(mesh_id.data()), loc, rot);
+
+	if (light_map.find(mesh_id) != light_map.end()) {
+		//Creates a copy of point light from the map
+		Graphics::PointLight light = light_map[mesh_id];
+
+		light.position = glm::vec3(instance.transform * glm::vec4(light.position, 1));
+
+		LOA::ID light_id = scene.addPointLight(light);
+		registry.emplace<Component::PointLight>(entity, light_id, light.color, light.intensity, light.radius);
+	}
 }

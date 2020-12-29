@@ -1,10 +1,15 @@
 #pragma once
 
 #include "Systems/System.h"
+
+#include "Graphics/Scene.h"
+
 #include <ryml.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <entt/core/hashed_string.hpp>
+
+#include <unordered_map>
 #include <vector>
 #include <string>
 
@@ -24,6 +29,8 @@ namespace LOA::Systems {
 
 		//todo find better way to aquire name
 		std::vector<std::string> assets_names;
+
+		std::unordered_map<entt::id_type, Graphics::PointLight> light_map;
 
 		ryml::Tree asset_tree;
 

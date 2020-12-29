@@ -107,6 +107,18 @@
 		offset: "glm::vec3(3.70, 2.5, -1.5)",
 		scale: .1
 	},
+	torch: {
+		path: "./res/models/dungeon_assets/dungeon/torch1.fbx",
+		pallet: "dungeon_pallet",
+		offset: "glm::vec3(1.50, -.5, -1)",
+		scale: .1,
+		light: {
+			offset: "glm::vec3(1.50, 0, -.5)",
+			color: "glm::vec3(.7, .5, .3)",
+			intensity: 2,
+			radius: 5
+		}
+	},
 	wall_1: {
 		path: "./res/models/dungeon_assets/dungeon/wall-1.fbx",
 		pallet: "dungeon_pallet",

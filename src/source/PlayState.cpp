@@ -46,7 +46,7 @@ PlayState::PlayState(){
 
 	//Scene set up
 	{
-		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(.7, .6, .5), .1f});
+		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(.7, .6, .5), .5f});
 		scene.setDirLight(Graphics::DirLight{glm::vec3(1, .9, .6), glm::vec3(1, -1, -.1), .1f});
 	}
 
@@ -74,7 +74,7 @@ PlayState::PlayState(){
 		registry.emplace<MovementState>(player);
 		registry.emplace<Input>(player);
 		registry.emplace<Renderable>(player, cubeID);
-		registry.emplace<PointLight>(player, point_light, glm::vec3(.7, .6, .5), 1.0f, 10.0f);
+		registry.emplace<PointLight>(player, point_light, glm::vec3(.7, .6, .5), 1.1f, 20.0f);
 		registry.emplace<CharacterController>(player);
 
 	}
