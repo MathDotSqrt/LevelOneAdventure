@@ -79,7 +79,7 @@ namespace LOA::Component {
 
 	struct FireParticle {
 		float spawn_rate;
-		float life_time = 2.0f;
+		float life_time = 10.0f;
 	};
 
 	struct LevelTile {
