@@ -110,6 +110,10 @@ PerspectiveCamera& Scene::getMainCamera() {
 	return mainCamera;
 }
 
+glm::vec3 Scene::getCameraPos() const {
+	return glm::vec3(mainCamera.transform[3]);
+}
+
 void Scene::setAmbientLight(AmbientLight light) {
 	ambient = light;
 }

@@ -131,6 +131,8 @@ namespace LOA::Graphics {
 		void setMainCamera(PerspectiveCamera camera);
 		PerspectiveCamera& getMainCamera();
 
+		glm::vec3 getCameraPos() const;
+
 		void setAmbientLight(AmbientLight light);
 		AmbientLight getAmbientLight() const;
 

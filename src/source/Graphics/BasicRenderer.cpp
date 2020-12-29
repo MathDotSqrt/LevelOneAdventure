@@ -266,13 +266,16 @@ BasicRenderer::renderDeferred(const Scene& scene, draw_iterator start, draw_iter
 BasicRenderer::draw_iterator
 BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_iterator end) {
 	using namespace entt;
-	auto& pointLights = scene.pointLights;
+
+	//We want to render the inside of the volume to handle the case of the 
+	//camera being inside the volume radius
+	glDisable(GL_DEPTH_TEST);
+	glFrontFace(GL_CW);
 
 	auto sphere = scene.meshCache.handle("sphere"_hs);
 	assert(sphere);
 	sphere->vao.bind();
 	sphere->ebo.bind();
-	
 	size_t num_indicies = sphere->ebo.getNumBytes() / sizeof(u32);
 
 	auto shader = shaders.get("LightVolumeShader"_hs);
@@ -282,6 +285,7 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	shader->start();
 	shader->setUniformMat4("VP", projection * scene.mainCamera.transform);
 
+	//GBuffer is where all of the data is to compute lighting
 	const FBO& gBuffer = postProcess.getGBuffer();
 	shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
 	shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(current_width, current_height)));
@@ -297,7 +301,7 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	const RenderStateKey current_state = start->getKey();
 	while (start != end && current_state == start->getKey()) {
 		auto light_id = start->getValue();
-		const auto &light = pointLights[light_id];
+		const auto &light = scene.pointLights[light_id];
 		
 		shader->setUniform3f("u_light.pos", light.position);
 		shader->setUniform3f("u_light.color", light.color);
@@ -309,7 +313,9 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	}
 	shader->end();
 
-	
+	//Reset opengl state
+	glEnable(GL_DEPTH_TEST);
+	glFrontFace(GL_CCW);
 
 	return start;
 }
