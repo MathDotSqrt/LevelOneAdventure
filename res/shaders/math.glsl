@@ -1,3 +1,6 @@
+#ifndef MATH_GLSL
+#define MATH_GLSL
+
 mat4 translate(mat4 m, vec3 pos){
   m[3][0] += pos.x;
   m[3][1] += pos.y;
@@ -52,3 +55,5 @@ mat4 rotate(float angle, vec3 axis){
 float max3(vec3 v){
   return max(max(v.x, v.y), v.z);
 }
+
+#endif

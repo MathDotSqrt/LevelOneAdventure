@@ -1,4 +1,5 @@
 #version 330
+#include "color_space.glsl"
 
 layout (location = 0) out vec3 g_world_pos;
 layout (location = 1) out vec3 g_normal;
@@ -9,11 +10,6 @@ in vec3 f_normal;
 in vec2 f_texcoord;
 
 uniform sampler2D diffuse;
-
-vec3 to_linear(vec3 color){
-	const float gamma = 2.2;
-	return pow(color, vec3(gamma));
-}
 
 void main(){
 
