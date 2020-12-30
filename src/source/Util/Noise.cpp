@@ -61,6 +61,13 @@ std::vector<glm::vec3> LOA::Util::gen_ssao_kernel(size_t num_kernels) {
 		};
 		sample = glm::normalize(sample);
 
+		//reject close to parallel rays
+		//https://mtnphil.wordpress.com/2013/06/26/know-your-ssao-artifacts/
+		if (glm::dot(sample, glm::vec3(0, 0, 1)) < .15) {
+			i--;
+			continue;
+		}
+
 		float scale = (float)i / num_kernels;
 		scale = glm::mix(.1f, 1.f, scale * scale);
 		sample *= scale;

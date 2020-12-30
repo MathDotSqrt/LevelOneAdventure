@@ -13,7 +13,7 @@ uniform mat4 P;
 uniform vec2 view_port;
 
 const float scale = 4;
-const float bias = .025;
+const float bias = .04;
 void main(){
   vec2 uv = getUV(color_attachment_size);
   vec3 view_pos = texture(position_attachment, uv).xyz;
@@ -43,5 +43,5 @@ void main(){
   }
 
   occlusion = 1.0 - (occlusion / SSAO_KERNEL_SIZE);
-  out_color = pow(occlusion, 1.2);
+  out_color = pow(occlusion, 1.5);
 }
