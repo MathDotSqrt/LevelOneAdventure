@@ -14,6 +14,6 @@
 //Aka, maxs point lights for transparent objects
 #define MAX_POINT_LIGHTS 8
 #define SSAO_KERNEL_SIZE 16
-#define SSAO_RADIUS .4
+#define SSAO_RADIUS 1
 
 #endif

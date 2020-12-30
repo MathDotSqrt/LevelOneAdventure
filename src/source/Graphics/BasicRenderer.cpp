@@ -14,7 +14,9 @@ using namespace LOA::Graphics;
 BasicRenderer::BasicRenderer() :
 	//noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().buildTexture3D(Util::gen_simplex_3D_texture(64, .05)))
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f))),
-	postProcess(*this, 3440, 1440) {
+	//postProcess(*this, 3440, 1440)
+	postProcess(*this, 3440, 1370)
+	{
 
 	using namespace entt;
 
@@ -291,7 +293,9 @@ BasicRenderer::renderLightVolumes(const Scene& scene, draw_iterator start, draw_
 	const FBO& gBuffer = postProcess.getGBuffer();
 	shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
 	shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(current_width, current_height)));
-	shader->setUniform2f("inv_viewport_size", 1.0f / current_width, 1.0f / current_height);
+	
+	glm::vec2 size = gBuffer.getActualSize(glm::vec2(current_width, current_height));
+	shader->setUniform2f("inv_viewport_size", 1.0f / size);
 
 	shader->setUniform1i("position_attachment", 0);
 	shader->setUniform1i("normal_attachment", 1);
