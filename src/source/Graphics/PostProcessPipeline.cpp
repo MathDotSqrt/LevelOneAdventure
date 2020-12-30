@@ -31,6 +31,8 @@ PostProcessPipeline::PostProcessPipeline(BasicRenderer &renderer, int width, int
 	using namespace entt;
 
 	ShaderSet& shaders = renderer.getShaderSet();
+	shaders.load("FXAA"_hs, "postprocess/pp.vert", "postprocess/pp_fxaa.frag");
+
 
 	shaders.load("FilterPP"_hs, "postprocess/pp.vert", "postprocess/pp_filter.frag");
 	shaders.load("BlurX"_hs, "postprocess/pp.vert", "postprocess/pp_blurX.frag");
