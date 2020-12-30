@@ -19,19 +19,18 @@ constexpr static int G_DEPTH_ATTACHMENT_INDEX = 3;
 
 PostProcessPipeline::PostProcessPipeline(BasicRenderer &renderer, int width, int height) :
 	gBuffer(width, height),
-	//mainViewPort(width, height),
 	//blurX(width / 4, height / 4),
 	//blurY(width / 4, height / 4),
 	ssao(width, height),
 	final(width, height),
+	fxaa(width, height),
 	ssaoNoise(TEX::Builder().floatType().rgb16f().nearest().repeat().buildTexture(4, 4, Util::gen_ssao_rotation(4))),
 	ssaoKernel(Util::gen_ssao_kernel(SSAO_KERNEL_SIZE)),
-	quad(gen_quad2D(2.0f)){
+	quad(gen_quad2D(2.0f)) {
 	
 	using namespace entt;
 
 	ShaderSet& shaders = renderer.getShaderSet();
-	shaders.load("FXAA"_hs, "postprocess/pp.vert", "postprocess/pp_fxaa.frag");
 
 
 	shaders.load("FilterPP"_hs, "postprocess/pp.vert", "postprocess/pp_filter.frag");
@@ -43,6 +42,8 @@ PostProcessPipeline::PostProcessPipeline(BasicRenderer &renderer, int width, int
 	shaders.load("DeferredAmbient"_hs, "postprocess/pp.vert", "postprocess/pp_deferred_ambient.frag");
 	shaders.load("SSAO"_hs, "postprocess/pp.vert", "postprocess/pp_ssao.frag");
 	shaders.load("FinalPP"_hs, "postprocess/pp.vert", "postprocess/pp.frag");
+	shaders.load("FXAA"_hs, "postprocess/pp.vert", "postprocess/pp_fxaa.frag");
+
 
 	gBuffer.addColorAttachment(TEX::Builder().rgb16f().clampToEdge().linear());		//Position
 	gBuffer.addColorAttachment(TEX::Builder().rgb16f().clampToEdge().linear());		//Normal
@@ -62,6 +63,8 @@ PostProcessPipeline::PostProcessPipeline(BasicRenderer &renderer, int width, int
 
 	final.addColorAttachment(TEX::Builder().rgb16f().clampToEdge().linear());		//HDR final color
 	final.addDepthAttachmentReference(gBuffer.getDepthAttachement());				//Depth reference
+
+	fxaa.addColorAttachment(TEX::Builder().rgb().clampToEdge().linear());
 }
 
 void PostProcessPipeline::bindGBuffer(int width, int height) const { 
@@ -218,6 +221,7 @@ void PostProcessPipeline::renderPostProcess(BasicRenderer &renderer) {
 	//}
 
 	{
+		fxaa.bind(width, height);
 		auto& shader = shaders.get("FinalPP"_hs);
 		shader->start();
 		//shader->setUniform2f("blur_attachment_size.fbo_size", final.getWidth(), final.getHeight());
@@ -225,6 +229,14 @@ void PostProcessPipeline::renderPostProcess(BasicRenderer &renderer) {
 		//shader->setUniform1i("blur_attachment", 1);
 		//final.bindAllColorAttachments();
 		renderStage(width, height, final, *shader);
+		shader->end();
+		fxaa.unbind();
+	}
+
+	{
+		auto& shader = shaders.get("FXAA"_hs);
+		shader->start();
+		renderStage(width, height, fxaa, *shader);
 		shader->end();
 	}
 }

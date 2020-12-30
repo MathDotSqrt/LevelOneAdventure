@@ -64,7 +64,7 @@ void InputSystem::update(float delta) {
 		auto& camera = camera_view.get<Camera>(entity);
 		
 		camera.distance -= window.getScrollDelta() / 1.0f;
-		camera.phi -= window.getScrollDelta() / 10;
+		camera.phi -= window.getScrollDelta() / 7.0f;
 		camera.theta -= window.isClick(Window::Mouse::RIGHT_CLICK) ? (pos.x - input.lastCursorPos.x) / 200 : 0;
 		input.lastCursorPos = pos;
 	}

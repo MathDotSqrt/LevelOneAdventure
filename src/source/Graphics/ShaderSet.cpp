@@ -34,7 +34,7 @@ std::string get_program_name(const std::vector<std::string>& shaders) {
 
 std::optional<std::string> preprocessor(std::string& source) {
 	const std::string INCLUDE_STRING = "#include ";
-	const size_t MAX_SHADER_CODE_LEN = 10000;
+	const size_t MAX_SHADER_CODE_LEN = 100000;
 
 	if (source.length() > MAX_SHADER_CODE_LEN) {
 		return {};
@@ -81,7 +81,6 @@ std::optional<std::string> preprocessor(std::string& source) {
 
 GLuint compile_shader(const std::string& source, GLenum shader_type) {
 	const char* src = source.c_str();
-
 	GLuint shaderID = glCreateShader(shader_type);
 	glShaderSource(shaderID, 1, &src, NULL);
 	glCompileShader(shaderID);
@@ -163,6 +162,9 @@ GLuint create_shader(const std::string& shader) {
 		const auto processedSource = preprocessor(source.value());
 		if (processedSource) {
 			shader_id = compile_shader(processedSource.value(), shader_type);
+		}
+		else {
+			std::cout << "Failed to preprocess\n";
 		}
 	}
 

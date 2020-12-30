@@ -46,8 +46,8 @@ PlayState::PlayState(){
 
 	//Scene set up
 	{
-		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(.7, .6, .5), .5f});
-		scene.setDirLight(Graphics::DirLight{glm::vec3(1, .9, .6), glm::vec3(1, -1, -.1), .1f});
+		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(1), .3f});
+		scene.setDirLight(Graphics::DirLight{glm::vec3(1, .9, .6), glm::vec3(1, -1, -.1), .05f});
 	}
 
 	//Fire

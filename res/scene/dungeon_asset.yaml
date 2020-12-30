@@ -13,7 +13,7 @@
 		offset: "glm::vec3(0, -.230, 0)",
 		scale: .1
 	},
-	
+
 	floor_metal1: {
 		path: "./res/models/dungeon_assets/dungeon/floor-metal1.fbx",
 		pallet: "dungeon_pallet",
@@ -59,7 +59,7 @@
 	build_box: {
 		path: "./res/models/dungeon_assets/dungeon/build-box1.fbx",
 		pallet: "dungeon_pallet",
-		offset: "glm::vec3(0, 0, 0)",
+		offset: "glm::vec3(0, -.015, 0)",
 		scale: .1
 	},
 
@@ -110,12 +110,12 @@
 	torch: {
 		path: "./res/models/dungeon_assets/dungeon/torch1.fbx",
 		pallet: "dungeon_pallet",
-		offset: "glm::vec3(1.50, -.5, -1)",
+		offset: "glm::vec3(0, -.5, -1.5)",
 		scale: .1,
 		light: {
-			offset: "glm::vec3(1.50, 0, -.5)",
-			color: "glm::vec3(.7, .5, .3)",
-			intensity: 2,
+			offset: "glm::vec3(0, .5, 0)",
+			color: "glm::vec3(.7, .4, .2)",
+			intensity: 4,
 			radius: 5
 		}
 	},
@@ -129,7 +129,7 @@
 		path: "./res/models/dungeon_assets/dungeon/wall-2.fbx",
 		pallet: "dungeon_pallet",
 		offset: "glm::vec3(1.50, 0, -1.55)",
-		scale: .1
+		scale: .1001
 	},
 	wall_3: {
 		path: "./res/models/dungeon_assets/dungeon/wall-3.fbx",

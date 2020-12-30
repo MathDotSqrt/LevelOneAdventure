@@ -1,3 +1,4 @@
+#include "postprocess/pp_base.frag"
 /**
  * @license
  * Copyright (c) 2011 NVIDIA Corporation. All rights reserved.
@@ -13,7 +14,7 @@
  * EVEN IF NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  */
  // https://github.com/libretro/glsl-shaders/blob/master/anti-aliasing/shaders/fxaa.glsl
-#include "postprocess/pp_base.frag"
+
 
 
 
@@ -21,11 +22,10 @@ uniform sampler2D color_attachment;
 
 out vec4 out_color;
 
-// compatibility #defines
+//compatibility #defines
 #define Source color_attachment
 #define vTexCoord f_uv
-#define SourceSize vec4(color_attachment_size.fbo_size, 1.0 / color_attachment_size.window_size) //either TextureSize or InputSize
-#define outsize vec4(color_attachment_size.window_size, 1.0 / color_attachment_size.window_size)
+#define SourceSize vec4(0, 0, 1.0 / color_attachment_size.fbo_size) //either TextureSize or InputSize
 
 
 
@@ -252,5 +252,5 @@ vec3 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 rcpFrame)
 
 void main()
 {
-   out_color = vec4(FxaaPixelShader(vTexCoord, Source, vec2(SourceSize.z, SourceSize.w)), 1.0) * 1.0;
+  out_color = vec4(FxaaPixelShader(getUV(), Source, vec2(SourceSize.z, SourceSize.w)), 1.0) * 1.0;
 }

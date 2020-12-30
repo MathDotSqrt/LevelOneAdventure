@@ -31,10 +31,11 @@ void main(){
   vec3 view_normal = texture(normal_attachment, getUV(color_attachment_size)).rgb;
 	//float ao = texture(ssao_attachment, getUV(color_attachment_size)).r;
   float ao = sample_ssao();
+  //float ao = 1;
 
   vec3 light_color = vec3(0);
-  light_color += compute_ambient(u_ambient_light) * color * 2;
-  light_color += compute_dir(view_normal, u_view_dir_light) * color * .5;
+  light_color += compute_ambient(u_ambient_light) * color;
+  light_color += compute_dir(view_normal, u_view_dir_light) * color;
 
   out_color = vec4(light_color * ao, 1);
   //out_color = vec4(vec3(ao), 1);

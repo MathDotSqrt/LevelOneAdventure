@@ -43,5 +43,5 @@ void main(){
   }
 
   occlusion = 1.0 - (occlusion / SSAO_KERNEL_SIZE);
-  out_color = pow(occlusion, 1.3);
+  out_color = pow(occlusion, SSAO_POWER);
 }

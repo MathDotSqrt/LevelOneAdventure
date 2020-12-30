@@ -31,9 +31,11 @@ namespace LOA::Graphics {
 		//3) render ambiant/ssao/directional lighting to final from gbuffer
 		//4) render light volumes and sample from gbuffer, addativly blend into final
 		//5) ... more post processing
-		FBO gBuffer;	//Bytes per pixel: 12 + 12 + 4 + 3 
+		FBO gBuffer;	//Bytes per pixel: 6 + 6 + 4 + 3 
 		FBO ssao;		//Bytes per pixel: 2
-		FBO final;		//Bytes per pixel: 12
+		FBO final;		//Bytes per pixel: 6
+
+		FBO fxaa;		//Bytes per pixel: 3
 
 		TEX ssaoNoise;
 		std::vector<glm::vec3> ssaoKernel;
