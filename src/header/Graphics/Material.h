@@ -19,6 +19,7 @@ namespace LOA::Graphics {
 		DEFERRED = 0,		//For lit objects
 		DEFERRED_LIGHT,		//For the light volumes
 		FORWARD,			//For non lit or transparent objects
+		DEBUG,				//Any object without postprocessing
 		SKYBOX,				//For the skybox
 		NUM_VIEW_PORT_LAYERS
 	};
@@ -124,7 +125,7 @@ namespace LOA::Graphics {
 		constexpr static MaterialType Type = MaterialType::LINE_MATERIAL_ID;
 		constexpr static entt::id_type ShaderID = "LineShader"_hs;
 		constexpr static BlendType DefaultBlend = BlendType::OPAQUE;
-		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::FORWARD;
+		constexpr static ViewPortLayer DefaultLayer = ViewPortLayer::DEBUG;
 
 	};
 }

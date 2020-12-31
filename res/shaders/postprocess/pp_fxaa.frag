@@ -253,4 +253,5 @@ vec3 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 rcpFrame)
 void main()
 {
   out_color = vec4(FxaaPixelShader(getUV(), Source, vec2(SourceSize.z, SourceSize.w)), 1.0) * 1.0;
+  //out_color = texture(color_attachment, getUV());
 }

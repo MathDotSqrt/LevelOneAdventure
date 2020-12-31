@@ -19,8 +19,8 @@ constexpr static int G_DEPTH_ATTACHMENT_INDEX = 3;
 
 PostProcessPipeline::PostProcessPipeline(BasicRenderer &renderer, int width, int height) :
 	gBuffer(width, height),
-	//blurX(width / 4, height / 4),
-	//blurY(width / 4, height / 4),
+	blurX(width / 4, height / 4),
+	blurY(width / 4, height / 4),
 	ssao(width, height),
 	final(width, height),
 	fxaa(width, height),
@@ -50,29 +50,28 @@ PostProcessPipeline::PostProcessPipeline(BasicRenderer &renderer, int width, int
 	gBuffer.addColorAttachment(TEX::Builder().rgba().clampToEdge().linear());		//Color+Specular
 	gBuffer.addDepthAttachment(TEX::Builder().depth24().clampToEdge().linear());	//Depth
 
-	ssao.addColorAttachment(TEX::Builder().r16f().clampToEdge().nearest());			//SSAO
+	ssao.addColorAttachment(TEX::Builder().r16f().clampToEdge().linear());			//SSAO
 
-	//mainViewPort.addColorAttachment(hdrColorSettings);
-	//mainViewPort.addDepthAttachment(depthSettings);
-
-	//blurX.addColorAttachment(hdrColorSettings);
-	//blurX.addDepthAttachment(depthSettings);
-
-	//blurY.addColorAttachment(hdrColorSettings);
-	//blurY.addColorAttachment(depthSettings);
+	blurX.addColorAttachment(TEX::Builder().rgb16f().clampToEdge().linear());		//Blur X
+	blurY.addColorAttachment(TEX::Builder().rgb16f().clampToEdge().linear());		//Blur Y
 
 	final.addColorAttachment(TEX::Builder().rgb16f().clampToEdge().linear());		//HDR final color
 	final.addDepthAttachmentReference(gBuffer.getDepthAttachement());				//Depth reference
 
-	fxaa.addColorAttachment(TEX::Builder().rgb().clampToEdge().linear());
+	fxaa.addColorAttachment(TEX::Builder().rgb().clampToEdge().linear());			//Antialiasing buffer
+	fxaa.addDepthAttachmentReference(gBuffer.getDepthAttachement());				//Depth reference
 }
 
 void PostProcessPipeline::bindGBuffer(int width, int height) const { 
 	gBuffer.bind(width, height);
 }
 
-void PostProcessPipeline::bindMainViewPort(int width, int height) const {
+void PostProcessPipeline::bindPostProcessBuffer(int width, int height) const {
 	final.bind(width, height);
+}
+
+void PostProcessPipeline::bindFXAA(int width, int height) const {
+	fxaa.bind(width, height);
 }
 
 void PostProcessPipeline::unbind() const {
@@ -110,7 +109,7 @@ void PostProcessPipeline::renderDeferred(const Scene& scene, BasicRenderer& rend
 		auto& shader = shaders.get("SSAO"_hs);
 		shader->start();
 
-		shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
+		shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getSize());
 		shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(width, height)));
 
 		shader->setUniform1i("position_attachment", 0);
@@ -147,7 +146,7 @@ void PostProcessPipeline::renderDeferred(const Scene& scene, BasicRenderer& rend
 		shader->setUniform3f("u_ambient_light.color", ambient.color);
 		shader->setUniform1f("u_ambient_light.intensity", ambient.intensity);
 
-		shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getWidth(), gBuffer.getHeight());
+		shader->setUniform2f("color_attachment_size.fbo_size", gBuffer.getSize());
 		shader->setUniform2f("color_attachment_size.window_size", gBuffer.getActualSize(glm::vec2(width, height)));
 		
 		shader->setUniform1i("normal_attachment", 0);
@@ -173,84 +172,127 @@ void PostProcessPipeline::renderDeferred(const Scene& scene, BasicRenderer& rend
 void PostProcessPipeline::renderPostProcess(BasicRenderer &renderer) {
 	using namespace entt;
 	
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+
+	quad.vao.bind();
+	quad.ebo.bind();
+
+	auto draw_quad = [this]() {
+		glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+	};
+
 	int width = renderer.getCurrentWidth();
 	int height = renderer.getCurrentHeight();
 	ShaderSet& shaders = renderer.getShaderSet();
+	
+	const FBO& filter = blurY;
 
-	final.unbind();
 
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	//{
-	//	blurX.bind(width, height);
-	//	auto& shader = shaders.get("FilterPP"_hs);
-	//	shader->start();
-	//	renderStage(width, height, mainViewPort, *shader);
-	//	shader->end();
-	//	blurX.unbind();
-	//}
+	{
+		filter.bind(width, height);
+		auto& shader = shaders.get("FilterPP"_hs);
+		shader->start();
 
-	//{
-	//	blurY.bind(width, height);
-	//	auto& shader = shaders.get("BlurX"_hs);
-	//	shader->start();
-	//	renderStage(width, height, blurX, *shader);
-	//	shader->end();
-	//	blurY.unbind();
-	//}
+		shader->setUniform2f("color_attachment_size.fbo_size", final.getSize());
+		shader->setUniform2f("color_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
+		shader->setUniform1i("color_attachment", 0);
+		final.getColorAttachment(0).bindActiveTexture(0);
 
-	//{
-	//	final.bind(width, height);
-	//	auto& shader = shaders.get("BlurY"_hs);
-	//	shader->start();
-	//	renderStage(width, height, blurY, *shader);
-	//	shader->end();
-	//	final.unbind();
-	//}
+		draw_quad();
 
-	//{
-	//	auto& shader = shaders.get("FinalPP"_hs);
-	//	shader->start();
-	//	
-	//	shader->setUniform2f("blur_attachment_size.fbo_size", final.getWidth(), final.getHeight());
-	//	shader->setUniform2f("blur_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
-	//	shader->setUniform1i("blur_attachment", 1);
-	//	final.bindAllColorAttachments();
-	//	renderStage(width, height, gBuffer, *shader);
-	//	shader->end();
-	//}
+		shader->end();
+		filter.unbind();
+	}
+	{
+		blurX.bind(width, height);
+
+		auto& shader = shaders.get("BlurX"_hs);
+		shader->start();
+
+		shader->setUniform2f("color_attachment_size.fbo_size", filter.getSize());
+		shader->setUniform2f("color_attachment_size.window_size", filter.getActualSize(glm::vec2(width, height)));
+		shader->setUniform1i("color_attachment", 0);
+		filter.getColorAttachment(0).bindActiveTexture(0);
+
+		draw_quad();
+
+		shader->end();
+		blurX.unbind();
+	}
+	{
+		blurY.bind(width, height);
+
+		auto& shader = shaders.get("BlurY"_hs);
+		shader->start();
+
+		shader->setUniform2f("color_attachment_size.fbo_size", blurX.getWidth(), blurX.getHeight());
+		shader->setUniform2f("color_attachment_size.window_size", blurX.getActualSize(glm::vec2(width, height)));
+		shader->setUniform1i("color_attachment", 0);
+		blurX.getColorAttachment(0).bindActiveTexture(0);
+		
+		draw_quad();
+
+		shader->end();
+		blurY.unbind();
+	}
 
 	{
 		fxaa.bind(width, height);
 		auto& shader = shaders.get("FinalPP"_hs);
 		shader->start();
-		//shader->setUniform2f("blur_attachment_size.fbo_size", final.getWidth(), final.getHeight());
-		//shader->setUniform2f("blur_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
-		//shader->setUniform1i("blur_attachment", 1);
-		//final.bindAllColorAttachments();
-		renderStage(width, height, final, *shader);
+
+		shader->setUniform2f("color_attachment_size.fbo_size", final.getSize());
+		shader->setUniform2f("color_attachment_size.window_size", final.getActualSize(glm::vec2(width, height)));
+		shader->setUniform1i("color_attachment", 0);
+		final.bindAllColorAttachments();
+
+		shader->setUniform2f("blur_attachment_size.fbo_size", blurY.getSize());
+		shader->setUniform2f("blur_attachment_size.window_size", blurY.getActualSize(glm::vec2(width, height)));
+		shader->setUniform1i("blur_attachment", 1);
+		blurY.getColorAttachment(0).bindActiveTexture(1);
+
+		draw_quad();
+
 		shader->end();
 		fxaa.unbind();
 	}
 
+	glEnable(GL_DEPTH_TEST);
+
+}
+
+void PostProcessPipeline::renderAntiAlias(BasicRenderer& renderer) {
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+
+	fxaa.unbind();
+	quad.vao.bind();
+	quad.ebo.bind();
+
+	auto draw_quad = [this]() {
+		glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+	};
+
+	int width = renderer.getCurrentWidth();
+	int height = renderer.getCurrentHeight();
+	ShaderSet& shaders = renderer.getShaderSet();
 	{
 		auto& shader = shaders.get("FXAA"_hs);
 		shader->start();
-		renderStage(width, height, fxaa, *shader);
+		shader->setUniform2f("color_attachment_size.fbo_size", fxaa.getWidth(), fxaa.getHeight());
+		shader->setUniform2f("color_attachment_size.window_size", fxaa.getActualSize(glm::vec2(width, height)));
+		shader->setUniform1i("color_attachment", 0);
+		fxaa.bindAllColorAttachments();
+
+		draw_quad();
+
 		shader->end();
 	}
 }
 
 void PostProcessPipeline::renderStage(int width, int height, const FBO &fbo, GLSLProgram &shader) {
-	shader.setUniform2f("color_attachment_size.fbo_size", fbo.getWidth(), fbo.getHeight());
-	shader.setUniform2f("color_attachment_size.window_size", fbo.getActualSize(glm::vec2(width, height)));
-	shader.setUniform1i("color_attachment", 0);
-	fbo.bindAllColorAttachments();
 
-	quad.vao.bind();
-	quad.ebo.bind();
-
-	glDrawElements(GL_TRIANGLES, quad.ebo.getNumBytes() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
 }
 
 const FBO& PostProcessPipeline::getGBuffer() const {

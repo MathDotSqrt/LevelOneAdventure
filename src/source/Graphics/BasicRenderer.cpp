@@ -83,9 +83,23 @@ void BasicRenderer::prerender(const Scene& scene, bool drawPhysicsDebug) {
 
 	//Add debug physics mesh draw call (only one if enabled)
 	if(drawPhysicsDebug){
-		const RenderStateKey renderKey{ BlendType::OPAQUE, MaterialType::LINE_MATERIAL_ID };
+		const RenderStateKey renderKey{ ViewPortLayer::DEBUG, BlendType::OPAQUE, MaterialType::LINE_MATERIAL_ID };
 		const RenderStateKeyValue renderCall{ renderKey, 0 };
 		drawList.push_back(renderCall);
+	}
+
+	//Force some post processing draw calls
+	{
+		//0) Gaurentees post process buffer has run
+		//1) Gaurentees antialiasing buffer has run
+		//2) Gaurentees final draw would be made
+		const RenderStateKey renderKey0{ ViewPortLayer::FORWARD, BlendType::OPAQUE, MaterialType::NUM_MATERIAL_ID };
+		const RenderStateKey renderKey1{ ViewPortLayer::DEBUG, BlendType::OPAQUE, MaterialType::NUM_MATERIAL_ID };
+		const RenderStateKey renderKey2{ ViewPortLayer::NUM_VIEW_PORT_LAYERS, BlendType::OPAQUE, MaterialType::NUM_MATERIAL_ID };
+		
+		drawList.push_back({ renderKey0, 0 });
+		drawList.push_back({ renderKey1, 0 });
+		drawList.push_back({ renderKey2, 0 });
 	}
 
 	std::sort(drawList.begin(), drawList.end());
@@ -107,9 +121,12 @@ void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer, Vi
 		postProcess.renderDeferred(scene, *this);
 		break;
 	case ViewPortLayer::DEFERRED_LIGHT:	
-		//postProcess render pointLights;
 		break;
 	case ViewPortLayer::FORWARD:
+		postProcess.renderPostProcess(*this);
+		break;
+	case ViewPortLayer::DEBUG:
+		postProcess.renderAntiAlias(*this);
 		break;
 	default:
 		break;
@@ -121,7 +138,10 @@ void BasicRenderer::setViewPortLayer(const Scene& scene, ViewPortLayer layer, Vi
 		break;
 	case ViewPortLayer::DEFERRED_LIGHT:
 	case ViewPortLayer::FORWARD:
-		postProcess.bindMainViewPort(current_width, current_height);
+		postProcess.bindPostProcessBuffer(current_width, current_height);
+		break;
+	case ViewPortLayer::DEBUG:
+		postProcess.bindFXAA(current_width, current_height);
 		break;
 	default:
 		break;
@@ -219,9 +239,6 @@ void BasicRenderer::render(const Scene &scene, const Physics::PhysicsScene* phys
 
 		clearOpenGLState();
 	}
-
-	postProcess.renderPostProcess(*this);
-
 }
 
 BasicRenderer::draw_iterator

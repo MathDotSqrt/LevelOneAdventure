@@ -8,15 +8,27 @@ uniform sampler2D color_attachment;
 
 out vec4 out_color;
 
+vec3 filter(vec2 uv){
+  vec3 tex_color = texture(color_attachment, uv).rgb;
+  return tex_color;
+  // //.3
+  // if(max3(tex_color) > .3){
+  //   return tex_color;
+  // }
+  // else{
+  //   return vec3(0);
+  // }
+}
+
 void main(){
   vec2 uv = getUV();
 
   vec2 tex_offset = 1 / vec2(color_attachment_size.fbo_size);
-  vec3 tex_color = texture(color_attachment, uv).rgb * weight[0];
+  vec3 tex_color = filter(uv) * weight[0];
 
   for(int i = 1; i < 10; i++){
-    tex_color += texture(color_attachment, uv + vec2(tex_offset.x * i, 0)).rgb * weight[i];
-    tex_color += texture(color_attachment, uv - vec2(tex_offset.x * i, 0)).rgb * weight[i];
+    tex_color += filter(uv + vec2(tex_offset.x * i, 0)) * weight[i];
+    tex_color += filter(uv - vec2(tex_offset.x * i, 0)) * weight[i];
   }
 
   out_color = vec4(tex_color, 1);

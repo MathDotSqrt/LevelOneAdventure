@@ -54,9 +54,9 @@ PlayState::PlayState(){
 	{
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		entt::entity fire = registry.create();
-		registry.emplace<Transformation>(fire, glm::vec3(0), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(0, 0, 1)));
-		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 5.0f);
-		registry.emplace<FireParticle>(fire, 100.0f);
+		registry.emplace<Transformation>(fire, glm::vec3(17, 6.5, 15), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(0, 0, 1)));
+		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 5.0f, 5.0f);
+		registry.emplace<FireParticle>(fire, 200.0f, 1000.0f);
 	}
 
 	
@@ -65,7 +65,7 @@ PlayState::PlayState(){
 	{
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
-		ID cubeID = scene.addInstance("cube"_hs, Graphics::BasicDeferredMaterial{"uv_debug_grid"_hs});
+		ID cubeID = scene.addInstance("cube"_hs, Graphics::BasicDeferredMaterial{ "uv_debug_grid"_hs });
 
 		player = registry.create();
 		registry.emplace<Transformation>(player, glm::vec3(0, 0, 10));
@@ -100,7 +100,7 @@ PlayState::PlayState(){
 void PlayState::update(float dt) {
 	auto& window = Window::getInstance();
 
-	if (window.isPressed('t') && !swap) {
+	if (window.isPressed('t')) {
 		auto& registry = engine.getRegistry();
 		if (registry.has<Component::MovementState>(camera)) {
 			registry.remove<Component::MovementState>(camera);
@@ -111,7 +111,6 @@ void PlayState::update(float dt) {
 			registry.remove<Component::MovementState>(player);
 		}
 	}
-	swap = window.isPressed('t');
 
 	engine.update(dt);
 }

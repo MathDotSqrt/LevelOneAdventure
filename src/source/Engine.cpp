@@ -24,7 +24,8 @@ void Engine::render() {
 	Physics::PhysicsScene& physicsScene = getPhysicsScene();
 
 	//we pass the physics scene to the renderer if we want to debug draw
-	renderer.render(scene, &physicsScene);
+	Physics::PhysicsScene* physics = physicsScene.getDrawer()->getDebugMode() == 0 ? nullptr : &physicsScene;
+	renderer.render(scene, physics);
 
 	//We prerender for the next frame because game physics is one frame behind the renderer
 	physicsScene.prerender();

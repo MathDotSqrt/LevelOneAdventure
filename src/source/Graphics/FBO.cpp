@@ -145,6 +145,10 @@ int FBO::getHeight() const {
 	return height;
 }
 
+glm::ivec2 FBO::getSize() const {
+	return { width, height };
+}
+
 GLuint FBO::getID() const {
 	return fboID;
 }

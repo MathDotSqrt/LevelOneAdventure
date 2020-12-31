@@ -32,6 +32,7 @@ namespace LOA::Graphics {
 
 		int getWidth() const;
 		int getHeight() const;
+		glm::ivec2 getSize() const;
 
 		GLuint getID() const;
 

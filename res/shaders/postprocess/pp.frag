@@ -34,15 +34,12 @@ vec3 exposure(vec3 color, float exposure){
 }
 
 void main(){
-  //vec3 blur_color = texture(blur_attachment, getUV(blur_attachment_size)).rgb;
-  vec2 uv = f_uv;
-  uv.y = 1 - uv.y;
-  //vec3 hdr_color = texture(color_attachment, uv).rgb;
+  vec3 blur_color = texture(blur_attachment, getUV(blur_attachment_size)).rgb;
   vec3 hdr_color = texture(color_attachment, getUV(color_attachment_size)).rgb;
 
   //vec3 mapped = hdr_color / (hdr_color + vec3(1));
 
-  //out_color = vec4(unreal(hdr_color + blur_color * .7), 1);
-  out_color = vec4(unreal(hdr_color), 1);
+  //out_color = vec4(unreal(hdr_color + blur_color * .15), 1);
+  out_color = vec4(to_gamma(aces(hdr_color + blur_color * .5)), 1);
 
 }

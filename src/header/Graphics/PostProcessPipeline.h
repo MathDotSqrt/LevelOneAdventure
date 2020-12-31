@@ -15,13 +15,15 @@ namespace LOA::Graphics {
 		PostProcessPipeline(BasicRenderer& renderer, int max_width, int max_height);
 
 		void bindGBuffer(int current_width, int current_height) const;
-		void bindMainViewPort(int current_width, int current_height) const;
+		void bindPostProcessBuffer(int current_width, int current_height) const;
+		void bindFXAA(int current_width, int current_height) const;
 		void unbind() const;
 
 		void clearFrameBuffers();
 
 		void renderDeferred(const Scene& scene, BasicRenderer& renderer);
 		void renderPostProcess(BasicRenderer& renderer);
+		void renderAntiAlias(BasicRenderer& renderer);
 		void renderStage(int width, int height, const FBO& fbo, GLSLProgram &shader);
 
 		const FBO& getGBuffer() const;
@@ -33,7 +35,10 @@ namespace LOA::Graphics {
 		//5) ... more post processing
 		FBO gBuffer;	//Bytes per pixel: 6 + 6 + 4 + 3 
 		FBO ssao;		//Bytes per pixel: 2
+		FBO blurX;		//Bytes per pixel: 6 / 4
+		FBO blurY;		//Bytes per pixel: 6 / 4
 		FBO final;		//Bytes per pixel: 6
+
 
 		FBO fxaa;		//Bytes per pixel: 3
 
