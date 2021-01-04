@@ -75,7 +75,16 @@ namespace LOA::Graphics {
 
 		Scene();
 
+
+		entt::resource_handle<Mesh> loadTexturedMesh(entt::id_type meshID, std::string path, glm::vec3 offset = glm::vec3(0), glm::vec3 scale = glm::vec3(1));
 		entt::resource_handle<Mesh> loadMesh(entt::id_type meshID, std::string path, glm::vec3 offset = glm::vec3(0), glm::vec3 scale=glm::vec3(1));
+		
+		template<typename ...T>
+		entt::resource_handle<Mesh> loadRawMesh(entt::id_type meshID, const Geometry<T...>& geometry) {
+			return meshCache.load<RawMeshLoader>(meshID, geometry);
+		}
+
+
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, std::string path);
 		entt::resource_handle<TEX> loadTEX(entt::id_type meshID, TEX::Builder settings, std::string path);
 

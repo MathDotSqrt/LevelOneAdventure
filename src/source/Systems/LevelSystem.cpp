@@ -284,7 +284,7 @@ void LevelSystem::loadAssets() {
 				read_float(node["scale"].val(), scale);
 
 				entt::hashed_string id(name.c_str());
-				scene.loadMesh(id, path, offset, glm::vec3(scale));
+				scene.loadTexturedMesh(id, path, offset, glm::vec3(scale));
 
 				if (node.has_child("light")) {
 					ryml::NodeRef lightNode = node["light"];

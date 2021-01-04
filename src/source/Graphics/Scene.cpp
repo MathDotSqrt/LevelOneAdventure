@@ -25,6 +25,10 @@ Scene::Scene() {
 	setDirLight(DirLight{ glm::vec3(0), glm::vec3(0, -1, 0), 0 });
 }
 
+entt::resource_handle<Mesh> Scene::loadTexturedMesh(entt::id_type id, std::string filename, glm::vec3 offset, glm::vec3 scale) {
+	return meshCache.reload<Graphics::TexturedMeshLoader>(id, filename, offset, scale);
+}
+
 entt::resource_handle<Mesh> Scene::loadMesh(entt::id_type id, std::string filename, glm::vec3 offset, glm::vec3 scale) {
 	return meshCache.reload<Graphics::MeshLoader>(id, filename, offset, scale);
 }

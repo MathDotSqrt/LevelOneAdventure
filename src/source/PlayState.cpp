@@ -24,8 +24,9 @@ PlayState::PlayState(){
 
 	auto& scene = engine.getScene();
 
-	scene.meshCache.load<Graphics::MeshLoader>("sphere"_hs, "./res/models/basic/uv_sphere.fbx");
-	scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
+	scene.loadMesh("sphere"_hs, "./res/models/basic/uv_sphere.fbx");
+	scene.loadRawMesh("cube"_hs, Graphics::gen_cube(1));
+
 	scene.loadTEX("uv_debug_grid"_hs, Graphics::TEX::Builder().mipmapLinear(), "./res/textures/uv_grid.jpg");
 
 
@@ -64,8 +65,7 @@ PlayState::PlayState(){
 	//Player
 	{
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
-		scene.meshCache.load<Graphics::MeshLoader>("cube"_hs, Graphics::gen_cube(1));
-		ID cubeID = scene.addInstance("cube"_hs, Graphics::BasicDeferredMaterial{ "uv_debug_grid"_hs });
+		ID cubeID = scene.addInstance("cube"_hs, Graphics::BasicDeferredMaterial{"uv_debug_grid"_hs});
 
 		player = registry.create();
 		registry.emplace<Transformation>(player, glm::vec3(0, 0, 10));
