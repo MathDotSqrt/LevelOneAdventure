@@ -52,6 +52,21 @@ void PhysicsScene::setGravity(glm::vec3 g) {
 	world->setGravity(btVector3(g.x, g.y, g.z));
 }
 
+bool PhysicsScene::castRay(glm::vec3 start, glm::vec3 stop, bool debug) const {
+	btVector3 btStart(start.x, start.y, start.z);
+	btVector3 btStop(stop.x, stop.y, stop.z);
+
+	btCollisionWorld::ClosestRayResultCallback callback(btStart, btStop);
+	world->rayTest(btStart, btStop, callback);
+
+	if (debug) {
+		btVector3 color = callback.hasHit() ? btVector3(1, 0, 0) : btVector3(0, 1, 0);
+		getDrawer()->drawLine(btStart, btStop, color);
+	}
+
+	return callback.hasHit();
+}
+
 btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, glm::quat rot) {
 	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
 	btVector3 inertia(0,0,0);
