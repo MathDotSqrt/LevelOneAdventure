@@ -105,6 +105,16 @@ void PhysicsSystem::update(float delta) {
 	using namespace Component;
 	auto& registry = engine.getRegistry();
 	
+	{
+		//Update positions of all non physics bodies
+		auto view = registry.view<Transformation, Velocity>(entt::exclude<RigidBody, CharacterController>);
+		for (auto entity : view) {
+			auto& transformation = view.get<Transformation>(entity);
+			auto& velocity = view.get<Velocity>(entity);
+			transformation.pos += velocity * delta;
+		}
+	}
+
 	auto static_view = registry.view<Transformation, StaticBody>();
 	for (auto entity : static_view) {
 		auto& transform = static_view.get<Transformation>(entity);
@@ -198,6 +208,4 @@ void PhysicsSystem::update(float delta) {
 		btVector3 btVel = collision.body->getLinearVelocity();
 		vel = to_glm(btVel);
 	}
-
-
 }

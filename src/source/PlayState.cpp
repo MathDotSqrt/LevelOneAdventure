@@ -15,6 +15,7 @@
 #include "Graphics/GeometryBuilder.h"
 
 #include "Util/Timer.h"
+#include "Physics/PhysicsScene.h"
 
 using namespace LOA;
 
@@ -33,18 +34,14 @@ PlayState::PlayState(){
 
 	auto& registry = engine.getRegistry();
 
-	engine.addSystem<Systems::ParticleSystem>();
-
-	engine.addSystem<Systems::ShaderSystem>();
-
 	engine.addSystem<Systems::InputSystem>();
 	engine.addSystem<Systems::MovementSystem>();
+	engine.addSystem<Systems::ParticleSystem>();
 	engine.addSystem<Systems::RenderSystem>();
-
 	engine.addSystem<Systems::PhysicsSystem>();
-	engine.addSystem<Systems::VelocitySystem>();
 
 	engine.addSystem<Systems::LevelSystem>();
+	engine.addSystem<Systems::ShaderSystem>();
 
 	//Scene set up
 	{
@@ -60,8 +57,6 @@ PlayState::PlayState(){
 		registry.emplace<PointLight>(fire, point_light, glm::vec3(.5, .3, .1), 5.0f, 5.0f);
 		registry.emplace<FireParticle>(fire, 200.0f, 1000.0f);
 	}
-
-	
 
 	//Player
 	{
@@ -108,9 +103,9 @@ PlayState::PlayState(){
 
 void PlayState::update(float dt) {
 	auto& window = Window::getInstance();
+	auto& registry = engine.getRegistry();
 
 	if (window.isPressed('t')) {
-		auto& registry = engine.getRegistry();
 		if (registry.has<Component::MovementState>(camera)) {
 			registry.remove<Component::MovementState>(camera);
 			registry.emplace<Component::MovementState>(player);
@@ -122,6 +117,7 @@ void PlayState::update(float dt) {
 	}
 
 	engine.update(dt);
+
 }
 
 void PlayState::render() {	
