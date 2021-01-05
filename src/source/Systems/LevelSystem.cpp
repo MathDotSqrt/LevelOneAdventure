@@ -95,7 +95,11 @@ void LevelSystem::init() {
 
 	auto& registry = engine.getRegistry();
 	auto create_builder = [&](glm::vec3 pos) {
-		ID id = scene.addInstance(assets_map[0], Graphics::TranslucentBasicMaterial{ "dungeon_pallet"_hs, .75f });
+		Graphics::BasicMaterial material;
+		material.setTexture("dungeon_pallet"_hs);
+		material.setAlpha(.5);
+
+		ID id = scene.addInstance(assets_map[0], material);
 		entt::entity builder = registry.create();
 		registry.emplace<Transformation>(builder, pos);
 		registry.emplace<Renderable>(builder, id);
@@ -125,7 +129,11 @@ void LevelSystem::update(float delta) {
 	};
 
 	auto replace_instance = [&](entt::entity entity, entt::id_type new_mesh_id) {
-		ID id = scene.addInstance(new_mesh_id, Graphics::TranslucentBasicMaterial{ "dungeon_pallet"_hs, .75f });
+		Graphics::BasicMaterial material;
+		material.setTexture("dungeon_pallet"_hs);
+		material.setAlpha(.75f);
+
+		ID id = scene.addInstance(new_mesh_id, material);
 		auto& renderable = registry.get<Renderable>(entity);
 		scene.getInstance(id).transform = scene.getInstance(renderable.instance_id).transform;
 		scene.removeInstance(renderable.instance_id);
@@ -210,14 +218,6 @@ void LevelSystem::update(float delta) {
 	
 	if (window.isPressed('y')) {
 		saveScene();
-	}
-	
-	auto view = registry.view<Graphics::DissolveMaterial>();
-	for (auto entity : view) {
-		if (Window::getInstance().isDown('x'))
-			view.get<Graphics::DissolveMaterial>(entity).time += delta / 2.0f;
-		else if(Window::getInstance().isDown('z'))
-			view.get<Graphics::DissolveMaterial>(entity).time -= delta / 2.0f;
 	}
 
 }
@@ -359,14 +359,14 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
 
-	//Graphics::DissolveMaterial material;
-	//material.diffuse = "dungeon_pallet"_hs;
+	Graphics::BasicLitMaterial material;
+	material.texture = "dungeon_pallet"_hs;
 	//material.dissolve_color = glm::vec3(.7f, .4f, .1f);
 	//material.offset = .05f;
 	//material.time = 0.0f;
 
-	Graphics::BasicDeferredMaterial material;
-	material.diffuse = "dungeon_pallet"_hs;
+	//Graphics::BasicLitMaterial material;
+	//material.texture = "dungeon_pallet"_hs;
 
 	//create instance
 	glm::vec3 pos = glm::vec3(loc) * grid_size;
@@ -389,6 +389,7 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 	registry.emplace<Component::LevelTile>(entity, std::string(mesh_id.data()), loc, rot);
 	registry.emplace<Component::Renderable>(entity, id);
 	registry.emplace<Component::StaticBody>(entity, body);
+	registry.emplace<Graphics::BasicLitMaterial>(entity, material);
 
 	if (light_map.find(mesh_id) != light_map.end()) {
 		//Creates a copy of point light from the map

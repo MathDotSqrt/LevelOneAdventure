@@ -39,6 +39,7 @@ namespace LOA::Graphics {
 		glm::mat4 projection = glm::identity<glm::mat4>();
 
 		TEX noise3D;
+		TEX white;
 
 		PostProcessPipeline postProcess;
 		
@@ -51,11 +52,10 @@ namespace LOA::Graphics {
 		void setViewPortLayer(const Scene &scene, ViewPortLayer layer, ViewPortLayer prev);
 		void setBlendType(const Scene& scene, BlendType blend);
 
-		draw_iterator renderDeferred(const Scene& scene, draw_iterator start, draw_iterator end);
-		draw_iterator renderLightVolumes(const Scene& scene, draw_iterator start, draw_iterator end);
-		draw_iterator renderTranslucentBasic(const Scene& scene, draw_iterator start, draw_iterator end);
-		draw_iterator renderNormal(const Scene &scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderBasic(const Scene& scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderBasicLit(const Scene& scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderLightVolumes(const Scene& scene, draw_iterator start, draw_iterator end);
+		draw_iterator renderNormal(const Scene &scene, draw_iterator start, draw_iterator end);
 		draw_iterator renderDissolve(const Scene& scene, draw_iterator start, draw_iterator end);
 
 		draw_iterator renderParticle(const Scene& scene, draw_iterator start, draw_iterator end);
@@ -65,6 +65,7 @@ namespace LOA::Graphics {
 		void renderPostprocess();
 
 		void clearOpenGLState();
+		void bindOrDefault(const Scene& scene, entt::id_type texture_id, int unit=0);
 		void loadPointLights(const Scene& scene, GLSLProgram &shader);
 		glm::mat4 makeTransform(const glm::vec3& t, const glm::quat& r, const glm::vec3& s) const;
 	};

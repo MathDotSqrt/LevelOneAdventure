@@ -26,6 +26,7 @@ PlayState::PlayState(){
 
 	scene.loadMesh("sphere"_hs, "./res/models/basic/uv_sphere.fbx");
 	scene.loadRawMesh("cube"_hs, Graphics::gen_cube(1));
+	//scene.loadMesh("dragon"_hs, "./res/models/dragon/dragon2.stl");
 
 	scene.loadTEX("uv_debug_grid"_hs, Graphics::TEX::Builder().mipmapLinear(), "./res/textures/uv_grid.jpg");
 
@@ -64,8 +65,15 @@ PlayState::PlayState(){
 
 	//Player
 	{
+		Graphics::DissolveMaterial material;
+		material.color = glm::vec3(1, 1, 1);
+		material.texture = "uv_debug_grid"_hs;
+		material.offset = .01f;
+		material.dissolve_color = glm::vec3(1, .8, .4);
+
+		ID cubeID = scene.addInstance("cube"_hs, material);
+
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
-		ID cubeID = scene.addInstance("cube"_hs, Graphics::BasicDeferredMaterial{"uv_debug_grid"_hs});
 
 		player = registry.create();
 		registry.emplace<Transformation>(player, glm::vec3(0, 0, 10));
@@ -76,6 +84,7 @@ PlayState::PlayState(){
 		registry.emplace<Renderable>(player, cubeID);
 		registry.emplace<PointLight>(player, point_light, glm::vec3(.7, .6, .5), 1.f, 10.0f);
 		registry.emplace<CharacterController>(player);
+		registry.emplace<Graphics::DissolveMaterial>(player, material);
 
 	}
 

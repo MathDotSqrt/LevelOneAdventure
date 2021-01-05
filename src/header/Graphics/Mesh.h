@@ -50,6 +50,10 @@ namespace LOA::Graphics {
 		const glm::vec3& getMax() const {
 			return max;
 		}
+
+		const size_t getNumIndicies() const {
+			return ebo.getNumBytes() / sizeof(u32);
+		}
 	private:
 		glm::vec3 min;
 		glm::vec3 max;

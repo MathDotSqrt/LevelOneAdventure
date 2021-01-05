@@ -1,4 +1,4 @@
-#include "Graphics/RenderStateKey.h"
+#include "Graphics/Material.h"
 
 using namespace LOA::Graphics;
 

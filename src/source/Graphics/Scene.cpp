@@ -8,17 +8,7 @@ PerspectiveCamera::PerspectiveCamera()
 PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float near, float far)
 	: fov(fov), aspect(aspect), near(near), far(far) {}
 
-Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type, ID matID)
-	: mesh(mesh), materialType(type), materialID(matID) {}
-
-Instance::Instance(entt::resource_handle<Mesh> mesh, MaterialType type)
-	: mesh(mesh), materialType(type), materialID(LOA::NullID) {}
-
-ParticleSystemInstance::ParticleSystemInstance(ParticleRenderData &&data, MaterialType type, ID matID) 
-	: data(std::move(data)), materialType(type), materialID(matID){}
-
-ParticleSystemInstance::ParticleSystemInstance(size_t max, MaterialType type, ID matID)
-	: data(max), materialType(type), materialID(matID) {}
+Instance::Instance(entt::resource_handle<Mesh> mesh) : mesh(mesh), material(nullptr){}
 
 Scene::Scene() {
 	setAmbientLight(AmbientLight{glm::vec3(0), 0});
@@ -42,17 +32,11 @@ entt::resource_handle<TEX> Scene::loadTEX(entt::id_type id, TEX::Builder setting
 }
 
 LOA::ID Scene::addInstance(entt::id_type meshID) {
-	return instances.insert(Instance{meshCache.handle(meshID), MaterialType::NUM_MATERIAL_ID});
+	return instances.insert(Instance{meshCache.handle(meshID)});
 }
 
 void Scene::removeInstance(ID id) {
 	assert(instances.has(id));
-
-	Instance& instance = instances[id];
-	ID materialID = instance.materialID;
-	MaterialType type = instance.materialType;
-
-	removeMaterial(type, materialID);
 
 	instances.remove(id);
 }
@@ -68,30 +52,6 @@ LOA::ID Scene::addPointLight(PointLight light) {
 
 void Scene::removePointLight(ID id) {
 	pointLights.remove(id);
-}
-
-LOA::ID Scene::createParticleInstance(size_t max, ParticleMaterial material) {
-	const auto id = insertMaterial(material);
-	return particleSystemInstances.insert(ParticleSystemInstance{max, MaterialType::PARTICLE_MATERIAL_ID, id});
-}
-
-LOA::ID Scene::createParticleInstance(size_t max, FireParticleMaterial material) {
-	const auto id = insertMaterial(material);
-	return particleSystemInstances.insert(ParticleSystemInstance{ max, MaterialType::FIRE_PARTICLE_ID, id });
-}
-
-void Scene::removeMaterial(MaterialType type, ID id){
-	if (type != MaterialType::NUM_MATERIAL_ID) {
-		freeListReferenceMap[type]->remove(id);
-	}
-}
-
-BlendType Scene::getMaterialBlendType(MaterialType type) const {
-	return blendMap.at(type);
-}
-
-ViewPortLayer Scene::getMaterialViewPortLayer(MaterialType type) const {
-	return viewPortLayerMap.at(type);
 }
 
 Instance& Scene::getInstance(ID id) {

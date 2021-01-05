@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Components.h"
 #include "Util/Timer.h"
+#include "Window.h"
 
 using namespace LOA;
 using namespace LOA::Systems;
@@ -73,7 +74,7 @@ void RenderSystem::update(float delta) {
 			instance.transform = makeTransform(trans);;
 		}
 	}
-	
+
 	//Copy point light state to renderer
 	{
 		auto point_view = registry.view<Transformation, PointLight>();
@@ -102,24 +103,23 @@ void RenderSystem::update(float delta) {
 		}
 	}
 
-	//Copy dissolve state to renderer
-	{
-		auto dissolve_view = registry.view<Renderable, Graphics::DissolveMaterial>();
-		for (auto entity : dissolve_view) {
-			auto& render = dissolve_view.get<Renderable>(entity);
-			auto& dissolve = dissolve_view.get<Graphics::DissolveMaterial>(entity);
 
-			auto& instance = scene.getInstance(render.instance_id);
 
-			if (instance.materialType != Graphics::MaterialType::DISSOLVE_MATERIAL_ID) {
-				scene.changeMaterial(render.instance_id, dissolve);
-			}
-
-			auto& material = scene.getMaterial<Graphics::DissolveMaterial>(instance.materialID);
-
-			material.time = dissolve.time;
-			material.offset = dissolve.offset;
-			material.dissolve_color = dissolve.dissolve_color;
-		}
+	auto view = registry.view<Graphics::DissolveMaterial>();
+	for (auto entity : view) {
+		if (Window::getInstance().isDown('x'))
+			view.get<Graphics::DissolveMaterial>(entity).time += delta / 2.0f;
+		else if (Window::getInstance().isDown('z'))
+			view.get<Graphics::DissolveMaterial>(entity).time -= delta / 2.0f;
 	}
+
+	//Copy material state to renderer
+	{
+		copyMaterial<Graphics::BasicMaterial>();
+		copyMaterial<Graphics::BasicLitMaterial>();
+		copyMaterial<Graphics::DissolveMaterial>();
+		copyMaterial<Graphics::FireParticleMaterial>();
+	}
+
+
 }
