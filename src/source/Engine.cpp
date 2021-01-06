@@ -7,6 +7,9 @@ using namespace LOA;
 
 Engine::Engine() {
 	registry.set<Physics::PhysicsScene>();
+
+	player = registry.create();
+	mainCamera = registry.create();
 }
 
 void Engine::update(float delta){
@@ -45,4 +48,12 @@ Graphics::BasicRenderer& Engine::getRenderer() {
 
 Physics::PhysicsScene& Engine::getPhysicsScene() {
 	return 	registry.ctx<Physics::PhysicsScene>();
+}
+
+const entt::entity& Engine::getPlayer() const {
+	return player;
+}
+
+const entt::entity& Engine::getMainCamera() const {
+	return mainCamera;
 }

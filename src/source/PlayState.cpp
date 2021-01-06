@@ -43,6 +43,9 @@ PlayState::PlayState(){
 	engine.addSystem<Systems::LevelSystem>();
 	engine.addSystem<Systems::ShaderSystem>();
 
+	entt::entity player = engine.getPlayer();
+	entt::entity camera = engine.getMainCamera();
+
 	//Scene set up
 	{
 		scene.setAmbientLight(Graphics::AmbientLight{glm::vec3(1), .3f});
@@ -70,7 +73,6 @@ PlayState::PlayState(){
 
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 
-		player = registry.create();
 		registry.emplace<Transformation>(player, glm::vec3(0, 0, 10));
 		registry.emplace<Velocity>(player, glm::vec3(0, 0, 0));
 		registry.emplace<Direction>(player, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
@@ -87,7 +89,6 @@ PlayState::PlayState(){
 	{
 		ID camera_light = scene.addPointLight(Graphics::PointLight{});
 
-		camera = registry.create();
 		registry.emplace<Transformation>(camera, glm::vec3(-2.5, 10, 10), glm::angleAxis(glm::pi<float>() / 4, glm::vec3(-1, 0, 0)));
 		registry.emplace<Velocity>(camera, glm::vec3(0, 0, 0));
 		registry.emplace<Camera>(camera, glm::radians(80.0f), 1.0f, .01f, 1000.0f, player);
@@ -105,6 +106,9 @@ void PlayState::update(float dt) {
 	auto& window = Window::getInstance();
 	auto& registry = engine.getRegistry();
 
+	entt::entity player = engine.getPlayer();
+	entt::entity camera = engine.getMainCamera();
+
 	if (window.isPressed('t')) {
 		if (registry.has<Component::MovementState>(camera)) {
 			registry.remove<Component::MovementState>(camera);
@@ -117,7 +121,6 @@ void PlayState::update(float dt) {
 	}
 
 	engine.update(dt);
-
 }
 
 void PlayState::render() {	
