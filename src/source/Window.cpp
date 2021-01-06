@@ -34,9 +34,18 @@ static void LOA::internal_focus_callback(GLFWwindow* window, int focused) {
 }
 
 static void LOA::internal_mouse_callback(GLFWwindow* window, int button, int action, int mods) {
-    if (action == GLFW_PRESS) {
+    //if (action == GLFW_PRESS) {
+    //    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //    Window::getInstance().hasFocus = true;
+    //}
+
+    if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         Window::getInstance().hasFocus = true;
+    }
+    else if(action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_RIGHT){
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        Window::getInstance().hasFocus = false;
     }
 }
 
@@ -104,6 +113,9 @@ void Window::update() {
         prev_keys[i] = isDown(i);
     }
 
+    prev_left_mouse = isDown(Mouse::LEFT_CLICK);
+    prev_right_mouse = isDown(Mouse::RIGHT_CLICK);
+    
     glfwPollEvents();
 }
 
@@ -119,12 +131,20 @@ bool Window::isDown(Keys key) const {
     return isDown(toGLFW(key));
 }
 
+bool Window::isDown(Mouse mouse) const {
+    return isClick(mouse);
+}
+
 bool Window::isPressed(char c) const {
     return isDown(c) && !prev_keys[toupper(c)];
 }
 
 bool Window::isPressed(Keys key) const {
     return isDown(key) && !prev_keys[toGLFW(key)];
+}
+
+bool Window::isPressed(Mouse mouse) const {
+    return isDown(mouse) && (mouse == Mouse::LEFT_CLICK ? !prev_left_mouse : !prev_right_mouse);
 }
 
 bool Window::isClick(Mouse mouse) const {
@@ -146,6 +166,7 @@ glm::vec2 Window::getMousePos() const {
     static double x, y;
     if(hasFocus)
         glfwGetCursorPos(window, &x, &y);
+
     return glm::vec2(x, y);
 }
 
@@ -182,6 +203,17 @@ int Window::toGLFW(Keys key) const {
         return GLFW_KEY_LEFT_CONTROL;
     case Keys::ESC:
         return GLFW_KEY_ESCAPE;
+    default:
+        return 0;
+    }
+}
+
+int Window::toGLFW(Mouse mouse) const {
+    switch (mouse) {
+    case Mouse::LEFT_CLICK:
+        return GLFW_MOUSE_BUTTON_LEFT;
+    case Mouse::RIGHT_CLICK:
+        return GLFW_MOUSE_BUTTON_RIGHT;
     default:
         return 0;
     }
