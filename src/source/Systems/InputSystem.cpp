@@ -21,10 +21,16 @@ void InputSystem::init() {
 void InputSystem::update(float delta) {
 	using namespace Component;
 	auto& window = Window::getInstance();
-	
+	auto& registry = engine.getRegistry();
 	glm::vec2 pos = window.getMousePos();
 	
-	auto& registry = engine.getRegistry();
+	if (window.isPressed(Window::Mouse::RIGHT_CLICK)) {
+		auto input_view = registry.view<Input>();
+		input_view.each([pos](auto& input) {
+			input.lastCursorPos = pos;
+		});
+	}
+
 	auto view = registry.view<Input, MovementState>();
 	for (auto entity : view) {
 		auto& input = view.get<Input>(entity);
@@ -65,7 +71,9 @@ void InputSystem::update(float delta) {
 		
 		camera.distance -= window.getScrollDelta() / 1.0f;
 		camera.phi -= window.getScrollDelta() / 7.0f;
-		camera.theta -= window.isClick(Window::Mouse::RIGHT_CLICK) ? (pos.x - input.lastCursorPos.x) / 200 : 0;
-		input.lastCursorPos = pos;
+		camera.theta -= window.isDown(Window::Mouse::RIGHT_CLICK) ? (pos.x - input.lastCursorPos.x) / 200 : 0;
+		
+		if(window.isDown(Window::Mouse::RIGHT_CLICK))
+			input.lastCursorPos = pos;
 	}
 }

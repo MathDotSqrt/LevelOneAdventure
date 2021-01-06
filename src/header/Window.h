@@ -40,8 +40,12 @@ namespace LOA {
 		bool isDown(char c) const;
 		bool isDown(int i) const;
 		bool isDown(Keys keys) const;
+		bool isDown(Mouse mouse) const;
+
 		bool isPressed(char c) const;
 		bool isPressed(Keys keys) const;
+		bool isPressed(Mouse mouse) const;
+
 		bool isClick(Mouse mouse) const;
 		bool shouldClose() const;
 
@@ -66,8 +70,11 @@ namespace LOA {
 		bool hasFocus = true;
 		bool isMouseDisabled;
 		std::bitset<348> prev_keys;
+		bool prev_left_mouse = false;
+		bool prev_right_mouse = false;
 
 		int toGLFW(Keys key) const;
+		int toGLFW(Mouse mouse) const;
 
 		Window(int width, int height, std::string title);
 	
