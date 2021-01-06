@@ -15,9 +15,6 @@ namespace LOA {
 		void render();
 	
 	private:
-		entt::entity camera;
-		entt::entity player;
-		bool swap = false;
 		Engine engine;
 
 	};

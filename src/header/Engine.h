@@ -32,7 +32,13 @@ namespace LOA {
 		Graphics::Scene& getScene();
 		Graphics::BasicRenderer& getRenderer();
 		Physics::PhysicsScene& getPhysicsScene();
+
+		const entt::entity& getPlayer() const;
+		const entt::entity& getMainCamera() const;
 	private:
+		entt::entity player;
+		entt::entity mainCamera;
+
 		entt::registry registry;
 		Graphics::Scene scene;
 		Graphics::BasicRenderer renderer;

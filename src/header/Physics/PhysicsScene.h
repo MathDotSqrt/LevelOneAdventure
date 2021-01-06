@@ -16,6 +16,14 @@ class btKinematicCharacterController;
 namespace LOA::Physics {
 	class PhysicsDebugDrawer;
 
+	enum class CollisionFlag {
+		STATIC = 1,
+		KINEMATIC = 2,
+		DYNAMIC = 4,
+		CHARACTER = 8,
+		ALL = -1
+	};
+
 	class PhysicsScene {
 	public:
 		PhysicsScene();

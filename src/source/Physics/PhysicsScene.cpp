@@ -57,6 +57,9 @@ bool PhysicsScene::castRay(glm::vec3 start, glm::vec3 stop, bool debug) const {
 	btVector3 btStop(stop.x, stop.y, stop.z);
 
 	btCollisionWorld::ClosestRayResultCallback callback(btStart, btStop);
+	//To only report back collisions with static objects
+	callback.m_collisionFilterMask = btBroadphaseProxy::StaticFilter;
+
 	world->rayTest(btStart, btStop, callback);
 
 	if (debug) {
@@ -110,6 +113,7 @@ btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
 	btTransform groundTransform;
 	groundTransform.setIdentity();
 	body->setWorldTransform(groundTransform);
+
 
 	world->addRigidBody(body);
 	return body;
