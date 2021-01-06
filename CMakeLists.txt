@@ -35,6 +35,7 @@ set(HEADER_FILES ${HEADER_FILES}
 
 	"src/header/Systems/InputSystem.h"
 	"src/header/Systems/LevelSystem.h"
+	"src/header/Systems/MouseCast.h"
 	"src/header/Systems/MovementSystem.h"
 	"src/header/Systems/ParticleSystem.h"
 	"src/header/Systems/PhysicsSystem.h"
@@ -84,6 +85,7 @@ set(SOURCE_FILES ${SOURCE_FILES}
 
 	"src/source/Systems/InputSystem.cpp"
 	"src/source/Systems/LevelSystem.cpp"
+	"src/source/Systems/MouseCast.cpp"
 	"src/source/Systems/MovementSystem.cpp"
 	"src/source/Systems/ParticleSystem.cpp"
 	"src/source/Systems/PhysicsSystem.cpp"
