@@ -8,7 +8,7 @@ using namespace LOA::Systems;
 using namespace entt;
 void MouseCast::init() {
 	//printf("We got printf out here.");
-	Graphics::Scene &scence = engine.getScene();
+	/*Graphics::Scene &scence = engine.getScene();
 	scence.loadMesh("Dwagon"_hs,"res/models/dragon/dragon2.stl");
 	Graphics::BasicLitMaterial material;
 	material.color = glm::vec3(.1,.76,.4);
@@ -17,7 +17,7 @@ void MouseCast::init() {
 	entt::entity ents = reg.create();
 	reg.emplace<Component::Transformation>(ents, glm::vec3(1, 1, 1), glm::angleAxis(3.14f/2*3.14f,glm::vec3(1,0,0)), glm::vec3(.1, .1, .1));
 	reg.emplace<Component::Renderable>(ents,id);
-	reg.emplace<Component::Velocity>(ents,glm::vec3(6,2,4));
+	reg.emplace<Component::Velocity>(ents,glm::vec3(6,2,4));*/
 	
 }
 
@@ -29,5 +29,8 @@ void MouseCast::update(float delta) {
 	entt::entity player = engine.getPlayer();
 	entt::registry& reg = engine.getRegistry();
 	Component::Transformation trans = reg.get<Component::Transformation>(player);
+	Graphics::Scene &scence = engine.getScene();
+	LOA::Graphics::PerspectiveCamera cam = scence.getMainCamera();
+	LOA::Graphics::BasicRenderer &render = engine.getRenderer();
 	pscene.castRay(glm::vec3(mouse,0),trans.pos,true);
 }
