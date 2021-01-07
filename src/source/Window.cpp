@@ -164,7 +164,7 @@ bool Window::shouldClose() const {
 
 glm::vec2 Window::getMousePos() const {
     static double x, y;
-    if(hasFocus)
+    //if(hasFocus)
         glfwGetCursorPos(window, &x, &y);
 
     return glm::vec2(x, y);
