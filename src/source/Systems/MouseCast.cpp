@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Components.h"
 #include "Physics/PhysicsScene.h"
+#include "glm/gtx/vector_angle.hpp"
 using namespace LOA::Systems;
 using namespace entt;
 static entt::entity dwagon;
@@ -49,10 +50,16 @@ void MouseCast::update(float delta) {
 	//printf("%f|%f|%f\n", mouseray.x, mouseray.y, mouseray.z);
 	glm::vec3 campos = reg.get<Component::Transformation>(engine.getMainCamera()).pos;
 	auto pair = pscene.castRay(campos, campos + mouseray * 600.0f, true);
-	if (pair.first)
+	/*if (pair.first)
 		trans.pos = pair.second;
 	else
-		trans.pos = campos + mouseray * 600.0f;
+		trans.pos = campos + mouseray * 600.0f;*/
+	auto &playertrans = reg.get<Component::Transformation>(engine.getPlayer());
+	auto &playerdir = reg.get<Component::Direction>(engine.getPlayer());
+	float angle = glm::orientedAngle(glm::normalize(-playerdir.forward),glm::normalize(playertrans.pos-pair.second),glm::normalize(glm::vec3(0,1,0)));
+	glm::quat newrot = glm::angleAxis(angle, glm::vec3(0, 1, 0));
+	playertrans.rot = newrot;
+	printf("%f\n",angle);
 	//printf("%d",pscene.castRay(campos, campos + mouseray * 600.0f,true));
 	
 	

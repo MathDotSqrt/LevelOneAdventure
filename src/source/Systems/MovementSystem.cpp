@@ -37,7 +37,7 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 
 	entt::entity fireball = registry.create();
 	
-	registry.emplace<Transformation>(fireball, pos);
+	registry.emplace<Transformation>(fireball, pos+glm::normalize(forward));
 	registry.emplace<Velocity>(fireball, glm::normalize(forward) * 20.0f);
 	registry.emplace<FireParticle>(fireball, 200.0f, 10.0f);
 	//registry.emplace<Renderable>(fireball, id);
