@@ -56,8 +56,10 @@ void MouseCast::update(float delta) {
 		trans.pos = campos + mouseray * 600.0f;*/
 	auto &playertrans = reg.get<Component::Transformation>(engine.getPlayer());
 	auto &playerdir = reg.get<Component::Direction>(engine.getPlayer());
-	float angle = glm::orientedAngle(glm::normalize(-playerdir.forward),glm::normalize(playertrans.pos-pair.second),glm::normalize(glm::vec3(0,1,0)));
-	glm::quat newrot = glm::angleAxis(angle, glm::vec3(0, 1, 0));
+	glm::vec2 playervec = glm::vec2(pair.second.x - playertrans.pos.x, pair.second.z - playertrans.pos.z);
+	glm::vec2 forvec = glm::vec2(playerdir.forward.x , playerdir.forward.z );
+	float angle = glm::orientedAngle(glm::normalize(forvec), glm::normalize(playervec));//glm::normalize(glm::vec3(0,1,0)));
+	glm::quat newrot = glm::angleAxis(-angle, glm::vec3(0, 1, 0));
 	playertrans.rot = newrot;
 	printf("%f\n",angle);
 	//printf("%d",pscene.castRay(campos, campos + mouseray * 600.0f,true));
