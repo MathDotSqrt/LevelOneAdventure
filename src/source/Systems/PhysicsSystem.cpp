@@ -45,7 +45,7 @@ void PhysicsSystem::freeHitBox(entt::registry& registry, entt::entity entity) {
 
 	auto& collision = registry.get<Component::HitBox>(entity);
 
-	if (collision.ghost == nullptr) {
+	if (collision.ghost != nullptr) {
 		scene.freeHitBox(collision.ghost);
 	}
 }
@@ -104,7 +104,7 @@ void PhysicsSystem::init() {
 	auto& registry = engine.getRegistry();
 
 	registry.on_construct<Component::HitBox>().connect<&PhysicsSystem::spawnHitBox>(this);
-	registry.on_destroy<Component::HitBox>().connect<&PhysicsSystem::spawnHitBox>(this);
+	registry.on_destroy<Component::HitBox>().connect<&PhysicsSystem::freeHitBox>(this);
 
 	registry.on_construct<Component::RigidBody>().connect<&PhysicsSystem::spawnRigidBody>(this);
 	registry.on_destroy<Component::RigidBody>().connect<&PhysicsSystem::freeRigidBody>(this);
@@ -214,7 +214,8 @@ void PhysicsSystem::update(float delta) {
 	//update hitbox collisions
 	for (auto entity : hitbox_view) {
 		auto& hitbox = hitbox_view.get<HitBox>(entity);
-		engine.getPhysicsScene().checkForContacts(hitbox.ghost);
+		hitbox.event = engine.getPhysicsScene().checkForContacts(hitbox.ghost);
+		hitbox.dim += .01f;;
 	}
 
 	//Copy updated data back into characters

@@ -3,6 +3,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include <glm/gtx/quaternion.hpp>
+#include "Components.h"
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -37,7 +38,7 @@ namespace LOA::Physics {
 		void prerender();
 		void setGravity(glm::vec3 g);
 		void update(float delta);
-		void checkForContacts(btPairCachingGhostObject* ghost);
+		Component::HitBox::CollisionEvent checkForContacts(btPairCachingGhostObject* ghost);
 		
 		std::pair<bool,glm::vec3> castRay(glm::vec3 start, glm::vec3 stop, bool debug=false) const;
 		

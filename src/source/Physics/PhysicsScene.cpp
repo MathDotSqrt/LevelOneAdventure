@@ -73,10 +73,14 @@ void PhysicsScene::update(float delta) {
 	//}
 }
 
-void PhysicsScene::checkForContacts(btPairCachingGhostObject* ghost) {
+LOA::Component::HitBox::CollisionEvent PhysicsScene::checkForContacts(btPairCachingGhostObject* ghost) {
 	btManifoldArray   manifold_array;
 	btBroadphasePairArray& pair_array = ghost->getOverlappingPairCache()->getOverlappingPairArray();
 	size_t num_pairs = pair_array.size();
+	
+	LOA::Component::HitBox::CollisionEvent event;
+	event.mask = 0;
+
 	for (size_t i = 0; i < num_pairs; i++) {
 		manifold_array.clear();
 
@@ -93,13 +97,15 @@ void PhysicsScene::checkForContacts(btPairCachingGhostObject* ghost) {
 		for (size_t j = 0; j < manifold_array.size(); j++) {
 			btPersistentManifold* manifold = manifold_array[j];
 			if (manifold->getNumContacts() > 0) {
-				printf("CONTACT %d\n", manifold->getNumContacts());
+				event.mask = 1;
 			}
 			else {
 			
 			}
 		}
 	}
+
+	return event;
 }
 
 std::pair<bool,glm::vec3> PhysicsScene::castRay(glm::vec3 start, glm::vec3 stop, bool debug) const {
@@ -140,12 +146,22 @@ btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, g
 	
 	if (mass == 0) {
 		body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+		constexpr int mask = btBroadphaseProxy::DefaultFilter 
+			| btBroadphaseProxy::StaticFilter 
+			| btBroadphaseProxy::CharacterFilter 
+			| btBroadphaseProxy::SensorTrigger;
+		world->addRigidBody(body, btBroadphaseProxy::KinematicFilter, mask);
 	}
 	else {
 		body->setCollisionFlags(btCollisionObject::CF_DYNAMIC_OBJECT);
+		constexpr int mask = btBroadphaseProxy::DefaultFilter 
+			| btBroadphaseProxy::StaticFilter 
+			| btBroadphaseProxy::KinematicFilter 
+			| btBroadphaseProxy::CharacterFilter 
+			| btBroadphaseProxy::SensorTrigger;
+		world->addRigidBody(body, btBroadphaseProxy::DefaultFilter, mask);
 	}
 
-	world->addRigidBody(body);
 
 	return body;
 }
@@ -168,17 +184,9 @@ btRigidBody* PhysicsScene::createStaticBox(float mass, glm::vec3 dim, glm::vec3 
 
 	body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
 
-
 	world->addRigidBody(body, btBroadphaseProxy::StaticFilter, btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
 
 	return body;
-}
-
-void PhysicsScene::freeBox(btRigidBody* body) {
-	delete body->getMotionState();
-	world->removeRigidBody(body);
-	delete body;
-
 }
 
 btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
@@ -233,6 +241,13 @@ btKinematicCharacterController* PhysicsScene::createCharacterController() {
 	world->addAction(controller);
 
 	return controller;
+}
+
+void PhysicsScene::freeBox(btRigidBody* body) {
+	delete body->getMotionState();
+	world->removeRigidBody(body);
+	delete body;
+
 }
 
 void PhysicsScene::freeCharacterController(btKinematicCharacterController* controller) {

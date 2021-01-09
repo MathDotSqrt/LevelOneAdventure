@@ -35,6 +35,19 @@ void ParticleSystem::update(float dt) {
 
 	auto& registry = engine.getRegistry();
 
+	//Check for collisions
+	{
+		auto view = registry.view<FireParticle, HitBox>();
+		for (auto entity : view) {
+			auto& particle = view.get<FireParticle>(entity);
+			auto& hitbox = view.get<HitBox>(entity);
+			if (hitbox.event.mask == 1) {
+				registry.destroy(entity);
+			}
+		}
+
+	}
+
 	//Spawns particles
 	{
 		auto view = registry.view<FireParticle, Transformation>();

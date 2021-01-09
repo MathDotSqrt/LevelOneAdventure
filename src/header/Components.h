@@ -114,6 +114,17 @@ namespace LOA::Component {
 		glm::vec3 dim = glm::vec3(1);
 		glm::vec3 offset = glm::vec3(0);
 		btPairCachingGhostObject* ghost=nullptr;
+
+		struct CollisionEvent {
+			enum class Event : u32{
+				STATIC,
+				CHARACTER
+			};
+			entt::entity entity = entt::null;
+			u32 mask = 0;
+		};
+
+		CollisionEvent event;
 	};
 
 	//Rigid Bodies that dont have physics: walls, floors, etc
