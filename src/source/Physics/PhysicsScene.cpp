@@ -150,6 +150,30 @@ btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, g
 	return body;
 }
 
+btRigidBody* PhysicsScene::createStaticBox(float mass, glm::vec3 dim, glm::vec3 pos, glm::quat rot) {
+	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
+	shapes.push_back(shape);
+
+	btVector3 inertia(0, 0, 0);
+
+
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, shape, inertia);
+
+	btRigidBody* body = new btRigidBody(rbInfo);
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+	groundTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+	body->setWorldTransform(groundTransform);
+
+	body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+
+
+	world->addRigidBody(body, btBroadphaseProxy::StaticFilter, btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
+
+	return body;
+}
+
 void PhysicsScene::freeBox(btRigidBody* body) {
 	delete body->getMotionState();
 	world->removeRigidBody(body);
@@ -175,6 +199,8 @@ btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
 
 btPairCachingGhostObject* PhysicsScene::createHitBox(glm::vec3 dim, glm::vec3 pos) {
 	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
+	shapes.push_back(shape);
+
 	btPairCachingGhostObject* ghost = new btPairCachingGhostObject();
 	ghost->setCollisionShape(shape);
 	ghost->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT | btCollisionObject::CF_NO_CONTACT_RESPONSE);
