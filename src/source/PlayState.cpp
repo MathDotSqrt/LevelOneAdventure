@@ -84,6 +84,7 @@ PlayState::PlayState(){
 		registry.emplace<Renderable>(player, cubeID);
 		registry.emplace<PointLight>(player, point_light, glm::vec3(.7, .6, .5), 1.f, 10.0f);
 		registry.emplace<CharacterController>(player);
+		registry.emplace<HitBox>(player, glm::vec3(.5));
 		registry.emplace<Graphics::DissolveMaterial>(player, material);
 
 	}

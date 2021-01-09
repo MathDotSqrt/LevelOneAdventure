@@ -9,6 +9,7 @@
 
 class btRigidBody;
 class btKinematicCharacterController;
+class btPairCachingGhostObject;
 
 namespace LOA::Systems {
 	class RenderSystem;
@@ -106,6 +107,13 @@ namespace LOA::Component {
 			offset(offset), 
 			mass(mass), 
 			body(nullptr) {}
+	};
+
+	//Ghost bodies for dealing/taking damage
+	struct HitBox {
+		glm::vec3 dim = glm::vec3(1);
+		glm::vec3 offset = glm::vec3(0);
+		btPairCachingGhostObject* ghost=nullptr;
 	};
 
 	//Rigid Bodies that dont have physics: walls, floors, etc

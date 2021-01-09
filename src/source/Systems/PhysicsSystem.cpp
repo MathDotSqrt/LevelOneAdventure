@@ -30,6 +30,26 @@ glm::quat to_glm(const btQuaternion& quat) {
 	return glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
 }
 
+void PhysicsSystem::spawnHitBox(entt::registry& registry, entt::entity entity) {
+	auto& scene = engine.getPhysicsScene();
+
+	auto& collision = registry.get<Component::HitBox>(entity);
+
+	if (collision.ghost == nullptr) {
+		collision.ghost = scene.createHitBox(collision.dim, glm::vec3(0));
+	}
+}
+
+void PhysicsSystem::freeHitBox(entt::registry& registry, entt::entity entity) {
+	auto& scene = engine.getPhysicsScene();
+
+	auto& collision = registry.get<Component::HitBox>(entity);
+
+	if (collision.ghost == nullptr) {
+		scene.freeHitBox(collision.ghost);
+	}
+}
+
 void PhysicsSystem::spawnRigidBody(entt::registry& registry, entt::entity entity) {
 	auto& scene = engine.getPhysicsScene();
 	
@@ -83,6 +103,9 @@ void PhysicsSystem::init() {
 
 	auto& registry = engine.getRegistry();
 
+	registry.on_construct<Component::HitBox>().connect<&PhysicsSystem::spawnHitBox>(this);
+	registry.on_destroy<Component::HitBox>().connect<&PhysicsSystem::spawnHitBox>(this);
+
 	registry.on_construct<Component::RigidBody>().connect<&PhysicsSystem::spawnRigidBody>(this);
 	registry.on_destroy<Component::RigidBody>().connect<&PhysicsSystem::freeRigidBody>(this);
 
@@ -113,6 +136,22 @@ void PhysicsSystem::update(float delta) {
 			auto& velocity = view.get<Velocity>(entity);
 			transformation.pos += velocity * delta;
 		}
+	}
+
+
+	auto hitbox_view = registry.view<Transformation, HitBox>();
+	for (auto entity : hitbox_view) {
+		auto& transform = hitbox_view.get<Transformation>(entity);
+		auto& static_body = hitbox_view.get<HitBox>(entity);
+
+		glm::vec3 rigid_body_origin = (transform.rot * static_body.offset) + transform.pos;
+
+		btTransform bt_transform;
+		bt_transform.setIdentity();
+		bt_transform.setOrigin(to_bt(rigid_body_origin));
+		bt_transform.setRotation(to_bt(transform.rot));
+
+		static_body.ghost->setWorldTransform(bt_transform);
 	}
 
 	auto static_view = registry.view<Transformation, StaticBody>();
@@ -169,8 +208,16 @@ void PhysicsSystem::update(float delta) {
 		collision.body->setLinearVelocity(btVector3(vel.x, vel.y, vel.z));
 	}
 
+	//Step physics simulation by a single frame
 	engine.getPhysicsScene().update(delta);
 
+	//update hitbox collisions
+	for (auto entity : hitbox_view) {
+		auto& hitbox = hitbox_view.get<HitBox>(entity);
+		engine.getPhysicsScene().checkForContacts(hitbox.ghost);
+	}
+
+	//Copy updated data back into characters
 	for (auto entity : character_view) {
 		auto& transform = character_view.get<Transformation>(entity);
 		auto& vel = character_view.get<Velocity>(entity);
@@ -189,6 +236,7 @@ void PhysicsSystem::update(float delta) {
 		vel = to_glm(btVel);
 	}
 
+	//Copy updated data back into rigid bodies
 	for (auto entity : view) {
 		auto& transform = view.get<Transformation>(entity);
 		auto& vel = view.get<Velocity>(entity);

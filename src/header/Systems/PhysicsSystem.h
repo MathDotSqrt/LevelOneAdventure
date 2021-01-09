@@ -10,6 +10,9 @@ namespace LOA::Systems {
 		void update(float dt);
 
 	private:
+		void spawnHitBox(entt::registry& registry, entt::entity entity);
+		void freeHitBox(entt::registry& registry, entt::entity entity);
+
 		void spawnRigidBody(entt::registry& registry, entt::entity entity);
 		void freeRigidBody(entt::registry& registry, entt::entity entity);
 		
