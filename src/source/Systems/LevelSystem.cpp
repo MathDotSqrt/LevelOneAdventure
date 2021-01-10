@@ -382,7 +382,7 @@ void LevelSystem::createTileInstance(entt::hashed_string mesh_id, const glm::ive
 	glm::vec3 offset = (mesh_max + mesh_min) * .5f;
 
 	auto& physicsScene = engine.getPhysicsScene();
-	btRigidBody* body = physicsScene.createBox(0, dim * .5f, pos + rotation * offset, rotation);
+	btRigidBody* body = physicsScene.createStaticBox(0, dim * .5f, pos + rotation * offset, rotation);
 
 	auto entity = registry.create();
 	//registry.emplace<Graphics::DissolveMaterial>(entity, material);

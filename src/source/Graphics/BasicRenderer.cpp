@@ -16,7 +16,9 @@ BasicRenderer::BasicRenderer() :
 	noise3D(TEX::Builder().floatType().r().linear().mirrorRepeat().mipmapLinear().buildTexture3D(Util::gen_perlin_3D_texture(64, .1f))),
 	white(TEX::Builder().rgb().nearest().clampToEdge().buildTexture(4, 4, std::vector(4 * 4, glm::u8vec3(255)))),	//all white texture
 	//postProcess(*this, 3440, 1440)
-	postProcess(*this, 3440, 1370)
+	postProcess(*this, 3440, 1370),
+	current_width(3440),
+	current_height(1370)
 	{
 
 	using namespace entt;

@@ -79,7 +79,7 @@ PlayState::PlayState(){
 
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 
-		registry.emplace<Transformation>(player, glm::vec3(0, 0, 10));
+		registry.emplace<Transformation>(player, glm::vec3(0, 0, 12));
 		registry.emplace<Velocity>(player, glm::vec3(0, 0, 0));
 		registry.emplace<Direction>(player, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		registry.emplace<MovementState>(player);
@@ -87,6 +87,7 @@ PlayState::PlayState(){
 		registry.emplace<Renderable>(player, cubeID);
 		registry.emplace<PointLight>(player, point_light, glm::vec3(.7, .6, .5), 1.f, 10.0f);
 		registry.emplace<CharacterController>(player);
+		registry.emplace<HitBox>(player, EventType::CHARACTER, glm::vec3(.5));
 		registry.emplace<Graphics::DissolveMaterial>(player, material);
 
 	}

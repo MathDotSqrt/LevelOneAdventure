@@ -3,12 +3,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <entt/entt.hpp>
-
+#include <vector>
 #include "common.h"
 #include "Util/PackedFreeList.h"
 
 class btRigidBody;
 class btKinematicCharacterController;
+class btPairCachingGhostObject;
 
 namespace LOA::Systems {
 	class RenderSystem;
@@ -109,6 +110,33 @@ namespace LOA::Component {
 			offset(offset), 
 			mass(mass), 
 			body(nullptr) {}
+	};
+
+	//Ghost bodies for dealing/taking damage
+
+	enum class EventType : u32 {
+		NONE = 0,
+		STATIC,
+		CHARACTER,
+		FIRE_BOLT,
+		NUL_EVENTS,
+	};
+	struct HitBox {
+		struct CollisionEvent {
+			entt::entity other_entity = entt::null;
+			EventType other_event_type = EventType::NONE;
+		};
+
+		EventType type = EventType::STATIC;
+		glm::vec3 dim = glm::vec3(1);
+		glm::vec3 offset = glm::vec3(0);
+		btPairCachingGhostObject* ghost = nullptr;
+
+		//Arraylist of events
+		//Hitbox system would clear these events every frame
+		//std::vector<CollisionEvent> events;
+
+		CollisionEvent event;
 	};
 
 	//Rigid Bodies that dont have physics: walls, floors, etc

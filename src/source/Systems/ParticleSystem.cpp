@@ -35,6 +35,20 @@ void ParticleSystem::update(float dt) {
 
 	auto& registry = engine.getRegistry();
 
+	//Check for collisions
+	{
+		auto view = registry.view<FireParticle, HitBox>();
+		for (auto entity : view) {
+			auto& particle = view.get<FireParticle>(entity);
+			auto& hitbox = view.get<HitBox>(entity);
+			if (hitbox.event.other_event_type != EventType::NONE) {
+				//todo queue all entity deletions
+				engine.deleteEntity(entity);
+			}
+		}
+
+	}
+
 	//Spawns particles
 	{
 		auto view = registry.view<FireParticle, Transformation>();
@@ -45,8 +59,7 @@ void ParticleSystem::update(float dt) {
 			fireGenerator.genParticles(particle.spawn_rate * dt, transform.pos);
 			particle.life_time -= dt;
 			if (particle.life_time < 0) {
-				//ok to destroy current entity when iterating
-				registry.destroy(entity);
+				engine.deleteEntity(entity);
 			}
 		}
 

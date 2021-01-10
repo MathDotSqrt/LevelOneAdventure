@@ -8,7 +8,21 @@
 
 using namespace LOA::Physics;
 
-
+//btVector3 to_bt(const glm::vec3& vec) {
+//	return btVector3(vec.x, vec.y, vec.z);
+//}
+//
+//btQuaternion to_bt(const glm::quat& quat) {
+//	return btQuaternion(quat.x, quat.y, quat.z, quat.w);
+//}
+//
+//glm::vec3 to_glm(const btVector3& vec) {
+//	return glm::vec3(vec.x(), vec.y(), vec.z());
+//}
+//
+//glm::quat to_glm(const btQuaternion& quat) {
+//	return glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
+//}
 
 PhysicsScene::PhysicsScene() {
 	config = new btDefaultCollisionConfiguration();
@@ -39,10 +53,6 @@ PhysicsScene::~PhysicsScene() {
 	delete config;
 }
 
-void PhysicsScene::update(float delta) {
-	world->stepSimulation(delta);
-}
-
 void PhysicsScene::prerender() {
 	world->debugDrawWorld();
 	glDrawer->bufferData();
@@ -50,6 +60,55 @@ void PhysicsScene::prerender() {
 
 void PhysicsScene::setGravity(glm::vec3 g) {
 	world->setGravity(btVector3(g.x, g.y, g.z));
+}
+
+void PhysicsScene::update(float delta) {
+	world->stepSimulation(delta);
+	//size_t num_manifolds = world->getDispatcher()->getNumManifolds();
+
+	//for (size_t i = 0; i < num_manifolds; i++) {
+	//	btPersistentManifold* contact = world->getDispatcher()->getManifoldByIndexInternal(i);
+	//	const btCollisionObject* obj0 = contact->getBody0();
+	//	const btCollisionObject* obj1 = contact->getBody1();
+	//}
+}
+
+LOA::Component::HitBox::CollisionEvent PhysicsScene::checkForContacts(btPairCachingGhostObject* ghost) {
+	btManifoldArray   manifold_array;
+	btBroadphasePairArray& pair_array = ghost->getOverlappingPairCache()->getOverlappingPairArray();
+	size_t num_pairs = pair_array.size();
+	
+	LOA::Component::HitBox::CollisionEvent event;
+
+	for (size_t i = 0; i < num_pairs; i++) {
+		manifold_array.clear();
+
+		const btBroadphasePair& pair = pair_array[i];
+		btBroadphasePair* collision_pair = world->getPairCache()->findPair(pair.m_pProxy0, pair.m_pProxy1);
+		if (collision_pair == nullptr) {
+			continue;
+		}
+
+		if (collision_pair->m_algorithm != nullptr) {
+			collision_pair->m_algorithm->getAllContactManifolds(manifold_array);
+		}
+
+		for (size_t j = 0; j < manifold_array.size(); j++) {
+			btPersistentManifold* manifold = manifold_array[j];
+			if (manifold->getNumContacts() > 0) {
+				entt::entity other = (entt::entity)manifold->getBody0()->getUserIndex();
+				//todo perform some assertions to verify its correct
+				Component::EventType event_type = (Component::EventType)manifold->getBody0()->getUserIndex2();
+				event.other_entity = other;
+				event.other_event_type = event_type;
+			}
+			else {
+			
+			}
+		}
+	}
+
+	return event;
 }
 
 std::pair<bool,glm::vec3> PhysicsScene::castRay(glm::vec3 start, glm::vec3 stop, bool debug) const {
@@ -90,18 +149,50 @@ btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, g
 	
 	if (mass == 0) {
 		body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+		constexpr int mask = btBroadphaseProxy::DefaultFilter 
+			| btBroadphaseProxy::StaticFilter 
+			| btBroadphaseProxy::CharacterFilter 
+			| btBroadphaseProxy::SensorTrigger;
+		world->addRigidBody(body, btBroadphaseProxy::KinematicFilter, mask);
+	}
+	else {
+		body->setCollisionFlags(btCollisionObject::CF_DYNAMIC_OBJECT);
+		constexpr int mask = btBroadphaseProxy::DefaultFilter 
+			| btBroadphaseProxy::StaticFilter 
+			| btBroadphaseProxy::KinematicFilter 
+			| btBroadphaseProxy::CharacterFilter 
+			| btBroadphaseProxy::SensorTrigger;
+		world->addRigidBody(body, btBroadphaseProxy::DefaultFilter, mask);
 	}
 
-	world->addRigidBody(body);
-
+	body->setUserIndex((i32)0);
+	body->setUserPointer(nullptr);
 	return body;
 }
 
-void PhysicsScene::freeBox(btRigidBody* body) {
-	delete body->getMotionState();
-	world->removeRigidBody(body);
-	delete body;
+btRigidBody* PhysicsScene::createStaticBox(float mass, glm::vec3 dim, glm::vec3 pos, glm::quat rot) {
+	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
+	shapes.push_back(shape);
 
+	btVector3 inertia(0, 0, 0);
+
+
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, shape, inertia);
+
+	btRigidBody* body = new btRigidBody(rbInfo);
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+	groundTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+	body->setWorldTransform(groundTransform);
+
+	body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+
+	world->addRigidBody(body, btBroadphaseProxy::StaticFilter, btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
+
+	body->setUserIndex((i32)0);
+	body->setUserPointer(nullptr);
+	return body;
 }
 
 btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
@@ -118,6 +209,21 @@ btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
 
 	world->addRigidBody(body);
 	return body;
+}
+
+btPairCachingGhostObject* PhysicsScene::createHitBox(glm::vec3 dim, glm::vec3 pos) {
+	btCollisionShape* shape = new btBoxShape(btVector3(dim.x, dim.y, dim.z));
+	shapes.push_back(shape);
+
+	btPairCachingGhostObject* ghost = new btPairCachingGhostObject();
+	ghost->setCollisionShape(shape);
+	ghost->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	ghost->setCustomDebugColor(btVector3(1, 0, 1));
+	world->addCollisionObject(ghost, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+
+	ghost->setUserIndex((i32)0);
+	ghost->setUserPointer(nullptr);
+	return ghost;
 }
 
 btKinematicCharacterController* PhysicsScene::createCharacterController() {
@@ -146,6 +252,13 @@ btKinematicCharacterController* PhysicsScene::createCharacterController() {
 	return controller;
 }
 
+void PhysicsScene::freeBox(btRigidBody* body) {
+	delete body->getMotionState();
+	world->removeRigidBody(body);
+	delete body;
+
+}
+
 void PhysicsScene::freeCharacterController(btKinematicCharacterController* controller) {
 	world->removeCollisionObject(controller->getGhostObject());
 	world->removeAction(controller);
@@ -153,6 +266,12 @@ void PhysicsScene::freeCharacterController(btKinematicCharacterController* contr
 	//TODO: investigate potential leak of ghost object
 	//not sure if bullet deallocates that for me
 	delete controller;
+}
+
+void PhysicsScene::freeHitBox(btPairCachingGhostObject* ghost) {
+	world->removeCollisionObject(ghost);
+
+	delete ghost;
 }
 
 PhysicsDebugDrawer* PhysicsScene::getDrawer() const { 
