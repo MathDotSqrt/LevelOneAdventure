@@ -10,6 +10,7 @@
 #include "Components.h"
 #include "Window.h"
 #include "Systems/MouseCast.h"
+#include "Systems/AISystem.h"
 
 #include "Graphics/ParticleGenerator.h"
 #include "Graphics/TEX.h"
@@ -38,6 +39,7 @@ PlayState::PlayState(){
 	engine.addSystem<Systems::InputSystem>();
 	engine.addSystem<Systems::MovementSystem>();
 	engine.addSystem<Systems::ParticleSystem>();
+	engine.addSystem<Systems::AISystem>();
 	engine.addSystem<Systems::RenderSystem>();
 	engine.addSystem<Systems::PhysicsSystem>();
 
@@ -45,6 +47,7 @@ PlayState::PlayState(){
 	engine.addSystem<Systems::ShaderSystem>();
 
 	engine.addSystem<Systems::MouseCast>();
+	
 
 	entt::entity player = engine.getPlayer();
 	entt::entity camera = engine.getMainCamera();

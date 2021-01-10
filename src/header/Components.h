@@ -69,6 +69,9 @@ namespace LOA::Component {
 		float phi = glm::pi<float>() / 4;
 		float distance = 10;
 	};
+	struct AIComponent {
+		entt::entity target;
+	};
 
 	struct PointLight {
 		LOA::ID instance_id;
