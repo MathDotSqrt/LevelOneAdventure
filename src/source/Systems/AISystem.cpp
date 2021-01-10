@@ -17,7 +17,7 @@ void AISystem::init()
 	material.color = glm::vec3(.1,.76,.4);
 	
 	entt::registry& reg = engine.getRegistry();
-	for (int i = 1; i < 101; i++) {
+	for (int i = 1; i < 2; i++) {//hahaha
 		LOA::ID id = scence.addInstance("Dwagon"_hs, material);
 		entt::entity dwagon = reg.create();
 		reg.emplace<Component::Transformation>(dwagon, glm::vec3(1.0f / i, 1, 1 * i), glm::angleAxis(3.14f / 2 * 3.14f, glm::vec3(1, 0, 0)), glm::vec3(.1, .1, .1));
@@ -25,7 +25,8 @@ void AISystem::init()
 		reg.emplace<Component::Velocity>(dwagon, glm::vec3(0, 0, 0));
 		reg.emplace<Component::Direction>(dwagon, glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer());
-		reg.emplace<Component::CharacterController>(dwagon);
+		reg.emplace<Component::CharacterController>(dwagon); 
+		reg.emplace<Component::HitBox>(dwagon,Component::EventType::CHARACTER,glm::vec3(1,1,1));
 	}
 
 }
@@ -33,14 +34,14 @@ void AISystem::init()
 void AISystem::update(float delta)
 {
 	auto &reg = engine.getRegistry();
-	auto &AIView = reg.view<Component::AIComponent>();
+	auto &AIView = reg.view<Component::AIComponent,Component::Transformation,Component::Velocity,Component::Direction>();
 	for (entt::entity ent : AIView) {
-		auto &trans = reg.get<Component::Transformation>(ent);
-		auto &targ = reg.get<Component::AIComponent>(ent).target;
+		auto &trans = AIView.get<Component::Transformation>(ent);
+		auto &targ = AIView.get<Component::AIComponent>(ent).target;
 		auto &targtrans = reg.get<Component::Transformation>(targ);
 		glm::vec3 path = targtrans.pos - trans.pos;
-		reg.get<Component::Velocity>(ent) = path;
-		auto& dir = reg.get<Component::Direction>(ent);
+		AIView.get<Component::Velocity>(ent) = path;
+		auto& dir = AIView.get<Component::Direction>(ent);
 		glm::vec3 dyndir = trans.rot * dir.forward;
 		trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x,dyndir.z),glm::vec2(targtrans.pos.x - trans.pos.x,targtrans.pos.z - trans.pos.z)) * trans.rot;
 
