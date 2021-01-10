@@ -36,9 +36,9 @@ glm::mat4 LOA::Util::make_transform_offset(glm::vec3 offset, glm::vec3 pos, glm:
 	glm::mat4 transformation = glm::scale(offset_m, scale);
 	return transformation;
 }
-glm::quat LOA::Util::turn_towards(glm::vec2 you, glm::vec2 other) {
+glm::quat LOA::Util::turn_towards(glm::vec2 forward, glm::vec2 targetDir) {
 
-	float angle = glm::orientedAngle(glm::normalize(you), glm::normalize(other));
+	float angle = glm::orientedAngle(glm::normalize(forward), glm::normalize(targetDir));
 	glm::quat newrot = glm::angleAxis(-angle, glm::vec3(0, 1, 0));
 	return newrot;
 }
