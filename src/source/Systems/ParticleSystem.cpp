@@ -42,14 +42,6 @@ void ParticleSystem::update(float dt) {
 			auto& particle = view.get<FireParticle>(entity);
 			auto& hitbox = view.get<HitBox>(entity);
 			if (hitbox.event.other_event_type != EventType::NONE) {
-				if (hitbox.event.other_event_type == EventType::STATIC) {
-					printf("STATIC\n");
-				}
-
-				if (hitbox.event.other_event_type == EventType::FIRE_BOLT) {
-					printf("FIRE\n");
-				}
-
 				//todo queue all entity deletions
 				engine.deleteEntity(entity);
 			}
