@@ -38,6 +38,12 @@ void Engine::render() {
 	physicsScene.prerender();
 }
 
+void Engine::initSystems() {
+	for (auto& system : systems) {
+		system->init();
+	}
+}
+
 void Engine::deleteEntity(entt::entity entity) {
 	to_delete.insert(entity);
 }

@@ -246,7 +246,7 @@ btKinematicCharacterController* PhysicsScene::createCharacterController() {
 	
 	//No clue what the parameters are 
 	//Found in the demo
-	world->addCollisionObject(ghost_object, btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter | btBroadphaseProxy::DefaultFilter);
+	world->addCollisionObject(ghost_object, btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter | btBroadphaseProxy::DefaultFilter | btBroadphaseProxy::CharacterFilter);
 	world->addAction(controller);
 
 	return controller;

@@ -26,8 +26,9 @@ namespace LOA {
 		template<typename T>
 		void addSystem() {
 			systems.push_back(std::make_unique<T>(*this));
-			systems.back()->init();
 		}
+
+		void initSystems();
 
 		void deleteEntity(entt::entity entity);
 

@@ -104,12 +104,6 @@ void PhysicsSystem::freeCharacterController(entt::registry& registry, entt::enti
 }
 
 PhysicsSystem::PhysicsSystem(Engine& engine) : BaseSystem(engine) {
-	
-}
-
-void PhysicsSystem::init() {
-	using namespace entt;
-
 	auto& registry = engine.getRegistry();
 
 	registry.on_construct<Component::HitBox>().connect<&PhysicsSystem::spawnHitBox>(this);
@@ -124,6 +118,12 @@ void PhysicsSystem::init() {
 
 	registry.on_construct<Component::CharacterController>().connect<&PhysicsSystem::spawnCharacterController>(this);
 	registry.on_destroy<Component::CharacterController>().connect<&PhysicsSystem::freeCharacterController>(this);
+}
+
+void PhysicsSystem::init() {
+	using namespace entt;
+
+	
 
 	auto& scene = engine.getPhysicsScene();
 

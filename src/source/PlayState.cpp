@@ -106,7 +106,7 @@ PlayState::PlayState(){
 	}
 	
 	
-
+	engine.initSystems();
 }
 
 void PlayState::update(float dt) {

@@ -25,7 +25,7 @@ void AISystem::init()
 		reg.emplace<Component::Velocity>(dwagon, glm::vec3(0, 0, 0));
 		reg.emplace<Component::Direction>(dwagon, glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer());
-		reg.emplace<RigidBody>(dwagon,glm::vec3(1,1,1),glm::vec3(0,0,0));
+		reg.emplace<Component::CharacterController>(dwagon);
 	}
 
 }
