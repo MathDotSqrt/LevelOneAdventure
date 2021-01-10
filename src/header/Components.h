@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <entt/entt.hpp>
-
+#include <vector>
 #include "common.h"
 #include "Util/PackedFreeList.h"
 
@@ -110,19 +110,28 @@ namespace LOA::Component {
 	};
 
 	//Ghost bodies for dealing/taking damage
+
+	enum class EventType : u32 {
+		NONE = 0,
+		STATIC,
+		CHARACTER,
+		FIRE_BOLT,
+		NUL_EVENTS,
+	};
 	struct HitBox {
+		struct CollisionEvent {
+			entt::entity other_entity = entt::null;
+			EventType other_event_type = EventType::NONE;
+		};
+
+		EventType type = EventType::STATIC;
 		glm::vec3 dim = glm::vec3(1);
 		glm::vec3 offset = glm::vec3(0);
-		btPairCachingGhostObject* ghost=nullptr;
+		btPairCachingGhostObject* ghost = nullptr;
 
-		struct CollisionEvent {
-			enum class Event : u32{
-				STATIC,
-				CHARACTER
-			};
-			entt::entity entity = entt::null;
-			u32 mask = 0;
-		};
+		//Arraylist of events
+		//Hitbox system would clear these events every frame
+		//std::vector<CollisionEvent> events;
 
 		CollisionEvent event;
 	};

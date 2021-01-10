@@ -79,7 +79,6 @@ LOA::Component::HitBox::CollisionEvent PhysicsScene::checkForContacts(btPairCach
 	size_t num_pairs = pair_array.size();
 	
 	LOA::Component::HitBox::CollisionEvent event;
-	event.mask = 0;
 
 	for (size_t i = 0; i < num_pairs; i++) {
 		manifold_array.clear();
@@ -97,7 +96,11 @@ LOA::Component::HitBox::CollisionEvent PhysicsScene::checkForContacts(btPairCach
 		for (size_t j = 0; j < manifold_array.size(); j++) {
 			btPersistentManifold* manifold = manifold_array[j];
 			if (manifold->getNumContacts() > 0) {
-				event.mask = 1;
+				entt::entity other = (entt::entity)manifold->getBody0()->getUserIndex();
+				//todo perform some assertions to verify its correct
+				Component::EventType event_type = (Component::EventType)manifold->getBody0()->getUserIndex2();
+				event.other_entity = other;
+				event.other_event_type = event_type;
 			}
 			else {
 			
@@ -162,7 +165,8 @@ btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, g
 		world->addRigidBody(body, btBroadphaseProxy::DefaultFilter, mask);
 	}
 
-
+	body->setUserIndex((i32)0);
+	body->setUserPointer(nullptr);
 	return body;
 }
 
@@ -186,6 +190,8 @@ btRigidBody* PhysicsScene::createStaticBox(float mass, glm::vec3 dim, glm::vec3 
 
 	world->addRigidBody(body, btBroadphaseProxy::StaticFilter, btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
 
+	body->setUserIndex((i32)0);
+	body->setUserPointer(nullptr);
 	return body;
 }
 
@@ -214,6 +220,9 @@ btPairCachingGhostObject* PhysicsScene::createHitBox(glm::vec3 dim, glm::vec3 po
 	ghost->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	ghost->setCustomDebugColor(btVector3(1, 0, 1));
 	world->addCollisionObject(ghost, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+
+	ghost->setUserIndex((i32)0);
+	ghost->setUserPointer(nullptr);
 	return ghost;
 }
 

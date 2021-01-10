@@ -42,7 +42,7 @@ void spawnFireball(Engine &engine, glm::vec3 pos, glm::vec3 forward) {
 	registry.emplace<FireParticle>(fireball, 200.0f, 10.0f);
 	//registry.emplace<Renderable>(fireball, id);
 	//registry.emplace<RigidBody>(fireball, glm::vec3(.5), glm::vec3(0), .1f);
-	registry.emplace<HitBox>(fireball, glm::vec3(.1), glm::vec3(0));
+	registry.emplace<HitBox>(fireball, EventType::FIRE_BOLT, glm::vec3(.1), glm::vec3(0));
 
 
 	registry.emplace<PointLight>(fireball, point_id, glm::vec3(1, .5, .3), 2.0f, 10.0f);

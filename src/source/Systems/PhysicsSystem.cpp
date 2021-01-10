@@ -38,6 +38,9 @@ void PhysicsSystem::spawnHitBox(entt::registry& registry, entt::entity entity) {
 	if (collision.ghost == nullptr) {
 		collision.ghost = scene.createHitBox(collision.dim, glm::vec3(0));
 	}
+	collision.ghost->setUserIndex((i32)entity);
+	collision.ghost->setUserIndex2((i32)collision.type);
+
 }
 
 void PhysicsSystem::freeHitBox(entt::registry& registry, entt::entity entity) {
@@ -48,6 +51,8 @@ void PhysicsSystem::freeHitBox(entt::registry& registry, entt::entity entity) {
 	if (collision.ghost != nullptr) {
 		scene.freeHitBox(collision.ghost);
 	}
+
+
 }
 
 void PhysicsSystem::spawnRigidBody(entt::registry& registry, entt::entity entity) {
@@ -58,7 +63,8 @@ void PhysicsSystem::spawnRigidBody(entt::registry& registry, entt::entity entity
 	if (collision.body == nullptr) {
 		collision.body = scene.createBox(collision.mass, collision.dim);
 	}
-
+	collision.body->setUserIndex((i32)entity);
+	collision.body->setUserIndex2((i32)Component::EventType::STATIC);
 }
 
 void PhysicsSystem::freeRigidBody(entt::registry& registry, entt::entity entity) {
@@ -73,6 +79,9 @@ void PhysicsSystem::spawnStaticBody(entt::registry& registry, entt::entity entit
 	if (static_body.body == nullptr) {
 		static_body.body = scene.createBox(0, static_body.dim);
 	}
+
+	static_body.body->setUserIndex((i32)entity);
+	static_body.body->setUserIndex2((i32)Component::EventType::STATIC);
 }
 
 void PhysicsSystem::freeStaticBody(entt::registry& registry, entt::entity entity) {
