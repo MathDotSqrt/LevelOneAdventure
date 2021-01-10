@@ -1,5 +1,6 @@
 #include "Util/TransformUtil.h"
 #include <glm/gtx/transform.hpp>
+#include "glm/gtx/vector_angle.hpp"
 using namespace LOA::Util;
 
 glm::mat4 LOA::Util::make_transform(const Component::Transformation& transform) {
@@ -35,6 +36,13 @@ glm::mat4 LOA::Util::make_transform_offset(glm::vec3 offset, glm::vec3 pos, glm:
 	glm::mat4 transformation = glm::scale(offset_m, scale);
 	return transformation;
 }
+glm::quat LOA::Util::turn_towards(glm::vec2 you, glm::vec2 other) {
+
+	float angle = glm::orientedAngle(glm::normalize(you), glm::normalize(other));
+	glm::quat newrot = glm::angleAxis(-angle, glm::vec3(0, 1, 0));
+	return newrot;
+}
+
 
 glm::quat LOA::Util::quarter_rot(int r) {
 	return glm::angleAxis(glm::pi<float>() * r / 2.0f, glm::vec3(0, 1, 0));

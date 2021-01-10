@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Physics/PhysicsScene.h"
 #include "glm/gtx/vector_angle.hpp"
+#include "Util/TransformUtil.h"
 using namespace LOA::Systems;
 using namespace entt;
 //static entt::entity dwagon;
@@ -57,7 +58,7 @@ void MouseCast::update(float delta) {
 	auto &playerdir = reg.get<Component::Direction>(engine.getPlayer());
 	glm::vec2 playervec = glm::vec2(pair.second.x - playertrans.pos.x, pair.second.z - playertrans.pos.z);
 	glm::vec2 forvec = glm::vec2(playerdir.forward.x , playerdir.forward.z );
-	float angle = glm::orientedAngle(glm::normalize(forvec), glm::normalize(playervec));
-	glm::quat newrot = glm::angleAxis(-angle, glm::vec3(0, 1, 0));
-	playertrans.rot = newrot;
+	/*float angle = glm::orientedAngle(glm::normalize(forvec), glm::normalize(playervec));
+	glm::quat newrot = glm::angleAxis(-angle, glm::vec3(0, 1, 0));*/
+	playertrans.rot = LOA::Util::turn_towards(forvec,playervec);
 }
