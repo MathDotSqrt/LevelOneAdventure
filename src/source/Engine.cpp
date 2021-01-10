@@ -12,15 +12,19 @@ Engine::Engine() {
 	mainCamera = registry.create();
 }
 
-void Engine::update(float delta){
-	
+void Engine::update(float delta) {
+
 	for (auto& system : systems) {
 		system->update(delta);
 	}
-	if(Window::getInstance().isPressed('m'))
+	if (Window::getInstance().isPressed('m'))
 		getPhysicsScene().getDrawer()->setDebugMode(1);
-	else if(Window::getInstance().isPressed('n'))
+	else if (Window::getInstance().isPressed('n'))
 		getPhysicsScene().getDrawer()->setDebugMode(0);
+
+	getRegistry().destroy(to_delete.begin(), to_delete.end());
+	to_delete.clear();
+
 }
 
 void Engine::render() {
@@ -32,6 +36,10 @@ void Engine::render() {
 
 	//We prerender for the next frame because game physics is one frame behind the renderer
 	physicsScene.prerender();
+}
+
+void Engine::deleteEntity(entt::entity entity) {
+	to_delete.insert(entity);
 }
 
 entt::registry& Engine::getRegistry() {

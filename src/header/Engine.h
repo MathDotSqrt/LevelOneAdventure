@@ -2,6 +2,7 @@
 
 #include <entt/entt.hpp>
 #include <vector>
+#include <unordered_set>
 #include <memory>
 
 #include "Graphics/Scene.h"
@@ -28,6 +29,8 @@ namespace LOA {
 			systems.back()->init();
 		}
 
+		void deleteEntity(entt::entity entity);
+
 		entt::registry& getRegistry();
 		Graphics::Scene& getScene();
 		Graphics::BasicRenderer& getRenderer();
@@ -44,5 +47,6 @@ namespace LOA {
 		Graphics::BasicRenderer renderer;
 
 		std::vector<std::unique_ptr<Systems::BaseSystem>> systems;
+		std::unordered_set<entt::entity> to_delete;
 	};
 }

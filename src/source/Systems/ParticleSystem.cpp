@@ -42,7 +42,8 @@ void ParticleSystem::update(float dt) {
 			auto& particle = view.get<FireParticle>(entity);
 			auto& hitbox = view.get<HitBox>(entity);
 			if (hitbox.event.mask == 1) {
-				registry.destroy(entity);
+				//todo queue all entity deletions
+				engine.deleteEntity(entity);
 			}
 		}
 
@@ -58,8 +59,7 @@ void ParticleSystem::update(float dt) {
 			fireGenerator.genParticles(particle.spawn_rate * dt, transform.pos);
 			particle.life_time -= dt;
 			if (particle.life_time < 0) {
-				//ok to destroy current entity when iterating
-				registry.destroy(entity);
+				engine.deleteEntity(entity);
 			}
 		}
 
