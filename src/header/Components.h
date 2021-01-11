@@ -72,6 +72,8 @@ namespace LOA::Component {
 	};
 	struct AIComponent {
 		entt::entity target;
+		float attackrange;
+		float cooldown = 0.0f;
 	};
 
 	struct PointLight {

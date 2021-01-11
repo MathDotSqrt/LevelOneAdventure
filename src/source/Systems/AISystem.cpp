@@ -24,26 +24,51 @@ void AISystem::init()
 		reg.emplace<Component::Renderable>(dwagon, id);
 		reg.emplace<Component::Velocity>(dwagon, glm::vec3(0, 0, 0));
 		reg.emplace<Component::Direction>(dwagon, glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
-		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer());
+		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer(),10.0f);
 		reg.emplace<Component::CharacterController>(dwagon); 
 		reg.emplace<Component::HitBox>(dwagon,Component::EventType::CHARACTER,glm::vec3(1,1,1));
+		reg.emplace<Component::MovementState>(dwagon);
 	}
 
 }
-
+void attack(entt::entity ent, LOA::Engine &engine, float delta) {
+	using namespace LOA;
+	auto& reg = engine.getRegistry();
+	auto& aicomp = reg.get<Component::AIComponent>(ent);
+	auto& pscene = engine.getPhysicsScene();
+	glm::vec3& entpos = reg.get<Component::Transformation>(ent).pos;
+	glm::vec3& targpos = reg.get<Component::Transformation>(aicomp.target).pos;
+	
+	aicomp.cooldown += delta;
+	auto pair = pscene.castRay(entpos, targpos, true);
+	
+	if (aicomp.cooldown >= 0.3f && !pair.first) {
+		printf("FIRE\n");
+		reg.get<Component::MovementState>(ent).fire = true;
+		reg.get<Component::AIComponent>(ent).cooldown = 0.0f;
+	}
+}
 void AISystem::update(float delta)
 {
-	auto &reg = engine.getRegistry();
-	auto &AIView = reg.view<Component::AIComponent,Component::Transformation,Component::Velocity,Component::Direction>();
+		chase(delta);
+}
+void AISystem::chase(float delta) {
+	auto& reg = engine.getRegistry();
+	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::Velocity, Component::Direction>();
 	for (entt::entity ent : AIView) {
-		auto &trans = AIView.get<Component::Transformation>(ent);
-		auto &targ = AIView.get<Component::AIComponent>(ent).target;
-		auto &targtrans = reg.get<Component::Transformation>(targ);
+		auto& trans = AIView.get<Component::Transformation>(ent);
+		auto& targ = AIView.get<Component::AIComponent>(ent).target;
+		auto& targtrans = reg.get<Component::Transformation>(targ);
 		glm::vec3 path = targtrans.pos - trans.pos;
-		AIView.get<Component::Velocity>(ent) = path;
+		if(glm::length(path) > AIView.get<Component::AIComponent>(ent).attackrange)
+			AIView.get<Component::Velocity>(ent) = path;
+		else {
+			AIView.get<Component::Velocity>(ent) = glm::vec3(0, 0, 0);
+			attack(ent,engine,delta);
+		}
 		auto& dir = AIView.get<Component::Direction>(ent);
 		glm::vec3 dyndir = trans.rot * dir.forward;
-		trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x,dyndir.z),glm::vec2(targtrans.pos.x - trans.pos.x,targtrans.pos.z - trans.pos.z)) * trans.rot;
-
-	}
+		trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
+	}	
 }
+

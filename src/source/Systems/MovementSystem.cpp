@@ -105,6 +105,7 @@ void MovementSystem::update(float delta) {
 
 		if (movement.fire) {
 			spawnFireball(engine, transform.pos, transform.rot * dir.forward);
+			movement.fire = false;
 		}
 	}
 

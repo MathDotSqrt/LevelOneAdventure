@@ -7,5 +7,7 @@ namespace LOA::Systems {
 		AISystem(LOA::Engine& engine) : BaseSystem(engine) {}
 		void init();
 		void update(float delta);
+		void chase(float delta);
+		//void attack(entt::entity ent, entt::registry &reg);
 	};
 }
