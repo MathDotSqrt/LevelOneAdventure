@@ -34,6 +34,7 @@ set(HEADER_FILES ${HEADER_FILES}
 	"src/header/Graphics/VBO.h"
 
 	"src/header/Systems/AISystem.h"
+	"src/header/Systems/HealthSystem.h"
 	"src/header/Systems/InputSystem.h"
 	"src/header/Systems/LevelSystem.h"
 	"src/header/Systems/MouseCast.h"
@@ -85,6 +86,7 @@ set(SOURCE_FILES ${SOURCE_FILES}
 	"src/source/Graphics/VBO.cpp"
 
 	"src/source/Systems/AISystem.cpp"
+	"src/source/Systems/HealthSystem.cpp"
 	"src/source/Systems/InputSystem.cpp"
 	"src/source/Systems/LevelSystem.cpp"
 	"src/source/Systems/MouseCast.cpp"

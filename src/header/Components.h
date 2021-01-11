@@ -74,6 +74,11 @@ namespace LOA::Component {
 		entt::entity target;
 	};
 
+	struct HealthComponent {
+		float max_health = 10;
+		float current_health = 10;
+	};
+
 	struct PointLight {
 		LOA::ID instance_id;
 		glm::vec3 color;
