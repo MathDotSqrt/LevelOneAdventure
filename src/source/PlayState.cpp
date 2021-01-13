@@ -1,5 +1,6 @@
 #include "PlayState.h"
 #include "Systems/LevelSystem.h"
+#include "Systems/HealthSystem.h"
 #include "Systems/InputSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/ParticleSystem.h"
@@ -36,17 +37,21 @@ PlayState::PlayState(){
 
 	auto& registry = engine.getRegistry();
 
+	//Game Code
 	engine.addSystem<Systems::InputSystem>();
-	engine.addSystem<Systems::MovementSystem>();
-	engine.addSystem<Systems::ParticleSystem>();
 	engine.addSystem<Systems::AISystem>();
+	engine.addSystem<Systems::MovementSystem>();
+	engine.addSystem<Systems::HealthSystem>();
+
+	//Rendering/Physics updating
+	engine.addSystem<Systems::ParticleSystem>();
 	engine.addSystem<Systems::RenderSystem>();
 	engine.addSystem<Systems::PhysicsSystem>();
+	engine.addSystem<Systems::MouseCast>();
 
+	//Utility stuff
 	engine.addSystem<Systems::LevelSystem>();
 	engine.addSystem<Systems::ShaderSystem>();
-
-	engine.addSystem<Systems::MouseCast>();
 	
 
 	entt::entity player = engine.getPlayer();

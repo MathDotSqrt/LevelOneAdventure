@@ -39,7 +39,7 @@ namespace LOA::Physics {
 		void prerender();
 		void setGravity(glm::vec3 g);
 		void update(float delta);
-		Component::HitBox::CollisionEvent checkForContacts(btPairCachingGhostObject* ghost);
+		std::vector<Component::HitBox::CollisionEvent> checkForContacts(btPairCachingGhostObject* ghost);
 		
 		std::pair<bool,glm::vec3> castRay(glm::vec3 start, glm::vec3 stop, bool debug=false) const;
 		

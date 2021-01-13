@@ -26,6 +26,7 @@ void AISystem::init()
 		reg.emplace<Component::Direction>(dwagon, glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer());
 		reg.emplace<Component::CharacterController>(dwagon); 
+		reg.emplace<Component::HealthComponent>(dwagon, 10.0f, 10.0f);
 		reg.emplace<Component::HitBox>(dwagon,Component::EventType::CHARACTER,glm::vec3(1,1,1));
 	}
 
