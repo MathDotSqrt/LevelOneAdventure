@@ -21,10 +21,6 @@ void Engine::update(float delta) {
 		getPhysicsScene().getDrawer()->setDebugMode(1);
 	else if (Window::getInstance().isPressed('n'))
 		getPhysicsScene().getDrawer()->setDebugMode(0);
-
-	getRegistry().destroy(to_delete.begin(), to_delete.end());
-	to_delete.clear();
-
 }
 
 void Engine::render() {
@@ -46,6 +42,11 @@ void Engine::initSystems() {
 
 void Engine::deleteEntity(entt::entity entity) {
 	to_delete.insert(entity);
+}
+
+void Engine::batchDelete() {
+	getRegistry().destroy(to_delete.begin(), to_delete.end());
+	to_delete.clear();
 }
 
 entt::registry& Engine::getRegistry() {

@@ -132,11 +132,12 @@ void PhysicsSystem::init() {
 }
 
 void PhysicsSystem::update(float delta) {
-	LOA::Util::Timer timer("Physics");
-
 	using namespace Component;
 	auto& registry = engine.getRegistry();
-	
+
+	LOA::Util::Timer timer("Physics");
+	engine.batchDelete();
+
 	{
 		//Update positions of all non physics bodies
 		auto view = registry.view<Transformation, Velocity>(entt::exclude<RigidBody, CharacterController>);
