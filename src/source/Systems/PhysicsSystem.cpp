@@ -136,6 +136,7 @@ void PhysicsSystem::update(float delta) {
 	auto& registry = engine.getRegistry();
 
 	LOA::Util::Timer timer("Physics");
+	//Delete all entities that have been marked for deletion
 	engine.batchDelete();
 
 	{

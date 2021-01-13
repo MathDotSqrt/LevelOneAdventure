@@ -28,10 +28,9 @@ void HealthSystem::update(float delta) {
 
 		for (const auto& event : hitbox.events) {
 			if (event.other_event_type == EventType::FIRE_BOLT) {
-				//registry.has(event.other_entity);
-				//auto& projectile = registry.get<ProjectileComponent>(event.other_entity);
-				printf("DAMAGE");
-				damageEntity(health, 1);
+				assert(registry.has(event.other_entity));
+				auto& projectile = registry.get<ProjectileComponent>(event.other_entity);
+				damageEntity(health, projectile.damage);
 			}
 		}
 	}
