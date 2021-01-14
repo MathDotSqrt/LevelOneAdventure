@@ -19,10 +19,10 @@ void AISystem::init()
 	material.color = glm::vec3(.1,.76,.4);
 	
 	entt::registry& reg = engine.getRegistry();
-	for (int i = 1; i < 2; i++) {//hahaha
-		LOA::ID id = scence.addInstance("Dwagon"_hs, material);
+	for (int i = 1; i < 20; i++) {//hahaha
+		LOA::ID id = scence.addInstance("cube"_hs, material);
 		entt::entity dwagon = reg.create();
-		reg.emplace<Component::Transformation>(dwagon, glm::vec3(1.0f / i, 1, 1 * i), glm::angleAxis(3.14f / 2 * 3.14f, glm::vec3(1, 0, 0)), glm::vec3(.1, .1, .1));
+		reg.emplace<Component::Transformation>(dwagon); //,glm::vec3(1.0f / i, 1, 1 * i), glm::angleAxis(3.14f / 2 * 3.14f, glm::vec3(1, 0, 0)), glm::vec3(.1, .1, .1));
 		reg.emplace<Component::Renderable>(dwagon, id);
 		reg.emplace<Component::Velocity>(dwagon, glm::vec3(0, 0, 0));
 		reg.emplace<Component::Direction>(dwagon, glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));

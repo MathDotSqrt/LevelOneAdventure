@@ -94,6 +94,7 @@ PlayState::PlayState(){
 		registry.emplace<CharacterController>(player);
 		registry.emplace<HitBox>(player, EventType::CHARACTER, glm::vec3(.5));
 		registry.emplace<Graphics::DissolveMaterial>(player, material);
+		//registry.emplace<HealthComponent>(player);
 
 	}
 
