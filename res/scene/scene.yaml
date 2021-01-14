@@ -1,420 +1,621 @@
 tiles:
   - tile: door_frame
+    location: 'glm::vec3( 9, 0, 11)'
+    rot: 2
+  - tile: torch
+    location: 'glm::vec3( -4, 3, 1)'
+    rot: 1
+  - tile: torch
+    location: 'glm::vec3( -4, 3, -1)'
+    rot: 1
+  - tile: torch
+    location: 'glm::vec3( -3, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( -1, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( 1, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( 3, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( 5, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( 7, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( 10, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( 12, 3, -2)'
+    rot: 4
+  - tile: torch
+    location: 'glm::vec3( 13, 3, -2)'
+    rot: 7
+  - tile: torch
+    location: 'glm::vec3( 13, 3, 0)'
+    rot: 7
+  - tile: torch
+    location: 'glm::vec3( 13, 3, 2)'
+    rot: 7
+  - tile: torch
+    location: 'glm::vec3( 13, 3, 4)'
+    rot: 7
+  - tile: torch
+    location: 'glm::vec3( 13, 3, 6)'
+    rot: 7
+  - tile: torch
+    location: 'glm::vec3( 13, 3, 8)'
+    rot: 7
+  - tile: torch
+    location: 'glm::vec3( 13, 3, 10)'
+    rot: 7
+  - tile: torch
+    location: 'glm::vec3( 12, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( 10, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( 7, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( 5, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( 3, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( 1, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( -1, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( -3, 3, 11)'
+    rot: 10
+  - tile: torch
+    location: 'glm::vec3( -4, 3, 11)'
+    rot: 9
+  - tile: torch
+    location: 'glm::vec3( -4, 3, 9)'
+    rot: 9
+  - tile: torch
+    location: 'glm::vec3( -4, 3, 4)'
+    rot: 1
+  - tile: torch
+    location: 'glm::vec3( -3, 3, 5)'
+    rot: 2
+  - tile: torch
+    location: 'glm::vec3( -1, 3, 5)'
+    rot: 2
+  - tile: torch
+    location: 'glm::vec3( 1, 3, 5)'
+    rot: 2
+  - tile: torch
+    location: 'glm::vec3( 3, 3, 5)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
     location: 'glm::vec3( 3, 0, 9)'
-    rot: 6
-  - tile: wall_2
-    location: 'glm::vec3( 7, 0, 9)'
-    rot: 6
-  - tile: wall_3
-    location: 'glm::vec3( 7, 0, 8)'
-    rot: 3
-  - tile: wall_3
-    location: 'glm::vec3( 7, 0, 6)'
-    rot: 3
-  - tile: build_box
-    location: 'glm::vec3( 7, 0, 7)'
-    rot: 0
-  - tile: build_box
-    location: 'glm::vec3( -2, 0, 8)'
-    rot: 0
-  - tile: build_box
-    location: 'glm::vec3( -1, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 0, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 1, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 2, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 3, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 4, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 5, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
     location: 'glm::vec3( 6, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 7, 0, 8)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 7, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 6, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 5, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 4, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 3, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 2, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 1, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( 0, 0, 7)'
-    rot: 0
-  - tile: build_box
-    location: 'glm::vec3( -1, 0, 7)'
-    rot: 0
-  - tile: build_box
-    location: 'glm::vec3( -2, 0, 7)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -2, 0, 6)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -1, 0, 6)'
-    rot: 0
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 0, 0, 6)'
-    rot: 0
+    location: 'glm::vec3( 5, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 1, 0, 6)'
-    rot: 0
+    location: 'glm::vec3( 4, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 2, 0, 6)'
-    rot: 0
+    location: 'glm::vec3( 3, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 3, 0, 6)'
-    rot: 0
+    location: 'glm::vec3( 2, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 4, 0, 6)'
-    rot: 0
+    location: 'glm::vec3( 1, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 5, 0, 6)'
-    rot: 0
+    location: 'glm::vec3( 0, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 6, 0, 6)'
-    rot: 0
+    location: 'glm::vec3( -1, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 7, 0, 6)'
-    rot: 0
-  - tile: pillar_3
-    location: 'glm::vec3( 4, 0, 4)'
-    rot: 35
-  - tile: pillar_1
-    location: 'glm::vec3( 2, 0, 3)'
-    rot: 32
-  - tile: pillar_1
-    location: 'glm::vec3( 1, 0, 3)'
-    rot: 32
-  - tile: pillar_1
-    location: 'glm::vec3( 0, 0, 3)'
-    rot: 32
+    location: 'glm::vec3( -2, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 7, 0, 1)'
-    rot: 32
+    location: 'glm::vec3( -3, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 7, 0, 0)'
-    rot: 32
+    location: 'glm::vec3( -3, 0, 9)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 6, 0, 0)'
-    rot: 32
+    location: 'glm::vec3( -3, 0, 10)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 5, 0, 0)'
-    rot: 32
+    location: 'glm::vec3( -4, 0, 10)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 4, 0, 0)'
-    rot: 32
+    location: 'glm::vec3( -4, 0, 9)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 6, 2, 1)'
-    rot: 31
-  - tile: stairs_stone1
-    location: 'glm::vec3( 6, 3, 3)'
-    rot: 30
-  - tile: stairs_stone1
-    location: 'glm::vec3( 6, 2, 2)'
-    rot: 30
-  - tile: build_box
-    location: 'glm::vec3( 7, 3, 2)'
-    rot: 28
-  - tile: build_box
-    location: 'glm::vec3( 7, 2, 2)'
-    rot: 28
-  - tile: build_box
-    location: 'glm::vec3( 7, 1, 2)'
-    rot: 28
-  - tile: build_box
-    location: 'glm::vec3( 7, 0, 2)'
-    rot: 28
-  - tile: wall_1
-    location: 'glm::vec3( 5, 0, 6)'
-    rot: 28
-  - tile: wall_2
-    location: 'glm::vec3( 6, 0, 4)'
-    rot: 27
-  - tile: wall_2
-    location: 'glm::vec3( 6, 0, 2)'
-    rot: 27
+    location: 'glm::vec3( -4, 0, 8)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 3, 0, 1)'
-    rot: 16
+    location: 'glm::vec3( -2, 0, 11)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 3, 0, 2)'
-    rot: 16
+    location: 'glm::vec3( -4, 0, 11)'
+    rot: 2
   - tile: floor_stone1
-    location: 'glm::vec3( 3, 0, 3)'
-    rot: 16
-  - tile: floor_metal1
-    location: 'glm::vec3( 3, 0, 4)'
-    rot: 16
-  - tile: metal_grid
-    location: 'glm::vec3( -2, 0, 3)'
-    rot: 13
-  - tile: metal_grid
-    location: 'glm::vec3( -1, 0, 3)'
-    rot: 13
-  - tile: metal_grid
-    location: 'glm::vec3( 0, 0, 3)'
-    rot: 12
-  - tile: metal_grid
-    location: 'glm::vec3( 0, 0, 2)'
-    rot: 12
-  - tile: stairs_wood3
-    location: 'glm::vec3( -1, 0, 5)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -2, 0, 5)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -2, 0, 4)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -1, 0, 4)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -1, 0, 3)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -2, 0, 3)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -2, 0, 2)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -1, 0, 2)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -1, 0, 1)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -2, 0, 1)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -2, 0, 0)'
-    rot: 0
-  - tile: stairs_wood3
-    location: 'glm::vec3( -1, 0, 0)'
-    rot: 0
-  - tile: door_frame
-    location: 'glm::vec3( 2, 0, 0)'
-    rot: 0
-  - tile: wall_1
+    location: 'glm::vec3( -3, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 11)'
+    rot: 2
+  - tile: floor_large
+    location: 'glm::vec3( 9, 0, 11)'
+    rot: 2
+  - tile: floor_large
+    location: 'glm::vec3( 9, 0, 10)'
+    rot: 2
+  - tile: floor_large
+    location: 'glm::vec3( 9, 0, 9)'
+    rot: 2
+  - tile: floor_large
+    location: 'glm::vec3( 9, 0, 8)'
+    rot: 2
+  - tile: floor_large
+    location: 'glm::vec3( 9, 0, 7)'
+    rot: 2
+  - tile: floor_large
+    location: 'glm::vec3( 9, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 0)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 4)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 5)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 3)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, -1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, -2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, -2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, -1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 0)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 3)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 4)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 5)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 5)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 4)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 3)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 0)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, -1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, -2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, -2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, -1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 0)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 3)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 4)'
+    rot: 2
+  - tile: floor_stone1
     location: 'glm::vec3( 0, 0, 0)'
-    rot: 0
-  - tile: floor_stone2
-    location: 'glm::vec3( 3, 0, 0)'
-    rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 2, 0, 0)'
-    rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 1, 0, 0)'
-    rot: 0
-  - tile: floor_stone2
-    location: 'glm::vec3( 1, 0, 1)'
-    rot: 0
-  - tile: floor_stone2
-    location: 'glm::vec3( 1, 0, 2)'
-    rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 1, 0, 3)'
-    rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 1, 0, 4)'
-    rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 1, 0, 5)'
-    rot: 0
-  - tile: floor_stone2
-    location: 'glm::vec3( 0, 0, 5)'
-    rot: 0
-  - tile: floor_stone2
-    location: 'glm::vec3( 0, 0, 4)'
-    rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 0, 0, 3)'
-    rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 0, 0, 2)'
     rot: 0
   - tile: floor_stone1
     location: 'glm::vec3( 0, 0, 1)'
     rot: 0
   - tile: floor_stone1
-    location: 'glm::vec3( 0, 0, 0)'
+    location: 'glm::vec3( 0, 0, 2)'
     rot: 0
-  - tile: door_left
-    location: 'glm::vec3( 2, 0, 0)'
-    rot: 0
-  - tile: door_right
-    location: 'glm::vec3( 2, 0, 0)'
-    rot: 0
-  - tile: wall_1
-    location: 'glm::vec3( 4, 0, 0)'
-    rot: 0
-  - tile: wall_1
-    location: 'glm::vec3( 6, 0, 0)'
-    rot: 0
-  - tile: wall_3
-    location: 'glm::vec3( 7, 0, 0)'
-    rot: 3
-  - tile: wall_3
-    location: 'glm::vec3( 7, 0, 2)'
-    rot: 3
-  - tile: wall_3
-    location: 'glm::vec3( 7, 0, 4)'
-    rot: 3
-  - tile: wall_3
-    location: 'glm::vec3( -2, 0, 0)'
-    rot: 0
-  - tile: harrow
-    location: 'glm::vec3( -1, 0, 0)'
-    rot: -1
   - tile: floor_stone1
-    location: 'glm::vec3( 2, 0, 1)'
-    rot: 16
+    location: 'glm::vec3( 1, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 3)'
+    rot: 0
   - tile: floor_stone1
     location: 'glm::vec3( 2, 0, 2)'
-    rot: 16
-  - tile: floor_stone2
-    location: 'glm::vec3( 2, 0, 3)'
-    rot: 16
-  - tile: floor_stone2
-    location: 'glm::vec3( 2, 0, 4)'
-    rot: 16
-  - tile: floor_stone1
-    location: 'glm::vec3( 2, 0, 5)'
-    rot: 16
-  - tile: floor_stone2
-    location: 'glm::vec3( 3, 0, 5)'
-    rot: 16
-  - tile: stairs_stone1
-    location: 'glm::vec3( 3, 0, 1)'
-    rot: 19
-  - tile: stairs_stone1
-    location: 'glm::vec3( 4, 1, 1)'
-    rot: 19
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 2, 1)'
-    rot: 19
-  - tile: stairs_stone1
-    location: 'glm::vec3( 5, 2, 2)'
-    rot: 22
-  - tile: stairs_stone1
-    location: 'glm::vec3( 5, 3, 3)'
-    rot: 22
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 4, 4)'
-    rot: 22
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 4, 5)'
-    rot: 22
-  - tile: wall_1
-    location: 'glm::vec3( 4, 0, 4)'
-    rot: 23
-  - tile: build_box
-    location: 'glm::vec3( 4, 0, 1)'
-    rot: 23
-  - tile: build_box
-    location: 'glm::vec3( 5, 0, 1)'
-    rot: 23
-  - tile: build_box
-    location: 'glm::vec3( 5, 1, 2)'
-    rot: 23
-  - tile: build_box
-    location: 'glm::vec3( 5, 1, 3)'
-    rot: 23
-  - tile: build_box
-    location: 'glm::vec3( 5, 2, 3)'
-    rot: 23
-  - tile: build_box
-    location: 'glm::vec3( 5, 0, 3)'
-    rot: 23
-  - tile: build_box
-    location: 'glm::vec3( 5, 0, 2)'
-    rot: 23
-  - tile: floor_stone1
-    location: 'glm::vec3( 4, 0, 1)'
-    rot: 23
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 0, 1)'
-    rot: 23
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 0, 2)'
-    rot: 23
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 0, 3)'
-    rot: 23
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 0, 4)'
-    rot: 23
-  - tile: floor_stone1
-    location: 'glm::vec3( 5, 0, 5)'
-    rot: 23
-  - tile: floor_stone2
-    location: 'glm::vec3( 4, 0, 2)'
-    rot: 23
-  - tile: floor_stone2
-    location: 'glm::vec3( 4, 0, 3)'
-    rot: 23
-  - tile: floor_stone1
-    location: 'glm::vec3( 4, 0, 4)'
-    rot: 24
-  - tile: floor_stone1
-    location: 'glm::vec3( 4, 0, 5)'
-    rot: 24
-  - tile: build_box
-    location: 'glm::vec3( 5, 0, 5)'
-    rot: 24
-  - tile: build_box
-    location: 'glm::vec3( 5, 0, 4)'
-    rot: 24
-  - tile: build_box
-    location: 'glm::vec3( 5, 1, 4)'
-    rot: 24
-  - tile: build_box
-    location: 'glm::vec3( 5, 2, 4)'
-    rot: 24
-  - tile: build_box
-    location: 'glm::vec3( 5, 2, 5)'
-    rot: 24
-  - tile: build_box
-    location: 'glm::vec3( 5, 1, 5)'
-    rot: 24
-  - tile: build_box
-    location: 'glm::vec3( 5, 1, 4)'
-    rot: 24
-  - tile: floor_stone1
-    location: 'glm::vec3( 6, 4, 4)'
     rot: 0
   - tile: floor_stone1
-    location: 'glm::vec3( 6, 4, 5)'
+    location: 'glm::vec3( 2, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 5)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 4)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 3)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, -2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, -1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 0)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 1)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 2)'
+    rot: 0
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 3)'
     rot: 0
   - tile: floor_stone1
     location: 'glm::vec3( 7, 0, 5)'
@@ -422,105 +623,390 @@ tiles:
   - tile: floor_stone1
     location: 'glm::vec3( 7, 0, 4)'
     rot: 0
-  - tile: floor_stone1
-    location: 'glm::vec3( 7, 0, 3)'
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, 5)'
     rot: 0
-  - tile: wall_1
-    location: 'glm::vec3( 5, 0, 9)'
-    rot: 6
-  - tile: wall_1
-    location: 'glm::vec3( 1, 0, 9)'
-    rot: 6
-  - tile: wall_2
-    location: 'glm::vec3( -1, 0, 9)'
-    rot: 6
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, 4)'
+    rot: 0
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, 3)'
+    rot: 0
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, 2)'
+    rot: 0
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, 1)'
+    rot: 0
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, 0)'
+    rot: 0
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, -1)'
+    rot: 0
+  - tile: floor_large
+    location: 'glm::vec3( 8, 0, -2)'
+    rot: 0
   - tile: door_frame
-    location: 'glm::vec3( -2, 0, 1)'
-    rot: 9
+    location: 'glm::vec3( 8, 0, -2)'
+    rot: 0
   - tile: wall_1
-    location: 'glm::vec3( -2, 0, 3)'
-    rot: 9
+    location: 'glm::vec3( 6, 0, -2)'
+    rot: 0
   - tile: wall_1
-    location: 'glm::vec3( -2, 0, 5)'
-    rot: 9
+    location: 'glm::vec3( 4, 0, -2)'
+    rot: 0
   - tile: wall_1
-    location: 'glm::vec3( -2, 0, 7)'
-    rot: 9
+    location: 'glm::vec3( 2, 0, -2)'
+    rot: 0
   - tile: wall_1
-    location: 'glm::vec3( -2, 0, 9)'
-    rot: 9
-  - tile: floor_stone2
-    location: 'glm::vec3( 3, 0, 9)'
-    rot: 9
-  - tile: floor_stone2
-    location: 'glm::vec3( 2, 0, 9)'
-    rot: 9
-  - tile: floor_metal1
+    location: 'glm::vec3( 0, 0, -2)'
+    rot: 0
+  - tile: wall_1
+    location: 'glm::vec3( -2, 0, -2)'
+    rot: 0
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, -2)'
+    rot: 0
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, -1)'
+    rot: 1
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, 1)'
+    rot: 1
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, 3)'
+    rot: 1
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, 5)'
+    rot: 1
+  - tile: wall_1
+    location: 'glm::vec3( -3, 0, 5)'
+    rot: 2
+  - tile: wall_1
+    location: 'glm::vec3( -1, 0, 5)'
+    rot: 2
+  - tile: wall_1
+    location: 'glm::vec3( 1, 0, 5)'
+    rot: 2
+  - tile: wall_1
+    location: 'glm::vec3( 3, 0, 5)'
+    rot: 2
+  - tile: wall_1
+    location: 'glm::vec3( 5, 0, 5)'
+    rot: 2
+  - tile: wall_1
+    location: 'glm::vec3( 7, 0, 5)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, -2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 0)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, -1)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 2)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 3)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 4)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 5)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 5)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 9, 0, 4)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 8)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 10, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 8)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 11, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 8)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 8)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 9)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 12, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 13, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 11)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 10)'
+    rot: 2
+  - tile: floor_stone1
     location: 'glm::vec3( 7, 0, 9)'
-    rot: 9
-  - tile: floor_metal1
-    location: 'glm::vec3( -2, 0, 9)'
-    rot: 9
-  - tile: bridge_wood
-    location: 'glm::vec3( 6, 0, 9)'
-    rot: 10
-  - tile: bridge_wood
-    location: 'glm::vec3( 5, 0, 9)'
-    rot: 10
-  - tile: bridge_wood
-    location: 'glm::vec3( 4, 0, 9)'
-    rot: 10
-  - tile: bridge_wood
-    location: 'glm::vec3( 1, 0, 9)'
-    rot: 10
-  - tile: bridge_wood
-    location: 'glm::vec3( 0, 0, 9)'
-    rot: 10
-  - tile: bridge_wood
-    location: 'glm::vec3( -1, 0, 9)'
-    rot: 10
-  - tile: torch
-    location: 'glm::vec3( 1, 3, 0)'
-    rot: 0
-  - tile: torch
-    location: 'glm::vec3( 4, 3, 0)'
-    rot: 0
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 2)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 3)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 4)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 5)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 6)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 7)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 8)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( -2, 3, 9)'
-    rot: 1
-  - tile: torch
-    location: 'glm::vec3( 1, 3, 9)'
     rot: 2
-  - tile: torch
-    location: 'glm::vec3( 4, 3, 9)'
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 8)'
     rot: 2
-  - tile: torch
-    location: 'glm::vec3( 4, 3, 5)'
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 7, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 6)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -4, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -3, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -2, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( -1, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 0, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 1, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 2, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 4, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 5, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 6, 0, 7)'
+    rot: 2
+  - tile: floor_stone1
+    location: 'glm::vec3( 3, 0, 7)'
+    rot: 2
+  - tile: harrow
+    location: 'glm::vec3( 7, 0, 2)'
+    rot: 2
+  - tile: harrow
+    location: 'glm::vec3( 4, 0, 2)'
+    rot: 2
+  - tile: harrow
+    location: 'glm::vec3( 1, 0, 2)'
+    rot: 2
+  - tile: harrow
+    location: 'glm::vec3( -2, 0, 2)'
+    rot: 2
+  - tile: harrow
+    location: 'glm::vec3( -3, 0, 2)'
+    rot: 2
+  - tile: harrow
+    location: 'glm::vec3( 7, 0, 3)'
+    rot: 3
+  - tile: harrow
+    location: 'glm::vec3( 7, 0, 4)'
+    rot: 3
+  - tile: harrow
+    location: 'glm::vec3( 4, 0, 3)'
+    rot: 3
+  - tile: harrow
+    location: 'glm::vec3( 4, 0, 4)'
+    rot: 3
+  - tile: harrow
+    location: 'glm::vec3( -1, 0, 3)'
+    rot: 3
+  - tile: harrow
+    location: 'glm::vec3( -1, 0, 4)'
     rot: 3
   - tile: torch
-    location: 'glm::vec3( 5, 3, 6)'
+    location: 'glm::vec3( 6, 3, 5)'
+    rot: 2
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, 2)'
+    rot: 7
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, 0)'
+    rot: 7
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, -2)'
+    rot: 7
+  - tile: wall_1
+    location: 'glm::vec3( 12, 0, -2)'
     rot: 4
+  - tile: wall_1
+    location: 'glm::vec3( 10, 0, -2)'
+    rot: 4
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, 4)'
+    rot: 7
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, 6)'
+    rot: 7
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, 8)'
+    rot: 7
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, 10)'
+    rot: 7
+  - tile: wall_1
+    location: 'glm::vec3( 13, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( 11, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( 7, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( 5, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( 3, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( 1, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( -1, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( -3, 0, 11)'
+    rot: 6
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, 11)'
+    rot: 9
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, 9)'
+    rot: 9
+  - tile: wall_1
+    location: 'glm::vec3( -4, 0, 7)'
+    rot: 9
   - tile: torch
-    location: 'glm::vec3( 6, 3, 6)'
-    rot: 4
+    location: 'glm::vec3( -4, 3, 7)'
+    rot: 9
+  - tile: torch
+    location: 'glm::vec3( -4, 3, 1)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 6, 0, 7)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 6, 0, 10)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 4, 0, 10)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 2, 0, 10)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 0, 0, 10)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( -2, 0, 10)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( -4, 0, 10)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( -4, 0, 7)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( -2, 0, 7)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 0, 0, 7)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 2, 0, 7)'
+    rot: 1
+  - tile: pillar_1
+    location: 'glm::vec3( 4, 0, 7)'
+    rot: 1
