@@ -76,6 +76,15 @@ namespace LOA::Component {
 		float cooldown = 0.0f;
 	};
 
+	struct HealthComponent {
+		float max_health = 10;
+		float current_health = 10;
+	};
+
+	struct ProjectileComponent {
+		float damage = 1.0f;
+	};
+
 	struct PointLight {
 		LOA::ID instance_id;
 		glm::vec3 color;
@@ -136,9 +145,9 @@ namespace LOA::Component {
 
 		//Arraylist of events
 		//Hitbox system would clear these events every frame
-		//std::vector<CollisionEvent> events;
+		std::vector<CollisionEvent> events;
 
-		CollisionEvent event;
+		//CollisionEvent event;
 	};
 
 	//Rigid Bodies that dont have physics: walls, floors, etc

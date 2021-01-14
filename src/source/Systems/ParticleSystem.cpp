@@ -41,7 +41,7 @@ void ParticleSystem::update(float dt) {
 		for (auto entity : view) {
 			auto& particle = view.get<FireParticle>(entity);
 			auto& hitbox = view.get<HitBox>(entity);
-			if (hitbox.event.other_event_type != EventType::NONE) {
+			if (hitbox.events.size() > 0) {
 				//todo queue all entity deletions
 				engine.deleteEntity(entity);
 			}

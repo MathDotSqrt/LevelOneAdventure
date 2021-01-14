@@ -31,6 +31,7 @@ namespace LOA {
 		void initSystems();
 
 		void deleteEntity(entt::entity entity);
+		void batchDelete();
 
 		entt::registry& getRegistry();
 		Graphics::Scene& getScene();

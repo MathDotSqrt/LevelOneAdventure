@@ -73,12 +73,12 @@ void PhysicsScene::update(float delta) {
 	//}
 }
 
-LOA::Component::HitBox::CollisionEvent PhysicsScene::checkForContacts(btPairCachingGhostObject* ghost) {
+std::vector<LOA::Component::HitBox::CollisionEvent> PhysicsScene::checkForContacts(btPairCachingGhostObject* ghost) {
 	btManifoldArray   manifold_array;
 	btBroadphasePairArray& pair_array = ghost->getOverlappingPairCache()->getOverlappingPairArray();
 	size_t num_pairs = pair_array.size();
 	
-	LOA::Component::HitBox::CollisionEvent event;
+	std::vector<LOA::Component::HitBox::CollisionEvent> events;
 
 	for (size_t i = 0; i < num_pairs; i++) {
 		manifold_array.clear();
@@ -96,11 +96,18 @@ LOA::Component::HitBox::CollisionEvent PhysicsScene::checkForContacts(btPairCach
 		for (size_t j = 0; j < manifold_array.size(); j++) {
 			btPersistentManifold* manifold = manifold_array[j];
 			if (manifold->getNumContacts() > 0) {
-				entt::entity other = (entt::entity)manifold->getBody0()->getUserIndex();
+				Component::HitBox::CollisionEvent event;
+
+				const btCollisionObject* body = manifold->getBody0() == ghost ? manifold->getBody1() : manifold->getBody0();
+				assert(manifold->getBody0() == ghost || manifold->getBody1() == ghost);
+				
+				entt::entity other = (entt::entity)body->getUserIndex();
 				//todo perform some assertions to verify its correct
-				Component::EventType event_type = (Component::EventType)manifold->getBody0()->getUserIndex2();
+				Component::EventType event_type = (Component::EventType)body->getUserIndex2();
 				event.other_entity = other;
 				event.other_event_type = event_type;
+
+				events.push_back(event);
 			}
 			else {
 			
@@ -108,7 +115,7 @@ LOA::Component::HitBox::CollisionEvent PhysicsScene::checkForContacts(btPairCach
 		}
 	}
 
-	return event;
+	return events;
 }
 
 std::pair<bool,glm::vec3> PhysicsScene::castRay(glm::vec3 start, glm::vec3 stop, bool debug) const {
@@ -147,6 +154,9 @@ btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, g
 	groundTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 	body->setWorldTransform(groundTransform);
 	
+	body->setUserIndex((i32)0);
+	body->setUserIndex2((i32)Component::EventType::NONE);
+
 	if (mass == 0) {
 		body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 		constexpr int mask = btBroadphaseProxy::DefaultFilter 
@@ -165,8 +175,7 @@ btRigidBody* PhysicsScene::createBox(float mass, glm::vec3 dim, glm::vec3 pos, g
 		world->addRigidBody(body, btBroadphaseProxy::DefaultFilter, mask);
 	}
 
-	body->setUserIndex((i32)0);
-	body->setUserPointer(nullptr);
+	
 	return body;
 }
 
@@ -191,6 +200,7 @@ btRigidBody* PhysicsScene::createStaticBox(float mass, glm::vec3 dim, glm::vec3 
 	world->addRigidBody(body, btBroadphaseProxy::StaticFilter, btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
 
 	body->setUserIndex((i32)0);
+	body->setUserIndex2((i32)Component::EventType::NONE);
 	body->setUserPointer(nullptr);
 	return body;
 }
@@ -204,8 +214,10 @@ btRigidBody* PhysicsScene::createStaticPlane(glm::vec3 normal, float scalar) {
 	btRigidBody* body = new btRigidBody(rbInfo);
 	btTransform groundTransform;
 	groundTransform.setIdentity();
+	body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
 	body->setWorldTransform(groundTransform);
-
+	body->setUserIndex((i32)0);
+	body->setUserIndex2((i32)Component::EventType::NONE);
 
 	world->addRigidBody(body);
 	return body;
@@ -216,12 +228,19 @@ btPairCachingGhostObject* PhysicsScene::createHitBox(glm::vec3 dim, glm::vec3 po
 	shapes.push_back(shape);
 
 	btPairCachingGhostObject* ghost = new btPairCachingGhostObject();
+
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+	ghost->setWorldTransform(groundTransform);
+
 	ghost->setCollisionShape(shape);
-	ghost->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	ghost->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	ghost->setCustomDebugColor(btVector3(1, 0, 1));
-	world->addCollisionObject(ghost, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+	world->addCollisionObject(ghost, btBroadphaseProxy::SensorTrigger, (btBroadphaseProxy::AllFilter ^ (btBroadphaseProxy::CharacterFilter)));
 
 	ghost->setUserIndex((i32)0);
+	ghost->setUserIndex2((i32)Component::EventType::NONE);
 	ghost->setUserPointer(nullptr);
 	return ghost;
 }
@@ -240,7 +259,8 @@ btKinematicCharacterController* PhysicsScene::createCharacterController() {
 	ghost_object->setWorldTransform(transform);
 	ghost_object->setCollisionShape(shape);
 	ghost_object->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
-	
+	ghost_object->setUserIndex((i32)0);
+	ghost_object->setUserIndex2((i32)Component::EventType::NONE);
 	//TODO: fix leak
 	btKinematicCharacterController* controller = new btKinematicCharacterController(ghost_object, shape, .1, btVector3(0, 1, 0));
 	
@@ -270,7 +290,6 @@ void PhysicsScene::freeCharacterController(btKinematicCharacterController* contr
 
 void PhysicsScene::freeHitBox(btPairCachingGhostObject* ghost) {
 	world->removeCollisionObject(ghost);
-
 	delete ghost;
 }
 

@@ -125,18 +125,20 @@ void PhysicsSystem::init() {
 
 	
 
-	auto& scene = engine.getPhysicsScene();
+	//auto& scene = engine.getPhysicsScene();
 
-	scene.createStaticPlane(glm::vec3(0, 1, 0), -.2);
-	scene.setGravity(glm::vec3(0, -10, 0));
+	//scene.createStaticPlane(glm::vec3(0, 1, 0), -.2);
+	//scene.setGravity(glm::vec3(0, -10, 0));
 }
 
 void PhysicsSystem::update(float delta) {
-	LOA::Util::Timer timer("Physics");
-
 	using namespace Component;
 	auto& registry = engine.getRegistry();
-	
+
+	LOA::Util::Timer timer("Physics");
+	//Delete all entities that have been marked for deletion
+	engine.batchDelete();
+
 	{
 		//Update positions of all non physics bodies
 		auto view = registry.view<Transformation, Velocity>(entt::exclude<RigidBody, CharacterController>);
@@ -217,13 +219,15 @@ void PhysicsSystem::update(float delta) {
 		collision.body->setLinearVelocity(btVector3(vel.x, vel.y, vel.z));
 	}
 
+	
+
 	//Step physics simulation by a single frame
 	engine.getPhysicsScene().update(delta);
 
 	//update hitbox collisions
 	for (auto entity : hitbox_view) {
 		auto& hitbox = hitbox_view.get<HitBox>(entity);
-		hitbox.event = engine.getPhysicsScene().checkForContacts(hitbox.ghost);
+		hitbox.events = engine.getPhysicsScene().checkForContacts(hitbox.ghost);
 		hitbox.dim += .01f;;
 	}
 
