@@ -50,7 +50,7 @@ void MouseCast::update(float delta) {
 	/*Get camera position and cast a ray using bullet 3 from the camera to the world coords of the mouse location.*/
 	glm::vec3 campos = reg.get<Component::Transformation>(engine.getMainCamera()).pos;
 	//The pair is a bool and a vec3. The bool is if it collided and the vec3 is where the closest collision was. Can use to click on terrain.
-	auto pair = pscene.castRay(campos, campos + mouseray * 600.0f, true);
+	auto pair = pscene.castRay(campos, campos + mouseray * 600.0f, false);
 
 	/*Found the angle between the forward vector of the player and the vector between the player and the mouse. Creates a quaternian using that angle 
 	and sets the player rotation to that new rotation. Use vec2 since we dont care about the y-axis and it repsects the sign of the angle. */

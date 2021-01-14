@@ -122,6 +122,8 @@ void MovementSystem::update(float delta) {
 			spawnFireball(engine, transform.pos, transform.rot * dir.forward);
 			movement.fire = false;
 		}
+		movement.forward = 0.0f;
+		movement.strafe = 0.0f;
 	});
 
 	//Camera Follow

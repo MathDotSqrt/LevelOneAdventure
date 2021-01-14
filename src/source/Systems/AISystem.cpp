@@ -44,40 +44,62 @@ void attack(entt::entity ent, LOA::Engine &engine,float delta) {
 	
 	
 	if (aicomp.cooldown >= 0.3f) {
-		printf("FIRE\n");
+		//printf("FIRE\n");
 		reg.get<Component::MovementState>(ent).fire = true;
 		reg.get<Component::AIComponent>(ent).cooldown = 0.0f;
 	}
 }
 void AISystem::update(float delta)
 {
-		chase(delta);
-}
-void AISystem::chase(float delta) {
 	auto& reg = engine.getRegistry();
 	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::MovementState, Component::Velocity, Component::Direction>();
 	for (entt::entity ent : AIView) {
 		auto& trans = AIView.get<Component::Transformation>(ent);
 		auto& targ = AIView.get<Component::AIComponent>(ent).target;
 		auto& targtrans = reg.get<Component::Transformation>(targ);
+		auto& dir = AIView.get<Component::Direction>(ent);
 		glm::vec3 path = targtrans.pos - trans.pos;
 		auto& aicomp = reg.get<Component::AIComponent>(ent);
 		auto& pscene = engine.getPhysicsScene();
 		glm::vec3& entpos = reg.get<Component::Transformation>(ent).pos;
 		glm::vec3& targpos = reg.get<Component::Transformation>(targ).pos;
-		auto pair = pscene.castRay(entpos, targpos, true);
-		if(glm::length(path) > AIView.get<Component::AIComponent>(ent).attackrange)
-			AIView.get<Component::MovementState>(ent).forward = -.4f;
+		auto pair = pscene.castRay(entpos, targpos);//LOS Cast
+		if (!pair.first) {//nothing in the way
+			attack(ent, engine, delta);
+		}
 		else {
+			chase(trans,dir,targtrans,delta);
+		}
+
+		
+		glm::vec3 dyndir = trans.rot * dir.forward;
+		trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
+	}
+		//chase(delta);
+}
+using namespace LOA::Component;
+void AISystem::chase(Transformation &trans, Direction dir,Transformation& targtrans,float delta) {
+	auto& reg = engine.getRegistry();
+	auto& pscene = engine.getPhysicsScene();
+	glm::quat angleoffset = glm::angleAxis(3.14f/12, glm::vec3(0, 1, 0));
+	glm::quat angleoffset2 = glm::angleAxis(-3.14f / 12, glm::vec3(0, 1, 0));
+	auto left = pscene.castRay(trans.pos, trans.pos + angleoffset * (trans.rot * dir.forward) * 5.0f, true);
+	auto right = pscene.castRay(trans.pos, trans.pos + angleoffset2 * (trans.rot * dir.forward) * 5.0f, true);
+	auto mid = pscene.castRay(trans.pos, trans.pos + trans.rot * dir.forward * 8.0f, true);
+	//printf("Left: %f,%f,%f\n", left.second.x, left.second.y, left.second.z);
+	//printf("Right: %f,%f,%f\n", right.second.x, right.second.y, right.second.z);
+	//printf("Mid: %f,%f,%f\n", mid.second.x, mid.second.y, mid.second.z);
+}
+//out of range
+		/*if(glm::length(path) > AIView.get<Component::AIComponent>(ent).attackrange)
+			if(!pair.first)
+				AIView.get<Component::MovementState>(ent).forward = -.4f;
+			else
+				AIView.get<Component::MovementState>(ent).strafe = 3.0f;
+		else {//in range
 			AIView.get<Component::MovementState>(ent).forward = 0.0f;
 			if(pair.first)
 				AIView.get<Component::MovementState>(ent).forward = -1.0f;
 			else
 				attack(ent,engine,delta);
-		}
-		auto& dir = AIView.get<Component::Direction>(ent);
-		glm::vec3 dyndir = trans.rot * dir.forward;
-		trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
-	}	
-}
-
+		}*/
