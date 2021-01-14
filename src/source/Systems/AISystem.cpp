@@ -54,7 +54,7 @@ void AISystem::update(float delta)
 }
 void AISystem::chase(float delta) {
 	auto& reg = engine.getRegistry();
-	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::Velocity, Component::Direction>();
+	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::MovementState, Component::Velocity, Component::Direction>();
 	for (entt::entity ent : AIView) {
 		auto& trans = AIView.get<Component::Transformation>(ent);
 		auto& targ = AIView.get<Component::AIComponent>(ent).target;
@@ -66,11 +66,11 @@ void AISystem::chase(float delta) {
 		glm::vec3& targpos = reg.get<Component::Transformation>(targ).pos;
 		auto pair = pscene.castRay(entpos, targpos, true);
 		if(glm::length(path) > AIView.get<Component::AIComponent>(ent).attackrange)
-			AIView.get<Component::Velocity>(ent) = path;
+			AIView.get<Component::MovementState>(ent).forward = -.4f;
 		else {
-			AIView.get<Component::Velocity>(ent) = glm::vec3(0, 0, 0);
+			AIView.get<Component::MovementState>(ent).forward = 0.0f;
 			if(pair.first)
-				AIView.get<Component::Velocity>(ent) = 3.0f*path;
+				AIView.get<Component::MovementState>(ent).forward = -1.0f;
 			else
 				attack(ent,engine,delta);
 		}

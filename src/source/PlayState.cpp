@@ -37,9 +37,10 @@ PlayState::PlayState(){
 	auto& registry = engine.getRegistry();
 
 	engine.addSystem<Systems::InputSystem>();
-	engine.addSystem<Systems::MovementSystem>();
 	engine.addSystem<Systems::ParticleSystem>();
 	engine.addSystem<Systems::AISystem>();
+	engine.addSystem<Systems::MovementSystem>();
+
 	engine.addSystem<Systems::RenderSystem>();
 	engine.addSystem<Systems::PhysicsSystem>();
 

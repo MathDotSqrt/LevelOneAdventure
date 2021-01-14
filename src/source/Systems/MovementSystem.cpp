@@ -71,19 +71,31 @@ void MovementSystem::update(float delta) {
 
 		glm::vec3 move_vector(movement.strafe * 10, movement.fly * 10, movement.forward * 10);
 		vel = move_rot * move_vector;
-
-
-		if (movement.fire) {
-			spawnFireball(engine, transform.pos, new_rot * dir.forward);
-		}
 	}
 
 	auto camera = registry.view<Transformation, Direction, Camera>().front();
 	auto& camera_transform = registry.get<Transformation>(camera);
 	auto& camera_dir = registry.get<Direction>(camera);
 
+	//Movement for all non human input characters
+	auto movement_view = registry.view<Transformation, MovementState, Direction, Velocity>(entt::exclude<Camera, Input>);
+	for (auto entity : movement_view){
+		auto& transform = movement_view.get<Transformation>(entity);
+		auto& movement = movement_view.get<MovementState>(entity);
+		auto& dir = movement_view.get<Direction>(entity);
+		auto& vel = movement_view.get<Velocity>(entity);
+
+		glm::vec3 forward = transform.rot * dir.forward;
+		glm::vec3 right = transform.rot * dir.right;
+
+		float vel_y = vel.y;
+		vel = -10.0f * forward * movement.forward + 10.0f * right * movement.strafe;
+		vel.y = vel_y;
+	}
+
+
 	//player movement controls
-	auto player_view = registry.view<Transformation, MovementState, Direction, Velocity>(entt::exclude<Camera>);
+	auto player_view = registry.view<Transformation, MovementState, Direction, Velocity, Input>(entt::exclude<Camera>);
 	for (auto entity : player_view) {
 		auto& transform = player_view.get<Transformation>(entity);
 		auto& movement = player_view.get<MovementState>(entity);
@@ -102,14 +114,15 @@ void MovementSystem::update(float delta) {
 		vel = -10.0f * forward * movement.forward + 10.0f * right * movement.strafe;
 		//set old y velocity to keep our falling speed
 		vel.y = vel_y;
+	}
 
+	//Handles fireing the fireballs
+	registry.view<Transformation, Direction, MovementState>().each([&](auto& transform, auto& dir, auto& movement) {
 		if (movement.fire) {
 			spawnFireball(engine, transform.pos, transform.rot * dir.forward);
 			movement.fire = false;
 		}
-	}
-
-
+	});
 
 	//Camera Follow
 	auto camera_follow_view = registry.view<Transformation, Direction, Camera, Input>(entt::exclude<MovementState>);
