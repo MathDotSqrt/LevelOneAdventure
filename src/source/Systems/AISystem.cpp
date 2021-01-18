@@ -103,7 +103,7 @@ void AISystem::update(float delta)
 				AIView.get<Component::MovementState>(ent).forward = -FORWARD_SPEED;
 				chase(trans, dir, aicomp.lastspot, delta);
 			}
-			else
+			else if (aicomp.currentstate == AIState::CHASE)
 				aicomp.currentstate = AIState::SEARCH;
 			if (aicomp.currentstate == AIState::SEARCH) {
 				AIView.get<Component::MovementState>(ent).forward = -FORWARD_SPEED;
