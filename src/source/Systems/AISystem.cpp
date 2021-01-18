@@ -16,6 +16,7 @@ float const FORWARD_SPEED = .6;
 float const MID_LENGTH = 3;
 float const SIDE_LENGTH = 2;
 float const WHISKER_OFFSET = 3.14 / 4;
+float const SHOULDER_LENGTH = 1;
 
 
 float const ATTACK_SLERP_SPEED = .1;
@@ -84,13 +85,13 @@ void AISystem::update(float delta)
 			//trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
 			glm::quat target = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
 			glm::quat current = trans.rot;
-
+			aicomp.lastspot = targtrans.pos;
 			trans.rot = glm::slerp(current, target, ATTACK_SLERP_SPEED);
 			attack(ent, engine, delta);
 		}
 		else {
 			AIView.get<Component::MovementState>(ent).forward = -FORWARD_SPEED;
-			chase(trans,dir,targtrans,delta);
+			chase(trans,dir,aicomp.lastspot,delta);
 		}
 
 		
@@ -99,11 +100,15 @@ void AISystem::update(float delta)
 		//chase(delta);
 }
 using namespace LOA::Component;
-void AISystem::chase(Transformation &trans, Direction dir,Transformation& targtrans,float delta) {
+void AISystem::chase(Transformation &trans, Direction dir,glm::vec3 &targtrans,float delta) {
 	auto& reg = engine.getRegistry();
 	auto& pscene = engine.getPhysicsScene();
 	glm::quat angleoffset = glm::angleAxis(WHISKER_OFFSET, glm::vec3(0, 1, 0));
 	glm::quat angleoffset2 = glm::angleAxis(-WHISKER_OFFSET, glm::vec3(0, 1, 0));
+	/*glm::quat rs = glm::angleAxis(-3.14f / 2.0f, glm::vec3(0, 1, 0));
+	glm::quat ls = glm::angleAxis(3.14f / 2.0f, glm::vec3(0, 1, 0));
+	auto lside = pscene.castRay(trans.pos, trans.pos + ls * (trans.rot * dir.forward) * SHOULDER_LENGTH, true);
+	auto rside = pscene.castRay(trans.pos, trans.pos + rs * (trans.rot * dir.forward) * SHOULDER_LENGTH, true);*/
 	auto left = pscene.castRay(trans.pos, trans.pos + angleoffset * (trans.rot * dir.forward) * SIDE_LENGTH, true);
 	auto right = pscene.castRay(trans.pos, trans.pos + angleoffset2 * (trans.rot * dir.forward) * SIDE_LENGTH, true);
 	auto mid = pscene.castRay(trans.pos, trans.pos + trans.rot * dir.forward * MID_LENGTH, true);
@@ -119,7 +124,7 @@ void AISystem::chase(Transformation &trans, Direction dir,Transformation& targtr
 	
 	if (!left.first && !right.first && !mid.first) {
 		glm::vec3 dyndir = trans.rot * dir.forward;
-		glm::quat target = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
+		glm::quat target = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.x - trans.pos.x, targtrans.z - trans.pos.z)) * trans.rot;
 		glm::quat current = trans.rot;
 		
 		trans.rot = glm::slerp(current, target, SLERP_SPEED);

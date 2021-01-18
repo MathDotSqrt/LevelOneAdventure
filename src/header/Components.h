@@ -74,6 +74,7 @@ namespace LOA::Component {
 		entt::entity target;
 		float attackrange;
 		float cooldown = 0.0f;
+		glm::vec3 lastspot = glm::vec3(0,0,0);
 	};
 
 	struct HealthComponent {
