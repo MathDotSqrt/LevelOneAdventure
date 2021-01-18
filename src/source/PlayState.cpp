@@ -4,6 +4,7 @@
 #include "Systems/InputSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/ParticleSystem.h"
+#include "Systems/PartySystem.h"
 #include "Systems/PhysicsSystem.h"
 #include "Systems/VelocitySystem.h"
 #include "Systems/RenderSystem.h"
@@ -39,6 +40,7 @@ PlayState::PlayState(){
 
 	//Game Code
 	engine.addSystem<Systems::InputSystem>();
+	engine.addSystem<Systems::PartySystem>();
 	engine.addSystem<Systems::AISystem>();
 	engine.addSystem<Systems::MovementSystem>();
 	engine.addSystem<Systems::HealthSystem>();

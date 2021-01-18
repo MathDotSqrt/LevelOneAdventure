@@ -119,6 +119,10 @@ std::vector<LOA::Component::HitBox::CollisionEvent> PhysicsScene::checkForContac
 }
 
 std::pair<bool,glm::vec3> PhysicsScene::castRay(glm::vec3 start, glm::vec3 stop, bool debug) const {
+	if (glm::distance2(start, stop) < .001f) {
+		return { false, glm::vec3(0, 0, 0) };
+	}
+	
 	btVector3 btStart(start.x, start.y, start.z);
 	btVector3 btStop(stop.x, stop.y, stop.z);
 
