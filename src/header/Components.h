@@ -70,11 +70,15 @@ namespace LOA::Component {
 		float phi = glm::pi<float>() / 4;
 		float distance = 10;
 	};
+	enum class AIState {
+		IDLE, ATTACK, CHASE, SEARCH
+	};
 	struct AIComponent {
 		entt::entity target;
 		float attackrange;
 		float cooldown = 0.0f;
 		glm::vec3 lastspot = glm::vec3(0,0,0);
+		AIState currentstate = AIState::IDLE;
 	};
 
 	struct HealthComponent {

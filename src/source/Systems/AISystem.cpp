@@ -20,7 +20,7 @@ float const SHOULDER_LENGTH = 1;
 
 
 float const ATTACK_SLERP_SPEED = .1;
-float const SLERP_SPEED = .03;
+float const SLERP_SPEED = .08;
 
 float const AVOID_RATE = .03f;
 float const FAST_AVOID_MULTIPLIER = 2;
@@ -66,6 +66,7 @@ void attack(entt::entity ent, LOA::Engine &engine,float delta) {
 }
 void AISystem::update(float delta)
 {
+	using namespace Component;
 	auto& reg = engine.getRegistry();
 	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::MovementState, Component::Velocity, Component::Direction>();
 	for (entt::entity ent : AIView) {
@@ -80,18 +81,33 @@ void AISystem::update(float delta)
 		glm::vec3& entpos = reg.get<Component::Transformation>(ent).pos;
 		glm::vec3& targpos = reg.get<Component::Transformation>(targ).pos;
 		auto pair = pscene.castRay(entpos, targpos);//LOS Cast
-		if (!pair.first && glm::length(path) < ai.attackrange) {//nothing in the way and is close enough
+		if (!pair.first) {//nothing in the way and is close enough
 			glm::vec3 dyndir = trans.rot * dir.forward;
 			//trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
 			glm::quat target = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
 			glm::quat current = trans.rot;
+			aicomp.currentstate = AIState::ATTACK;
 			aicomp.lastspot = targtrans.pos;
 			trans.rot = glm::slerp(current, target, ATTACK_SLERP_SPEED);
-			attack(ent, engine, delta);
+			if (glm::length(path) < aicomp.attackrange) {
+				attack(ent, engine, delta);
+			}
+			else {
+				AIView.get<Component::MovementState>(ent).forward = -FORWARD_SPEED;
+			}
 		}
 		else {
-			AIView.get<Component::MovementState>(ent).forward = -FORWARD_SPEED;
-			chase(trans,dir,aicomp.lastspot,delta);
+			if (aicomp.currentstate == AIState::ATTACK)
+				aicomp.currentstate = AIState::CHASE;
+			if (glm::length(aicomp.lastspot - trans.pos) > 1 && aicomp.currentstate == AIState::CHASE) {
+				AIView.get<Component::MovementState>(ent).forward = -FORWARD_SPEED;
+				chase(trans, dir, aicomp.lastspot, delta);
+			}
+			else
+				aicomp.currentstate = AIState::SEARCH;
+			if (aicomp.currentstate == AIState::SEARCH) {
+				AIView.get<Component::MovementState>(ent).forward = -FORWARD_SPEED;
+			}
 		}
 
 		
