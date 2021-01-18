@@ -25,6 +25,8 @@ float const SLERP_SPEED = .08;
 float const AVOID_RATE = .03f;
 float const FAST_AVOID_MULTIPLIER = 2;
 
+static entt::entity debug_cube;
+
 void AISystem::init()
 {
 	Graphics::Scene &scence = engine.getScene();
@@ -47,6 +49,14 @@ void AISystem::init()
 		reg.emplace<Component::MovementState>(dwagon);
 	}
 
+
+	Graphics::BasicMaterial debug_material;
+	debug_material.setAlpha(.5f);
+	debug_material.setColor(glm::vec3(1.5f));
+	LOA::ID id = scence.addInstance("cube"_hs, debug_material);
+	debug_cube = reg.create();
+	reg.emplace<Component::Transformation>(debug_cube, glm::vec3(0), glm::quat(1, 0, 0, 0), glm::vec3(.2f)); //,glm::vec3(1.0f / i, 1, 1 * i), glm::angleAxis(3.14f / 2 * 3.14f, glm::vec3(1, 0, 0)), glm::vec3(.1, .1, .1));
+	reg.emplace<Component::Renderable>(debug_cube, id);
 }
 void attack(entt::entity ent, LOA::Engine &engine,float delta) {
 	using namespace LOA;
@@ -69,6 +79,7 @@ void AISystem::update(float delta)
 	using namespace Component;
 	auto& reg = engine.getRegistry();
 	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::MovementState, Component::Velocity, Component::Direction>();
+	
 	for (entt::entity ent : AIView) {
 		auto& trans = AIView.get<Component::Transformation>(ent);
 		auto& ai = AIView.get<Component::AIComponent>(ent);
@@ -81,6 +92,11 @@ void AISystem::update(float delta)
 		glm::vec3& entpos = reg.get<Component::Transformation>(ent).pos;
 		glm::vec3& targpos = reg.get<Component::Transformation>(targ).pos;
 		auto pair = pscene.castRay(entpos, targpos);//LOS Cast
+
+		//debug info
+		reg.get<Component::Transformation>(debug_cube).pos = aicomp.lastspot;
+
+
 		if (!pair.first) {//nothing in the way and is close enough
 			glm::vec3 dyndir = trans.rot * dir.forward;
 			//trans.rot = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.pos.x - trans.pos.x, targtrans.pos.z - trans.pos.z)) * trans.rot;
@@ -88,6 +104,7 @@ void AISystem::update(float delta)
 			glm::quat current = trans.rot;
 			aicomp.currentstate = AIState::ATTACK;
 			aicomp.lastspot = targtrans.pos;
+
 			trans.rot = glm::slerp(current, target, ATTACK_SLERP_SPEED);
 			if (glm::length(path) < aicomp.attackrange) {
 				attack(ent, engine, delta);
