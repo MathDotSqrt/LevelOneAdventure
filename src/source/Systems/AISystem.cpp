@@ -234,6 +234,8 @@ void AISystem::chase(Transformation &trans, Direction dir, glm::vec3 &targtrans,
 	//TODO: if all three are true the AI is LOST
 	if (left.first && right.first && mid.first) {
 		//Go Home, pray that the AI wont get lost on the way home
+		glm::vec3 path = targtrans - trans.pos;
+		trans.rot = turn_ai(trans.rot, path, dir, 10 * SLERP_SPEED * speed);
 	}
 	
 	if (!left.first && !right.first && !mid.first) {
