@@ -34,7 +34,7 @@ void PartySystem::init() {
 		registry.emplace<PointLight>(npc, point_light, glm::vec3(.7, .6, .5), 1.f, 10.0f);
 		registry.emplace<CharacterController>(npc);
 		registry.emplace<HitBox>(npc, EventType::CHARACTER, glm::vec3(.5));
-		registry.emplace<HealthComponent>(npc, 10.f, 10.f);
+		registry.emplace<HealthComponent>(npc, 100.f, 100.f);
 		registry.emplace<AIComponent>(npc, entt::null, .8f);
 		registry.emplace<PartyMember>(npc, entt::null);
 		registry.emplace<Graphics::DissolveMaterial>(npc, material);
