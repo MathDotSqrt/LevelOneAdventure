@@ -76,6 +76,7 @@ namespace LOA::Component {
 	struct AIComponent {
 		entt::entity target;
 		float attackrange;
+		float speed = 1.0f;
 		float cooldown = 0.0f;
 		glm::vec3 lastspot = glm::vec3(10);
 		AIState currentstate = AIState::IDLE;

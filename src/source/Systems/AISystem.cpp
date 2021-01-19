@@ -12,7 +12,7 @@ using namespace entt;
 
 //static entt::entity dwagon;
 //Need to update slerp and avoidance rates if speed is updated
-float const FORWARD_SPEED = .6;
+float const ENEMY_FORWARD_SPEED = .6;
 
 float const MID_LENGTH = 3;
 float const SIDE_LENGTH = 2;
@@ -20,10 +20,10 @@ float const WHISKER_OFFSET = 3.14 / 4;
 float const SHOULDER_LENGTH = 1;
 
 
-float const ATTACK_SLERP_SPEED = .1;
-float const SLERP_SPEED = .08;
+float const ATTACK_SLERP_SPEED = .1 / .6;
+float const SLERP_SPEED = .08 / .6;
 
-float const AVOID_RATE = .03f;
+float const AVOID_RATE = .03f / .6;
 float const FAST_AVOID_MULTIPLIER = 2;
 
 static entt::entity debug_cube;
@@ -43,7 +43,7 @@ void AISystem::init()
 		reg.emplace<Component::Renderable>(dwagon, id);
 		reg.emplace<Component::Velocity>(dwagon, glm::vec3(0, 0, 0));
 		reg.emplace<Component::Direction>(dwagon, glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
-		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer(),10.0f);
+		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer(), 10.0f, ENEMY_FORWARD_SPEED);
 		reg.emplace<Component::CharacterController>(dwagon); 
 		reg.emplace<Component::HealthComponent>(dwagon, 10.0f, 10.0f);
 		reg.emplace<Component::HitBox>(dwagon,Component::EventType::CHARACTER,glm::vec3(1,1,1));
@@ -82,7 +82,7 @@ glm::quat turn_ai(const glm::quat &current_rot, const glm::vec3 &target_dir, con
 	glm::vec2 target_dir2(target_dir.x, target_dir.z);
 
 	glm::quat target = LOA::Util::turn_towards(current_dir2, target_dir2) * current_rot;
-	return glm::slerp(current_rot, target, SPEED);
+	return glm::slerp(current_rot, target, glm::min(SPEED, 1.f));
 }
 
 void AISystem::update(float delta)
@@ -148,7 +148,13 @@ void AISystem::update(float delta)
 			aicomp.lastspot = targtrans.pos;
 		}
 
-		aicomp.currentstate = AIState::CHASE;
+		if (glm::distance(trans.pos, targtrans.pos) < 2) {
+			aicomp.currentstate = AIState::IDLE;
+		}
+		else{
+			aicomp.currentstate = AIState::CHASE;
+		}
+
 	}
 
 	//All AI actions per state
@@ -175,29 +181,29 @@ void AISystem::update(float delta)
 		{
 			auto& targtrans = reg.get<Component::Transformation>(targ);
 			glm::vec3 path = targtrans.pos - trans.pos;
-			trans.rot = turn_ai(trans.rot, path, dir, ATTACK_SLERP_SPEED);
+			trans.rot = turn_ai(trans.rot, path, dir, ATTACK_SLERP_SPEED * aicomp.speed);
 
 			if (glm::length(path) < aicomp.attackrange) {
 				attack(ent, engine, delta);
 
 				//if too close move back a lil
 				if (glm::length(path) < aicomp.attackrange / 2.0f) {
-					movement.forward = FORWARD_SPEED;
+					movement.forward = aicomp.speed;
 				}
 			}
 			else {
-				movement.forward = -FORWARD_SPEED;
+				movement.forward = -aicomp.speed;
 			}
 		}
 			break;
 		case AIState::CHASE:
 			//Moves forward and performs chase 
-			movement.forward = -FORWARD_SPEED;
-			chase(trans, dir, aicomp.lastspot, delta);
+			movement.forward = -aicomp.speed;
+			chase(trans, dir, aicomp.lastspot, aicomp.speed, delta);
 			break;
 		case AIState::SEARCH:
 			//Blindly moves forward
-			movement.forward = -FORWARD_SPEED;
+			movement.forward = -aicomp.speed;
 			break;
 		}
 
@@ -208,7 +214,7 @@ void AISystem::update(float delta)
 		//chase(delta);
 }
 using namespace LOA::Component;
-void AISystem::chase(Transformation &trans, Direction dir,glm::vec3 &targtrans,float delta) {
+void AISystem::chase(Transformation &trans, Direction dir, glm::vec3 &targtrans, float speed, float delta) {
 	auto& reg = engine.getRegistry();
 	auto& pscene = engine.getPhysicsScene();
 	glm::quat angleoffset = glm::angleAxis(WHISKER_OFFSET, glm::vec3(0, 1, 0));
@@ -232,13 +238,13 @@ void AISystem::chase(Transformation &trans, Direction dir,glm::vec3 &targtrans,f
 	
 	if (!left.first && !right.first && !mid.first) {
 		glm::vec3 path = targtrans - trans.pos;
-		trans.rot = turn_ai(trans.rot, path, dir, SLERP_SPEED);
+		trans.rot = turn_ai(trans.rot, path, dir, SLERP_SPEED * speed);
 	}
 	if(left.first){
-		theta += -AVOID_RATE;
+		theta += -AVOID_RATE * speed;
 	}
 	if(right.first){
-		theta += AVOID_RATE;
+		theta += AVOID_RATE * speed;
 	}
 	if(mid.first){
 		theta *= FAST_AVOID_MULTIPLIER;
