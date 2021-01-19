@@ -34,12 +34,23 @@ void PartySystem::init() {
 		registry.emplace<CharacterController>(npc);
 		registry.emplace<HitBox>(npc, EventType::CHARACTER, glm::vec3(.5));
 		registry.emplace<HealthComponent>(npc, 10.f, 10.f);
-		//registry.emplace<AIComponent>(npc, entt::null, 1.f);
+		registry.emplace<AIComponent>(npc, engine.getPlayer(), 1.f);
+		registry.emplace<PartyMember>(npc, engine.getPlayer());
 		registry.emplace<Graphics::DissolveMaterial>(npc, material);
 	}
 
 }
 
 void PartySystem::update(float delta) {
+	using namespace Component;
 
+	auto& registry = engine.getRegistry();
+
+	auto MemberView = registry.view<PartyMember, AIComponent>();
+	for (entt::entity entity : MemberView) {
+		auto& member = MemberView.get<PartyMember>(entity);
+		auto& ai = MemberView.get<AIComponent>(entity);
+
+		ai.target = member.leader;
+	}
 }

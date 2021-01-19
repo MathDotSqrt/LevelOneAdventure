@@ -6,6 +6,7 @@
 #include "Physics/PhysicsScene.h"
 #include "glm/gtx/vector_angle.hpp"
 #include "Util/TransformUtil.h"
+using namespace LOA;
 using namespace LOA::Systems;
 using namespace entt;
 
@@ -74,14 +75,84 @@ void attack(entt::entity ent, LOA::Engine &engine,float delta) {
 		reg.get<Component::AIComponent>(ent).cooldown = 0.0f;
 	}
 }
+
+glm::quat turn_ai(const glm::quat &current_rot, const glm::vec3 &target_dir, const Component::Direction &dir, float SPEED) {
+	glm::vec3 dyndir = current_rot * dir.forward;
+	glm::vec2 current_dir2(dyndir.x, dyndir.z);
+	glm::vec2 target_dir2(target_dir.x, target_dir.z);
+
+	glm::quat target = LOA::Util::turn_towards(current_dir2, target_dir2) * current_rot;
+	return glm::slerp(current_rot, target, SPEED);
+}
+
 void AISystem::update(float delta)
 {
 	using namespace Component;
 
 	auto& pscene = engine.getPhysicsScene();
 	auto& reg = engine.getRegistry();
-	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::MovementState, Component::Velocity, Component::Direction>();
 	
+
+	//How AI State changes for enemy AI
+	auto EnemyAIView = reg.view<AIComponent, Transformation>(entt::exclude<PartyMember>);
+	for (entt::entity ent : EnemyAIView) {
+		
+		auto& trans = EnemyAIView.get<Component::Transformation>(ent);
+		auto& aicomp = EnemyAIView.get<Component::AIComponent>(ent);
+		auto& targ = aicomp.target;
+
+		if (targ == entt::null) {
+			aicomp.currentstate = AIState::IDLE;
+			continue;
+		}
+
+		auto& targtrans = reg.get<Component::Transformation>(targ);
+		glm::vec3 path = targtrans.pos - trans.pos;
+
+		auto pair = pscene.castRay(trans.pos, targtrans.pos, true);//LOS Cast
+
+		if (pair.first == false) { //Has line of sight
+			aicomp.currentstate = AIState::ATTACK;
+			aicomp.lastspot = targtrans.pos;
+
+		}
+		else if (aicomp.currentstate == AIState::ATTACK) {	//Was attacking but lost LOS; Chase
+			aicomp.currentstate = AIState::CHASE;
+		}
+		else if (aicomp.currentstate == AIState::CHASE) {
+			//If AI was chasing and arrived at target position but did not gain line of sight of target search
+			if (glm::distance(aicomp.lastspot, trans.pos) < 1.f) {
+				aicomp.currentstate = AIState::SEARCH;
+			}
+		}
+	}
+
+
+	auto PartyMemberAIView = reg.view<AIComponent, Transformation, PartyMember>();
+	for (entt::entity ent : PartyMemberAIView) {
+		auto& trans = PartyMemberAIView.get<Component::Transformation>(ent);
+		auto& aicomp = PartyMemberAIView.get<Component::AIComponent>(ent);
+		auto& targ = aicomp.target;
+
+		//No valid target
+		if (targ == entt::null) {
+			aicomp.currentstate = AIState::IDLE;
+			continue;
+		}
+
+		auto& targtrans = reg.get<Component::Transformation>(targ);
+		glm::vec3 path = targtrans.pos - trans.pos;
+
+		auto pair = pscene.castRay(trans.pos, targtrans.pos, true);//LOS Cast
+		if(pair.first == false) { //Has line of sight
+			aicomp.lastspot = targtrans.pos;
+		}
+
+		aicomp.currentstate = AIState::CHASE;
+	}
+
+	//All AI actions per state
+	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::MovementState, Component::Velocity, Component::Direction>();
 	for (entt::entity ent : AIView) {
 		auto& trans = AIView.get<Component::Transformation>(ent);
 		auto& dir = AIView.get<Component::Direction>(ent);
@@ -89,29 +160,11 @@ void AISystem::update(float delta)
 		auto& aicomp = AIView.get<Component::AIComponent>(ent);
 		auto& targ = aicomp.target;
 		
+		//Something wrong here...
 		//There is no entity to target
+		//Automatically idle
 		if (targ == entt::null) {
 			aicomp.currentstate = AIState::IDLE;
-		}
-		else {
-			auto& targtrans = reg.get<Component::Transformation>(targ);
-			glm::vec3 path = targtrans.pos - trans.pos;
-
-			auto pair = pscene.castRay(trans.pos, targtrans.pos, true);//LOS Cast
-
-			
-			if (pair.first == false) { //Has line of sight
-				aicomp.currentstate = AIState::ATTACK;
-			}
-			else if (aicomp.currentstate == AIState::ATTACK){	//Was attacking but lost LOS; Chase
-				aicomp.currentstate = AIState::CHASE;
-			}
-			else if (aicomp.currentstate == AIState::CHASE) {	
-				//If AI was chasing and arrived at target position but did not gain line of sight of target search
-				if (glm::distance(aicomp.lastspot, trans.pos) < 1.f) {	
-					aicomp.currentstate = AIState::SEARCH;
-				}
-			}
 		}
 		
 		switch (aicomp.currentstate) {
@@ -122,15 +175,7 @@ void AISystem::update(float delta)
 		{
 			auto& targtrans = reg.get<Component::Transformation>(targ);
 			glm::vec3 path = targtrans.pos - trans.pos;
-			
-			glm::vec3 dyndir = trans.rot * dir.forward;
-			glm::vec2 current_dir(dyndir.x, dyndir.z);
-			glm::vec2 target_dir(path.x, path.z);
-
-			glm::quat target = LOA::Util::turn_towards(current_dir, target_dir) * trans.rot;
-			trans.rot = glm::slerp(trans.rot, target, ATTACK_SLERP_SPEED);
-
-			aicomp.lastspot = targtrans.pos;
+			trans.rot = turn_ai(trans.rot, path, dir, ATTACK_SLERP_SPEED);
 
 			if (glm::length(path) < aicomp.attackrange) {
 				attack(ent, engine, delta);
@@ -186,11 +231,8 @@ void AISystem::chase(Transformation &trans, Direction dir,glm::vec3 &targtrans,f
 	}
 	
 	if (!left.first && !right.first && !mid.first) {
-		glm::vec3 dyndir = trans.rot * dir.forward;
-		glm::quat target = LOA::Util::turn_towards(glm::vec2(dyndir.x, dyndir.z), glm::vec2(targtrans.x - trans.pos.x, targtrans.z - trans.pos.z)) * trans.rot;
-		glm::quat current = trans.rot;
-		
-		trans.rot = glm::slerp(current, target, SLERP_SPEED);
+		glm::vec3 path = targtrans - trans.pos;
+		trans.rot = turn_ai(trans.rot, path, dir, SLERP_SPEED);
 	}
 	if(left.first){
 		theta += -AVOID_RATE;
