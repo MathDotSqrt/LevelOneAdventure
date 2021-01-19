@@ -48,6 +48,7 @@ void AISystem::init()
 		reg.emplace<Component::HealthComponent>(dwagon, 10.0f, 10.0f);
 		reg.emplace<Component::HitBox>(dwagon,Component::EventType::CHARACTER,glm::vec3(1,1,1));
 		reg.emplace<Component::MovementState>(dwagon);
+		reg.emplace<Component::FireMage>(dwagon);
 	}
 
 
@@ -71,7 +72,7 @@ void attack(entt::entity ent, LOA::Engine &engine,float delta) {
 	
 	if (aicomp.cooldown >= 0.3f) {
 		//printf("FIRE\n");
-		reg.get<Component::MovementState>(ent).fire = true;
+		reg.get<Component::MovementState>(ent).basicattack = true;
 		reg.get<Component::AIComponent>(ent).cooldown = 0.0f;
 	}
 }

@@ -20,13 +20,13 @@ void AttackSystem::update(float delta)
 {
 	using namespace Component;
 	auto& reg = engine.getRegistry();
-	auto& FireMageView = reg.view<FireMage,MovementState>();
+	auto& FireMageView = reg.view<FireMage,MovementState,Transformation,Direction>();
 	for (entt::entity ent : FireMageView) {
 		auto& movementstate = FireMageView.get<MovementState>(ent);
 		auto& trans = FireMageView.get<Transformation>(ent);
 		auto& dir = FireMageView.get<Direction>(ent);
 		if (movementstate.basicattack)
-			firebolt(engine,trans.pos,dir.forward);
+			firebolt(engine,trans.pos,trans.rot* dir.forward);
 	}
 }
 void firebolt(Engine& engine, glm::vec3 pos, glm::vec3 forward) {
