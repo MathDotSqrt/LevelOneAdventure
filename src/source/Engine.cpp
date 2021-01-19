@@ -21,6 +21,7 @@ void Engine::update(float delta) {
 		getPhysicsScene().getDrawer()->setDebugMode(1);
 	else if (Window::getInstance().isPressed('n'))
 		getPhysicsScene().getDrawer()->setDebugMode(0);
+	computeMouseCast();
 }
 
 void Engine::render() {
@@ -71,4 +72,35 @@ const entt::entity& Engine::getPlayer() const {
 
 const entt::entity& Engine::getMainCamera() const {
 	return mainCamera;
+}
+std::pair<bool, glm::vec3> Engine::getMouseCast() {
+	return mousecastposition;
+}
+void Engine::computeMouseCast() {
+	LOA::Window& window = Window::getInstance();
+	glm::vec2 mouse = window.getMousePos();// Gets viewport space mouse coords
+	LOA::Physics::PhysicsScene& pscene = this->getPhysicsScene();
+	entt::entity player = this->getPlayer();
+	entt::registry& reg = this->getRegistry();
+	Graphics::Scene& scence = this->getScene();
+	LOA::Graphics::PerspectiveCamera cam = scence.getMainCamera();
+	LOA::Graphics::BasicRenderer& render = this->getRenderer();
+
+	float x = (2.0f * mouse.x) / render.getCurrentWidth() - 1.0f;//Normalized Device space conversion
+	float y = (2.0f * mouse.y) / render.getCurrentHeight() - 1.0f;
+
+	glm::vec4 clipcoords = glm::vec4(x, -y, -1.0f, 1.0f);//Clip coords
+	glm::mat4 invertprojection = glm::inverse(render.getProjection());
+	glm::vec4 eyeCoords = invertprojection * clipcoords;
+	eyeCoords = glm::vec4(eyeCoords.x, eyeCoords.y, -1.0f, 0.0f);//Eye coords, -1 is so it goes "into" the screen
+	glm::mat4 invertview = glm::inverse(cam.transform);
+	glm::vec4 rayworld = invertview * eyeCoords;
+	glm::vec3 mouseray = glm::vec3(rayworld.x, rayworld.y, rayworld.z);
+	mouseray = glm::normalize(mouseray);
+
+	/*Get camera position and cast a ray using bullet 3 from the camera to the world coords of the mouse location.*/
+	glm::vec3 campos = reg.get<Component::Transformation>(this->getMainCamera()).pos;
+	//The pair is a bool and a vec3. The bool is if it collided and the vec3 is where the closest collision was. Can use to click on terrain.
+	mousecastposition = pscene.castRay(campos, campos + mouseray * 600.0f, false);
+
 }

@@ -71,6 +71,7 @@ namespace LOA::Component {
 		float phi = glm::pi<float>() / 4;
 		float distance = 10;
 	};
+	
 	enum class AIState {
 		IDLE, ATTACK, CHASE, SEARCH
 	};
@@ -192,5 +193,7 @@ namespace LOA::Component {
 	/*Classes*/
 	struct FireMage {
 		/*In the Future might store mana/stamina, cooldowns, ect*/
+		float cooldown = 1;
+		float pcooldown = 12;
 	};
 }
