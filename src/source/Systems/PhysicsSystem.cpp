@@ -183,7 +183,7 @@ void PhysicsSystem::update(float delta) {
 	auto character_view = registry.view<Transformation, Velocity, CharacterController>();
 	for (auto entity : character_view) {
 		auto& transform = character_view.get<Transformation>(entity);
-		auto& vel = character_view.get<Velocity>(entity);
+		glm::vec3& vel = character_view.get<Velocity>(entity);
 		auto& controller = character_view.get<CharacterController>(entity);
 
 		//For some reason, to interact with the controller you need to access its 'Ghost Object'
@@ -198,7 +198,13 @@ void PhysicsSystem::update(float delta) {
 
 		ghost_object->setWorldTransform(bt_transform);
 
-		kinematic_controller->setLinearVelocity(to_bt(vel * delta));
+		if (glm::length2(vel * delta) < .0001f) {
+			kinematic_controller->setLinearVelocity(to_bt(glm::vec3(0)));
+		}
+		else {
+			kinematic_controller->setLinearVelocity(to_bt(vel * delta));
+
+		}
 	}
 
 	auto view = registry.view<Transformation, Velocity, RigidBody>();
