@@ -117,14 +117,14 @@ void MovementSystem::update(float delta) {
 	}
 
 	//Handles fireing the fireballs
-	registry.view<Transformation, Direction, MovementState>().each([&](auto& transform, auto& dir, auto& movement) {
+	/*registry.view<Transformation, Direction, MovementState>().each([&](auto& transform, auto& dir, auto& movement) {
 		if (movement.fire) {
 			spawnFireball(engine, transform.pos, transform.rot * dir.forward);
 			movement.fire = false;
 		}
 		movement.forward = 0.0f;
 		movement.strafe = 0.0f;
-	});
+	});*/
 
 	//Camera Follow
 	auto camera_follow_view = registry.view<Transformation, Direction, Camera, Input>(entt::exclude<MovementState>);

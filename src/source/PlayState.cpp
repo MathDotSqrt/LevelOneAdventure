@@ -12,6 +12,7 @@
 #include "Window.h"
 #include "Systems/MouseCast.h"
 #include "Systems/AISystem.h"
+#include "Systems/AttackSystem.h"
 
 #include "Graphics/ParticleGenerator.h"
 #include "Graphics/TEX.h"
@@ -42,6 +43,7 @@ PlayState::PlayState(){
 	engine.addSystem<Systems::AISystem>();
 	engine.addSystem<Systems::MovementSystem>();
 	engine.addSystem<Systems::HealthSystem>();
+	engine.addSystem<Systems::AttackSystem>();
 
 	//Rendering/Physics updating
 	engine.addSystem<Systems::ParticleSystem>();
@@ -93,6 +95,7 @@ PlayState::PlayState(){
 		registry.emplace<PointLight>(player, point_light, glm::vec3(.7, .6, .5), 1.f, 10.0f);
 		registry.emplace<CharacterController>(player);
 		registry.emplace<HitBox>(player, EventType::CHARACTER, glm::vec3(.5));
+		registry.emplace<FireMage>(player);
 		registry.emplace<Graphics::DissolveMaterial>(player, material);
 		//registry.emplace<HealthComponent>(player);
 

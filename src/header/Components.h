@@ -48,7 +48,8 @@ namespace LOA::Component {
 		float forward = 0;
 		float strafe = 0;
 		float fly = 0;
-		bool fire = false;
+		bool basicattack = false;
+		bool powerfulattack = false;
 		glm::vec2 rotate = glm::vec2(0);
 	};
 
@@ -178,5 +179,9 @@ namespace LOA::Component {
 	//Rigid Bodies for characters: player, enemies, etc
 	struct CharacterController {
 		btKinematicCharacterController* kinematicCollider = nullptr;
+	};
+	/*Classes*/
+	struct FireMage {
+		/*In the Future might store mana/stamina, cooldowns, ect*/
 	};
 }
