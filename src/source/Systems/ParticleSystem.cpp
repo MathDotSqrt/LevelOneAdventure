@@ -10,7 +10,7 @@
 
 using namespace LOA::Systems;
 
-ParticleSystem::ParticleSystem(LOA::Engine &engine) : BaseSystem(engine), fireInstanceID(LOA::NullID), fireGenerator(10000){
+ParticleSystem::ParticleSystem(LOA::Engine &engine) : BaseSystem(engine), fireInstanceID(LOA::NullID), fireGenerator(1000000){
 
 }
 

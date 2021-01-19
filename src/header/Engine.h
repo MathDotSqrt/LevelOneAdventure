@@ -37,18 +37,22 @@ namespace LOA {
 		Graphics::Scene& getScene();
 		Graphics::BasicRenderer& getRenderer();
 		Physics::PhysicsScene& getPhysicsScene();
+		std::pair<bool, glm::vec3> getMouseCast();
 
 		const entt::entity& getPlayer() const;
 		const entt::entity& getMainCamera() const;
 	private:
+		void computeMouseCast();
 		entt::entity player;
 		entt::entity mainCamera;
-
+		
 		entt::registry registry;
 		Graphics::Scene scene;
 		Graphics::BasicRenderer renderer;
 
 		std::vector<std::unique_ptr<Systems::BaseSystem>> systems;
 		std::unordered_set<entt::entity> to_delete;
+
+		std::pair<bool,glm::vec3> mousecastposition;
 	};
 }
