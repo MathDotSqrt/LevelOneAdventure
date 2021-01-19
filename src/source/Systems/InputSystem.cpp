@@ -56,7 +56,7 @@ void InputSystem::update(float delta) {
 			movement.fly -= 1;
 
 		movement.basicattack = window.isPressed(Window::Mouse::LEFT_CLICK);
-		movement.powerfulattack = window.isPressed(window.isDown('f'));
+		movement.powerfulattack = window.isPressed('f');
 		glm::vec2 delta = pos - input.lastCursorPos;
 
 		movement.rotate = -delta;
