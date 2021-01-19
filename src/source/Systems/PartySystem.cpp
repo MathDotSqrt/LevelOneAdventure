@@ -12,23 +12,25 @@ using namespace LOA::Component;
 using namespace entt;
 
 void PartySystem::init() {
-
+	using namespace entt;
 	auto& registry = engine.getRegistry();
 	auto& scene = engine.getScene();
 
+	scene.loadTexturedMesh("lizard"_hs, "./res/models/dungeon_assets/character/chara-lizard.fbx", glm::vec3(0, -1 + .03f, 0), glm::vec3(.05f));
+
 	Graphics::DissolveMaterial material;
 	material.color = glm::vec3(1, 1, 1);
-	material.texture = "uv_debug_grid"_hs;
+	material.texture = "dungeon_pallet"_hs;
 	material.offset = .01f;
 	material.dissolve_color = glm::vec3(1, .8, .4);
 
 	for (int i = 0; i < 4; i++) {
-		ID cubeID = scene.addInstance("cube"_hs, material);
+		ID cubeID = scene.addInstance("lizard"_hs, material);
 		ID point_light = scene.addPointLight(Graphics::PointLight{});
 		entt::entity npc = registry.create();
 		registry.emplace<Transformation>(npc, glm::vec3(-10 + 10 * i, 0, 12));
 		registry.emplace<Velocity>(npc, glm::vec3(0, 0, 0));
-		registry.emplace<Direction>(npc, glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+		registry.emplace<Direction>(npc, glm::vec3(0, 0, 1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		registry.emplace<MovementState>(npc);
 		registry.emplace<Renderable>(npc, cubeID);
 		registry.emplace<PointLight>(npc, point_light, glm::vec3(.7, .6, .5), 1.f, 10.0f);
@@ -51,6 +53,9 @@ void PartySystem::update(float delta) {
 	for (entt::entity entity : MemberView) {
 		auto& member = MemberView.get<PartyMember>(entity);
 		auto& ai = MemberView.get<AIComponent>(entity);
+
+		//Cannot be its own leader with an AI component
+		assert(member.leader != entity);
 
 		if (member.leader == entt::null) {
 			auto& transform = MemberView.get<Transformation>(entity);

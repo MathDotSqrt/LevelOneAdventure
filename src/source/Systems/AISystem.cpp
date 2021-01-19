@@ -31,18 +31,21 @@ static entt::entity debug_cube;
 void AISystem::init()
 {
 	Graphics::Scene &scence = engine.getScene();
-	scence.loadMesh("Dwagon"_hs,"res/models/dragon/dragon2.stl");
+
+	scence.loadTexturedMesh("minos"_hs, "./res/models/dungeon_assets/character/chara-minos.fbx", glm::vec3(0, -1 + .03f, 0), glm::vec3(.05f));
+	
 	Graphics::BasicLitMaterial material;
-	material.color = glm::vec3(.1,.76,.4);
+	material.color = glm::vec3(1);
+	material.texture = "dungeon_pallet"_hs;
 	
 	entt::registry& reg = engine.getRegistry();
 	for (int i = 1; i < 2; i++) {//hahaha
-		LOA::ID id = scence.addInstance("cube"_hs, material);
+		LOA::ID id = scence.addInstance("minos"_hs, material);
 		entt::entity dwagon = reg.create();
 		reg.emplace<Component::Transformation>(dwagon); //,glm::vec3(1.0f / i, 1, 1 * i), glm::angleAxis(3.14f / 2 * 3.14f, glm::vec3(1, 0, 0)), glm::vec3(.1, .1, .1));
 		reg.emplace<Component::Renderable>(dwagon, id);
 		reg.emplace<Component::Velocity>(dwagon, glm::vec3(0, 0, 0));
-		reg.emplace<Component::Direction>(dwagon, glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
+		reg.emplace<Component::Direction>(dwagon, glm::vec3(0, 0, 1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		reg.emplace<Component::AIComponent>(dwagon, engine.getPlayer(), 10.0f, ENEMY_FORWARD_SPEED);
 		reg.emplace<Component::CharacterController>(dwagon); 
 		reg.emplace<Component::HealthComponent>(dwagon, 10.0f, 10.0f);
