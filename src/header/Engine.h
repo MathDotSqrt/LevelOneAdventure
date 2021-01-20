@@ -13,6 +13,10 @@ namespace LOA::Physics {
 	class PhysicsScene;
 }
 
+namespace LOA::Component {
+	class Transformation;
+}
+
 namespace LOA {
 	class Engine {
 	public:
@@ -41,6 +45,8 @@ namespace LOA {
 
 		const entt::entity& getPlayer() const;
 		const entt::entity& getMainCamera() const;
+		Component::Transformation& getCameraTransform();
+		const Component::Transformation& getCameraTransform() const;
 	private:
 		void computeMouseCast();
 		entt::entity player;

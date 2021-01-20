@@ -26,7 +26,13 @@ float const SLERP_SPEED = .08 / .6;
 float const AVOID_RATE = .03f / .6;
 float const FAST_AVOID_MULTIPLIER = 2;
 
-static entt::entity debug_cube;
+static std::vector<entt::entity> debug_cubes;
+
+AISystem::AISystem(LOA::Engine &engine) : BaseSystem(engine){
+	
+	//This is for debugging only
+	engine.getRegistry().on_construct<Component::AIComponent>().connect<&AISystem::createDebugCube>(this);
+}
 
 void AISystem::init()
 {
@@ -53,15 +59,6 @@ void AISystem::init()
 		reg.emplace<Component::MovementState>(dwagon);
 		reg.emplace<Component::FireMage>(dwagon);
 	}
-
-
-	Graphics::BasicMaterial debug_material;
-	debug_material.setAlpha(.5f);
-	debug_material.setColor(glm::vec3(1.5f));
-	LOA::ID id = scence.addInstance("cube"_hs, debug_material);
-	debug_cube = reg.create();
-	reg.emplace<Component::Transformation>(debug_cube, glm::vec3(0), glm::quat(1, 0, 0, 0), glm::vec3(.2f)); //,glm::vec3(1.0f / i, 1, 1 * i), glm::angleAxis(3.14f / 2 * 3.14f, glm::vec3(1, 0, 0)), glm::vec3(.1, .1, .1));
-	reg.emplace<Component::Renderable>(debug_cube, id);
 }
 void attack(entt::entity ent, LOA::Engine &engine,float delta) {
 	using namespace LOA;
@@ -105,13 +102,14 @@ void AISystem::update(float delta)
 		}
 
 		auto& targtrans = reg.get<Component::Transformation>(targ);
-		glm::vec3 path = targtrans.pos - trans.pos;
-
 		auto pair = pscene.castRay(trans.pos, targtrans.pos, true);//LOS Cast
+
+		//target entity is always the target position
+		aicomp.target_pos = targtrans.pos;
 
 		if (pair.first == false) { //Has line of sight
 			aicomp.currentstate = AIState::ATTACK;
-			aicomp.lastspot = targtrans.pos;
+			aicomp.last_pos = aicomp.target_pos;
 
 		}
 		else if (aicomp.currentstate == AIState::ATTACK) {	//Was attacking but lost LOS; Chase
@@ -119,7 +117,7 @@ void AISystem::update(float delta)
 		}
 		else if (aicomp.currentstate == AIState::CHASE) {
 			//If AI was chasing and arrived at target position but did not gain line of sight of target search
-			if (glm::distance(aicomp.lastspot, trans.pos) < 1.f) {
+			if (glm::distance(aicomp.last_pos, trans.pos) < 1.f) {
 				aicomp.currentstate = AIState::SEARCH;
 			}
 		}
@@ -138,15 +136,12 @@ void AISystem::update(float delta)
 			continue;
 		}
 
-		auto& targtrans = reg.get<Component::Transformation>(targ);
-		glm::vec3 path = targtrans.pos - trans.pos;
-
-		auto pair = pscene.castRay(trans.pos, targtrans.pos, true);//LOS Cast
+		auto pair = pscene.castRay(trans.pos, aicomp.target_pos, true);//LOS Cast
 		if(pair.first == false) { //Has line of sight
-			aicomp.lastspot = targtrans.pos;
+			aicomp.last_pos = aicomp.target_pos;
 		}
 
-		if (glm::distance(trans.pos, targtrans.pos) < 2) {
+		if (glm::distance(trans.pos, aicomp.target_pos) < .5f) {
 			aicomp.currentstate = AIState::IDLE;
 		}
 		else{
@@ -157,6 +152,7 @@ void AISystem::update(float delta)
 
 	//All AI actions per state
 	auto& AIView = reg.view<Component::AIComponent, Component::Transformation, Component::MovementState, Component::Velocity, Component::Direction>();
+	int i = 0;
 	for (entt::entity ent : AIView) {
 		auto& trans = AIView.get<Component::Transformation>(ent);
 		auto& dir = AIView.get<Component::Direction>(ent);
@@ -197,7 +193,7 @@ void AISystem::update(float delta)
 		case AIState::CHASE:
 			//Moves forward and performs chase 
 			movement.forward = -aicomp.speed;
-			chase(trans, dir, aicomp.lastspot, aicomp.speed, delta);
+			chase(trans, dir, aicomp.last_pos, aicomp.speed, delta);
 			break;
 		case AIState::SEARCH:
 			//Blindly moves forward
@@ -206,8 +202,9 @@ void AISystem::update(float delta)
 		}
 
 		//debug info
-		reg.get<Component::Transformation>(debug_cube).pos = aicomp.lastspot;
-		reg.get<Component::Transformation>(debug_cube).pos.y += 1.f;
+		reg.get<Component::Transformation>(debug_cubes[i]).pos = aicomp.last_pos;
+		reg.get<Component::Transformation>(debug_cubes[i]).pos.y += 1.f;
+		i++;
 	}
 		//chase(delta);
 }
@@ -252,16 +249,16 @@ void AISystem::chase(Transformation &trans, Direction dir, glm::vec3 &targtrans,
 	glm::quat offset = glm::angleAxis(theta, glm::vec3(0, 1, 0));
 	trans.rot = offset * trans.rot;
 }
-//out of range
-		/*if(glm::length(path) > AIView.get<Component::AIComponent>(ent).attackrange)
-			if(!pair.first)
-				AIView.get<Component::MovementState>(ent).forward = -.4f;
-			else
-				AIView.get<Component::MovementState>(ent).strafe = 3.0f;
-		else {//in range
-			AIView.get<Component::MovementState>(ent).forward = 0.0f;
-			if(pair.first)
-				AIView.get<Component::MovementState>(ent).forward = -1.0f;
-			else
-				attack(ent,engine,delta);
-		}*/
+
+
+void AISystem::createDebugCube(entt::registry& registry, entt::entity) {
+	Graphics::BasicMaterial debug_material;
+	debug_material.setAlpha(.5f);
+	debug_material.setColor(glm::vec3(1.5f));
+	LOA::ID id = engine.getScene().addInstance("cube"_hs, debug_material);
+
+	entt::entity debug_cube = registry.create();
+	registry.emplace<Component::Transformation>(debug_cube, glm::vec3(0), glm::quat(1, 0, 0, 0), glm::vec3(.2f)); //,glm::vec3(1.0f / i, 1, 1 * i), glm::angleAxis(3.14f / 2 * 3.14f, glm::vec3(1, 0, 0)), glm::vec3(.1, .1, .1));
+	registry.emplace<Component::Renderable>(debug_cube, id);
+	debug_cubes.push_back(debug_cube);
+}

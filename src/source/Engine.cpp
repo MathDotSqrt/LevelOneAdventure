@@ -73,6 +73,15 @@ const entt::entity& Engine::getPlayer() const {
 const entt::entity& Engine::getMainCamera() const {
 	return mainCamera;
 }
+
+Component::Transformation& Engine::getCameraTransform() {
+	return registry.get<Component::Transformation>(getMainCamera());
+}
+
+const Component::Transformation& Engine::getCameraTransform() const {
+	return registry.get<Component::Transformation>(getMainCamera());
+}
+
 std::pair<bool, glm::vec3> Engine::getMouseCast() {
 	return mousecastposition;
 }

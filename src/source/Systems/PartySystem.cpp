@@ -50,6 +50,8 @@ void PartySystem::update(float delta) {
 	auto& registry = engine.getRegistry();
 
 	auto MemberView = registry.view<PartyMember, AIComponent, Transformation>();
+
+	int i = 0;
 	for (entt::entity entity : MemberView) {
 		auto& member = MemberView.get<PartyMember>(entity);
 		auto& ai = MemberView.get<AIComponent>(entity);
@@ -64,6 +66,12 @@ void PartySystem::update(float delta) {
 			if (glm::distance(player_trans.pos, transform.pos) < 10 && engine.getPhysicsScene().castRay(transform.pos, player_trans.pos).first == false) {
 				member.leader = engine.getPlayer();
 			}
+		}
+		else {
+			auto &camera_transform = engine.getCameraTransform();
+
+			ai.target_pos = registry.get<Transformation>(member.leader).pos + glm::vec3(4 - i * 2, 0, -2);
+			i++;
 		}
 
 		ai.target = member.leader;

@@ -84,7 +84,8 @@ namespace LOA::Component {
 		float speed = 1.0f;
 		float cooldown = 0.0f;
 		
-		glm::vec3 lastspot = glm::vec3(10);
+		glm::vec3 target_pos = glm::vec3(0);
+		glm::vec3 last_pos = glm::vec3(0);
 		AIState currentstate = AIState::IDLE;
 	};
 
