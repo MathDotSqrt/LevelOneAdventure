@@ -7,6 +7,8 @@
 #include "Graphics/Scene.h"
 #include "Physics/PhysicsScene.h"
 
+#include "util/TransformUtil.h"
+
 using namespace LOA::Systems;
 using namespace LOA::Component;
 using namespace entt;
@@ -68,9 +70,13 @@ void PartySystem::update(float delta) {
 			}
 		}
 		else {
-			auto &camera_transform = engine.getCameraTransform();
+			glm::vec3 leader_pos = registry.get<Transformation>(member.leader).pos;
+			glm::vec3 camera_pos = engine.getCameraTransform().pos;
 
-			ai.target_pos = registry.get<Transformation>(member.leader).pos + glm::vec3(4 - i * 2, 0, -2);
+			glm::vec2 path = glm::vec2(leader_pos.x, leader_pos.z) - glm::vec2(camera_pos.x, camera_pos.z);
+			glm::quat rot = Util::turn_towards(glm::vec2(0, 1), path);
+
+			ai.target_pos = leader_pos + rot * glm::vec3(3 - i * 2, 0, -2);
 			i++;
 		}
 
